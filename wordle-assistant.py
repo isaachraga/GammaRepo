@@ -3,10 +3,10 @@
 # Wordle Assistant
 # Run 'python wordle-assistant.py'
 
-with open("words.txt","r") as f:
-    words = f.readlines()
+# with open("words.txt","r") as f:
+#     words = f.readlines()
 
-words = [w.strip() for w in words]
+# words = [w.strip() for w in words]
 
 # print(len(words))
 # print(words[1:3])
@@ -42,6 +42,8 @@ def guess_word(game_State):
         return ""
     
     # Valid input recieved
+    wordCount = int((charCount/10))
+    print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
 
     # TO DO: use info obtained to get a guess
 
@@ -58,6 +60,6 @@ def guess_word(game_State):
 if __name__ == "__main__":
     while True:
         state = input("\nGame state: ")
-        guess = guess_word(state)
+        guess = guess_word(state.lower())
         if guess != "":
             print("You should try '" + guess + "'.")
