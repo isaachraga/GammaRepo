@@ -13,7 +13,38 @@
 # exit(0)
 
 def guess_word(game_State):
-    
+
+    # How common each letter is by weight
+    # All weights sum to a total of 10,000
+    frequencyTable = {
+        'e': 981,
+        'a': 844,
+        'r': 777,
+        'o': 626,
+        't': 621,
+        'i': 602,
+        'l': 600,
+        's': 575,
+        'n': 510,
+        'u': 425,
+        'c': 415,
+        'y': 387,
+        'h': 351,
+        'd': 345,
+        'p': 321,
+        'g': 278,
+        'm': 277,
+        'b': 248,
+        'f': 192,
+        'k': 188,
+        'w': 180,
+        'v': 138,
+        'x': 34,
+        'z': 33,
+        'q': 27,
+        'j': 25
+    }
+
     charCount = 0 # Ensures the correct amount of characters have been inputted
     prevLetter = '' # Stores letter to use in combination with symbol
 
