@@ -45,8 +45,15 @@ def guess_word(game_State):
         'j': 25
     }
 
+    greenLetters = {}
+
+    yellowLetters = {}
+
+    grayLetters = []
+
     charCount = 0 # Ensures the correct amount of characters have been inputted
     prevLetter = '' # Stores letter to use in combination with symbol
+    yellowCount = 0
 
     for ch in game_State:
         if ch.isspace(): # Handle whitespace
@@ -58,6 +65,16 @@ def guess_word(game_State):
             letterNum = int((((charCount-1) % 10)/2)+1)
 
             print("Word " + str(wordNum) + ", Letter " + str(letterNum) + ":  " + prevLetter + " " + ch) # FOR DEBUGGING PURPOSES
+
+            #Adds letters to corresponding dictionaries for use in word guessing
+            if ch == '=' :
+                greenLetters[prevLetter] = letterNum #green stores letter and position
+            elif ch == '-' :
+                yellowLetters[yellowCount] = [prevLetter, letterNum] #yellow stores letter and not position, uses wordnum to allow for duplicate keys with different values
+                yellowCount = yellowCount+1
+            elif ch == '.' :
+                if prevLetter not in grayLetters:
+                    grayLetters.append(prevLetter) #gray just stores letters
 
             # TO DO: update knowledge on letters based on the inputted info
 
@@ -76,9 +93,26 @@ def guess_word(game_State):
     wordCount = int((charCount/10))
     print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
 
+    #Dictionary Debug
+    print("Green")
+    print(greenLetters)
+    print("Yellow")
+    print(yellowLetters)
+    print("Gray")
+    print(grayLetters)
+
+
+
     # TO DO: use info obtained to get a guess
+    #if number of words submitted is less than 3, use suggestions to collect data
+        #figure out best way to collect most data
+    #else
+        #search through words that meet criteria, add to new list
+        #find the best word based on highest value from frequeny table 
+    #submit word
 
     return "guess"
+
 
 
 
