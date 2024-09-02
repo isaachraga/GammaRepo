@@ -12,6 +12,8 @@
 # print(words[1:3])
 # exit(0)
 
+game_state_history = []
+
 def guess_word(game_State):
 
     # How common each letter is by weight
@@ -124,7 +126,20 @@ def guess_word(game_State):
 # Information from previous inputs should not be retained
 if __name__ == "__main__":
     while True:
-        state = input("\nGame state: ")
+        state = input("\nGame state (or press Up to use previous): ")
+
+        # Check if the input is empty (user hit enter)
+        if state.strip() == "":
+            if game_state_history:
+                state = game_state_history[-1] # Use the last game state in history
+                print(f"Reusing previous state: {state}")
+            else:
+                print("No previous state found. Please enter a new game state.")
+                continue
+
+        # Store the current state in history
+        game_state_history.append(state.lower())
+
         guess = guess_word(state.lower())
         if guess != "":
             print("You should try '" + guess + "'.")
