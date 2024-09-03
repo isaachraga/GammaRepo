@@ -147,47 +147,59 @@ def guess_word(game_State):
 
 
 
-    #
-    for word in words:
-        
-        failState = False
-        for ch in word:
-            if grayLetters:
-                if ch in grayLetters:
-                    failState = True
-                    break
+     #adieu
+    #flown
+    #nymph
+    if wordCount == 0:
+        guess = 'adieu'
+        return guess
+    elif wordCount == 1:
+        guess = 'flown'
+        return guess
+    elif wordCount == 2:
+        guess = 'nymph'
+        return guess
+    elif wordCount > 2:
+        for word in words:
             
-                    
-        
-        if greenLetters:
-            for letter in greenLetters:
-                charLoc = 1
-                for ch in word:
-                    if charLoc == greenLetters[letter]:
-                        if letter != ch:
-                            failState = True
-                            break
-                    charLoc = charLoc + 1
-        
-        if yellowLetters:
-            for item in yellowLetters:
-                if yellowLetters[item][0] not in word:
-                    failState = True
-                    break
-                else:
-                    charLoc = 1 
+            failState = False
+            for ch in word:
+                if grayLetters:
+                    if ch in grayLetters:
+                        failState = True
+                        break
+                
+                        
+            
+            if greenLetters:
+                for letter in greenLetters:
+                    charLoc = 1
                     for ch in word:
-                        if charLoc == yellowLetters[item][1]:
-                            if ch == yellowLetters[item][0]:
+                        if charLoc == greenLetters[letter]:
+                            if letter != ch:
                                 failState = True
                                 break
                         charLoc = charLoc + 1
+            
+            if yellowLetters:
+                for item in yellowLetters:
+                    if yellowLetters[item][0] not in word:
+                        failState = True
+                        break
+                    else:
+                        charLoc = 1 
+                        for ch in word:
+                            if charLoc == yellowLetters[item][1]:
+                                if ch == yellowLetters[item][0]:
+                                    failState = True
+                                    break
+                            charLoc = charLoc + 1
 
 
-        if failState == True:
-            failState = False
-        elif word not in critWords:
-            critWords.append(word)
+            if failState == True:
+                failState = False
+            elif word not in critWords:
+                critWords.append(word)
 
     randNum = len(critWords)
     print (randNum)
@@ -195,6 +207,7 @@ def guess_word(game_State):
         guessWord = critWords[randrange(randNum)]
     else:
         guessWord = 'xBADx'
+
         
 
    
@@ -223,15 +236,22 @@ if __name__ == "__main__":
 
         # Check if the input is empty (user hit enter)
         if state.strip() == "":
+            print("Printing")
             if game_state_history:
-                state = game_state_history[-1] # Use the last game state in history
-                print(f"Reusing previous state: {state}")
+                #state = game_state_history[-1] # Use the last game state in history
+                print(game_state_history[-1])
+                #print(f"Reusing previous state: {state}")
+                print("Printing2")
             else:
-                print("No previous state found. Please enter a new game state.")
+                #print("No previous state found. Please enter a new game state.")
+                print("You should try 'adieu'")
                 continue
+        else:
+            game_state_history.append(state.lower())
 
         # Store the current state in history
-        game_state_history.append(state.lower())
+        print("GSH")
+        print (len(game_state_history))
 
         guess = guess_word(state.lower())
         if guess != "":
