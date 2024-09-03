@@ -12,7 +12,12 @@
 # print(words[1:3])
 # exit(0)
 
+
+
+from random import randrange
 game_state_history = []
+
+
 
 def guess_word(game_State):
 
@@ -56,6 +61,7 @@ def guess_word(game_State):
     charCount = 0 # Ensures the correct amount of characters have been inputted
     prevLetter = '' # Stores letter to use in combination with symbol
     yellowCount = 0
+    guessWord = ''
 
     for ch in game_State:
         if ch.isspace(): # Handle whitespace
@@ -106,14 +112,101 @@ def guess_word(game_State):
 
 
     # TO DO: use info obtained to get a guess
+
+    #Possible approach??
+    #
     #if number of words submitted is less than 3, use suggestions to collect data
         #figure out best way to collect most data
     #else
         #search through words that meet criteria, add to new list
         #find the best word based on highest value from frequeny table 
     #submit word
+    #
 
-    return "guess"
+    #Selecting word list from game state rules
+    #read in words 1 by 1
+    #check all criteria
+    #add to list if passed
+    #return rand word from good list
+
+    #Selecting word list from game state rules
+    with open("sortedWords.txt","r") as f:
+        words = f.readlines()
+
+    words = [w.strip() for w in words]
+    critWords = []
+
+    #input check
+    for ch in grayLetters:
+        if ch in greenLetters:
+            print("Error: Input not valid. Gray letter as Green Letter")
+            return ''
+        if ch in yellowLetters:
+            print("Error: Input not valid. Gray letter as Yellow Letter")
+            return ''
+
+
+
+    #
+    for word in words:
+        
+        failState = False
+        for ch in word:
+            if grayLetters:
+                if ch in grayLetters:
+                    failState = True
+                    break
+            
+                    
+        
+        if greenLetters:
+            for letter in greenLetters:
+                charLoc = 1
+                for ch in word:
+                    if charLoc == greenLetters[letter]:
+                        if letter != ch:
+                            failState = True
+                            break
+                    charLoc = charLoc + 1
+        
+        if yellowLetters:
+            for item in yellowLetters:
+                if yellowLetters[item][0] not in word:
+                    failState = True
+                    break
+                else:
+                    charLoc = 1 
+                    for ch in word:
+                        if charLoc == yellowLetters[item][1]:
+                            if ch == yellowLetters[item][0]:
+                                failState = True
+                                break
+                        charLoc = charLoc + 1
+
+
+        if failState == True:
+            failState = False
+        elif word not in critWords:
+            critWords.append(word)
+
+    randNum = len(critWords)
+    print (randNum)
+    if randNum > 0:
+        guessWord = critWords[randrange(randNum)]
+    else:
+        guessWord = 'xBADx'
+        
+
+   
+
+
+
+    for wrd in critWords:
+        print(wrd)
+   
+    
+
+    return guessWord
 
 
 
