@@ -101,8 +101,13 @@ def guess_word(game_State):
                 yellowLetters[yellowCount] = [prevLetter, letterNum] #yellow stores letter and not position, uses wordnum to allow for duplicate keys with different values
                 yellowCount = yellowCount+1
             elif ch == '.' :
-                if prevLetter not in grayLetters:
-                    grayLetters.append(prevLetter) #gray just stores letters
+                if prevLetter not in grayLetters and prevLetter not in greenLetters:
+                    inYellow = False
+                    for item in yellowLetters:
+                        if yellowLetters[item][0] == prevLetter:
+                            inYellow = True
+                    if inYellow == False:
+                        grayLetters.append(prevLetter) #gray just stores letters
 
             # TO DO: update knowledge on letters based on the inputted info
 
@@ -178,7 +183,7 @@ def guess_word(game_State):
         guess = 'lymph'
         return guess
     elif wordCount == 3:
-        guess = 'vexil'
+        guess = 'vibex'
         return guess
     elif wordCount > 3:
         for word in words:
