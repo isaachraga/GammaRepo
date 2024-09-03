@@ -167,19 +167,20 @@ def guess_word(game_State):
 
 
 
-     #adieu
-    #flown
-    #nymph
+    #default words and rules
     if wordCount == 0:
         guess = 'adieu'
         return guess
     elif wordCount == 1:
-        guess = 'flown'
+        guess = 'wrong'
         return guess
     elif wordCount == 2:
-        guess = 'nymph'
+        guess = 'lymph'
         return guess
-    elif wordCount > 2:
+    elif wordCount == 3:
+        guess = 'vexil'
+        return guess
+    elif wordCount > 3:
         for word in words:
             
             failState = False
