@@ -17,12 +17,7 @@
 from random import randrange
 game_state_history = []
 
-
-
-def guess_word(game_State):
-
-    # How common each letter is by weight
-    # All weights sum to a total of 10,000
+def rank_word(word_list):
     frequencyTable = {
         'e': 981,
         'a': 844,
@@ -51,6 +46,31 @@ def guess_word(game_State):
         'q': 27,
         'j': 25
     }
+    rankedDict = {}
+    for word in word_list:
+        score = 0
+        for ch in word:
+            score = score + frequencyTable[ch]
+        rankedDict[score] = word
+    
+    
+    sorted_dict = dict(sorted(rankedDict.items()))
+
+    print(sorted_dict)
+
+    output = list(sorted_dict.values())[-1]
+    
+    return output
+
+
+
+
+
+def guess_word(game_State):
+
+    # How common each letter is by weight
+    # All weights sum to a total of 10,000
+    
 
     greenLetters = {}
 
@@ -201,10 +221,12 @@ def guess_word(game_State):
             elif word not in critWords:
                 critWords.append(word)
 
+    #ranked word choice
     randNum = len(critWords)
     print (randNum)
     if randNum > 0:
-        guessWord = critWords[randrange(randNum)]
+        #guessWord = critWords[randrange(randNum)]
+        guessWord = rank_word(critWords)
     else:
         guessWord = 'xBADx'
 
