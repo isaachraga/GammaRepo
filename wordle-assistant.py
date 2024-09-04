@@ -3,21 +3,12 @@
 # Wordle Assistant
 # Run 'python wordle-assistant.py'
 
-# with open("words.txt","r") as f:
-#     words = f.readlines()
-
-# words = [w.strip() for w in words]
-
-# print(len(words))
-# print(words[1:3])
-# exit(0)
-
-
-
 from random import randrange
 game_state_history = []
 
 def rank_word(word_list):
+    # How common each letter is by weight
+    # All weights sum to a total of 10,000
     frequencyTable = {
         'e': 981,
         'a': 844,
@@ -53,25 +44,18 @@ def rank_word(word_list):
             score = score + frequencyTable[ch]
         rankedDict[score] = word
     
-    
     sorted_dict = dict(sorted(rankedDict.items()))
 
-    print(sorted_dict)
+    # print(sorted_dict) # DEBUGGING
 
     output = list(sorted_dict.values())[-1]
     
     return output
 
-
-
-
-
+# Word Guessing Function
+# Input a valid gamestate, and the next guess will be returned
 def guess_word(game_State):
-
-    # How common each letter is by weight
-    # All weights sum to a total of 10,000
     
-
     greenLetters = {}
 
     yellowLetters = {}
@@ -97,7 +81,7 @@ def guess_word(game_State):
             wordNum = int((charCount/10)+1)
             letterNum = int((((charCount-1) % 10)/2)+1)
 
-            print("Word " + str(wordNum) + ", Letter " + str(letterNum) + ":  " + prevLetter + " " + ch) # FOR DEBUGGING PURPOSES
+            #print("Word " + str(wordNum) + ", Letter " + str(letterNum) + ":  " + prevLetter + " " + ch) # FOR DEBUGGING PURPOSES
 
             #Adds letters to corresponding dictionaries for use in word guessing
             if ch == '=' :
@@ -105,7 +89,7 @@ def guess_word(game_State):
                 greenCount = greenCount+1
                 if prevLetter in grayLetters:
                     graySpecial[graySpecialCount] = [prevLetter, grayLetters[prevLetter]]
-                    print(graySpecial)
+                    # print(graySpecial) # DEBUGGING
                     del grayLetters[prevLetter]
                     graySpecialCount = graySpecialCount + 1
                     
@@ -114,7 +98,7 @@ def guess_word(game_State):
                 yellowCount = yellowCount+1
                 if prevLetter in grayLetters:
                     graySpecial[graySpecialCount] = [prevLetter, grayLetters[prevLetter]]
-                    print(graySpecial)
+                    # print(graySpecial) # DEBUGGING
                     del grayLetters[prevLetter]
                     graySpecialCount = graySpecialCount + 1
             elif ch == '.' :
@@ -126,8 +110,6 @@ def guess_word(game_State):
                     if inYellow == False:
                         grayLetters[prevLetter] = letterNum #gray just stores letters
 
-            # TO DO: update knowledge on letters based on the inputted info
-
             prevLetter = '' # Reset previous letter
         else: # Incorrect character inputted
             print("Unexpected Character in Input, Please Try Again")
@@ -135,43 +117,23 @@ def guess_word(game_State):
         charCount += 1
     
     # Incorrect amount of characters inputted
-    if ((charCount % 10) != 0) or (charCount == 0):
+    if ((charCount % 10) != 0):
         print("Incorrect Number of Characters, Please Try Again")
         return ""
     
     # Valid input recieved
     wordCount = int((charCount/10))
-    print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
+    # print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
 
     #Dictionary Debug
-    print("Green")
-    print(greenLetters)
-    print("Yellow")
-    print(yellowLetters)
-    print("Gray")
-    print(grayLetters)
-    print("Special")
-    print(graySpecial)
-
-
-
-    # TO DO: use info obtained to get a guess
-
-    #Possible approach??
-    #
-    #if number of words submitted is less than 3, use suggestions to collect data
-        #figure out best way to collect most data
-    #else
-        #search through words that meet criteria, add to new list
-        #find the best word based on highest value from frequeny table 
-    #submit word
-    #
-
-    #Selecting word list from game state rules
-    #read in words 1 by 1
-    #check all criteria
-    #add to list if passed
-    #return rand word from good list
+    # print("Green")
+    # print(greenLetters)
+    # print("Yellow")
+    # print(yellowLetters)
+    # print("Gray")
+    # print(grayLetters)
+    # print("Special")
+    # print(graySpecial)
 
     #Selecting word list from game state rules
     with open("sortedWords.txt","r") as f:
@@ -189,10 +151,7 @@ def guess_word(game_State):
             #print("Error: Input not valid. Gray letter as Yellow Letter")
             #return ''
 
-
-
     #default words and rules
-    
     if wordCount == 0:
         guess = 'adieu'
         return guess
@@ -215,26 +174,18 @@ def guess_word(game_State):
                     if ch in grayLetters:
                         failState = True
                         break
-                
-                        
+                 
             tempWord = {}
             if greenLetters:
                 tempLoc = 1
                 for ch in word:
                     tempWord[tempLoc]=ch
                     tempLoc = tempLoc + 1
-
                 for item in greenLetters:
                     if tempWord[greenLetters[item][1]] != greenLetters[item][0]:
                         failState = True
                         break
 
-
-                    
-
-
-                       
-            
             if yellowLetters:
                 for item in yellowLetters:
                     if yellowLetters[item][0] not in word:
@@ -254,12 +205,10 @@ def guess_word(game_State):
                 for ch in word:
                     tempWord[tempLoc]=ch
                     tempLoc = tempLoc + 1
-
                 for item in graySpecial:
                     if tempWord[graySpecial[item][1]] == graySpecial[item][0]:
                         failState = True
                         break
-
 
             if failState == True:
                 failState = False
@@ -268,27 +217,17 @@ def guess_word(game_State):
 
     #ranked word choice
     randNum = len(critWords)
-    print (randNum)
+    # print (randNum) # DEBUGGING
     if randNum > 0:
         #guessWord = critWords[randrange(randNum)]
         guessWord = rank_word(critWords)
     else:
         guessWord = 'xBADx'
 
-        
-
+    # for wrd in critWords: # DEBUGGING
+    #     print(wrd) 
    
-
-
-
-    for wrd in critWords:
-        print(wrd)
-   
-    
-
     return guessWord
-
-
 
 
 # INPUT GAMESTATE:
