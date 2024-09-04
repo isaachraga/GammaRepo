@@ -245,14 +245,17 @@ def repeat_previous_state():
         print("No previous state found. Please enter a new game state.")
         return None
 
+state = ""
 if __name__ == "__main__":
-    while True:
-        state = input("\nGame state (or type 'repeat' to use previous): ")
+    while state != "ex":
+        state = input("\nEnter Game State ('re' to use previous or 'ex' to exit): ")
 
-        if state.strip().lower() == "repeat":
+        if state.strip().lower() == "re":
             state = repeat_previous_state()
             if state is None:
                 continue
+        elif state.strip().lower() == "ex":
+            continue
         else:
             game_state_history.append(state.lower())
 
