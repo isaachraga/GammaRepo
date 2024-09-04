@@ -297,28 +297,25 @@ def guess_word(game_State):
 # Whitespace is disregaurded
 # Gamestate should be inputted in full
 # Information from previous inputs should not be retained
+def repeat_previous_state():
+    if game_state_history:
+        state = game_state_history[-1]
+        print(f"Reusing previous state: {state}")
+        return state
+    else:
+        print("No previous state found. Please enter a new game state.")
+        return None
+
 if __name__ == "__main__":
     while True:
-        state = input("\nGame state (or press Up to use previous): ")
+        state = input("\nGame state (or type 'repeat' to use previous): ")
 
-        # Check if the input is empty (user hit enter)
-        if state.strip() == "":
-            print("Printing")
-            if game_state_history:
-                #state = game_state_history[-1] # Use the last game state in history
-                print(game_state_history[-1])
-                #print(f"Reusing previous state: {state}")
-                print("Printing2")
-            else:
-                #print("No previous state found. Please enter a new game state.")
-                print("You should try 'adieu'")
+        if state.strip().lower() == "repeat":
+            state = repeat_previous_state()
+            if state is None:
                 continue
         else:
             game_state_history.append(state.lower())
-
-        # Store the current state in history
-        print("GSH")
-        print (len(game_state_history))
 
         guess = guess_word(state.lower())
         if guess != "":
