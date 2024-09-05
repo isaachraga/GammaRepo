@@ -9046,7 +9046,8 @@ regar
 reges
 reggo
 regie
-regmaregna
+regma
+regna
 regos
 regur
 rehab
