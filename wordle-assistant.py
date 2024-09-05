@@ -5,6 +5,8 @@
 
 from random import randrange
 game_state_history = []
+usedLetters = []
+wordCount = 0
 
 def rank_word(word_list):
     # How common each letter is by weight
@@ -37,11 +39,17 @@ def rank_word(word_list):
         'q': 27,
         'j': 25
     }
+    global usedLetters
+    global wordCount
     rankedDict = {}
     for word in word_list:
         score = 0
         for ch in word:
-            score = score + frequencyTable[ch]
+            if wordCount <= 3: # don't score used letters for info guesses
+                if ch not in usedLetters:
+                    score = score + frequencyTable[ch]
+            else:
+                score = score + frequencyTable[ch]
         rankedDict[score] = word
     
     sorted_dict = dict(sorted(rankedDict.items()))
@@ -67,6 +75,7 @@ def guess_word(game_State):
 
     graySpecial = {}
 
+    global usedLetters
     usedLetters = []
 
     charCount = 0 # Ensures the correct amount of characters have been inputted
@@ -129,6 +138,7 @@ def guess_word(game_State):
         return ""
     
     # Valid input recieved
+    global wordCount 
     wordCount = int((charCount/10))
     # print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
 
@@ -156,33 +166,13 @@ def guess_word(game_State):
             failState = False
             wordLetters = [] # Avoids words with repeated letters
             for ch in word:
-                if ch in usedLetters or ch in wordLetters:
+                if ch in wordLetters:
                     failState = True
                 wordLetters.append(ch)
             if failState == True:
                 failState = False
             elif word not in critWords:
                 critWords.append(word)
-        if len(critWords) == 0: # If no valid words were found, allows 2 vowels to be used
-            for letter in usedLetters:
-                if letter in {'a', 'e', 'i', 'o', 'u', 'y'}:
-                    usedLetters.remove(letter)
-            for word in words:
-                failState = False
-                vowelsUsed = 0
-                wordLetters = [] # Avoids words with repeated letters
-                for ch in word:
-                    if ch in usedLetters or ch in wordLetters:
-                        failState = True
-                    if ch in {'a', 'e', 'i', 'o', 'u', 'y'}:
-                        vowelsUsed = vowelsUsed + 1
-                        if vowelsUsed > 2: # Allow 2 vowels to be used
-                            failState = True
-                    wordLetters.append(ch)
-                if failState == True:
-                    failState = False
-                elif word not in critWords:
-                    critWords.append(word)
         guessWord = rank_word(critWords)
     
     
