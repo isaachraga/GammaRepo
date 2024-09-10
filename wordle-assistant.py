@@ -5,6 +5,8 @@
 
 from random import randrange
 game_state_history = []
+usedLetters = []
+wordCount = 0
 
 def rank_word(word_list):
     # How common each letter is by weight
@@ -37,18 +39,27 @@ def rank_word(word_list):
         'q': 27,
         'j': 25
     }
+    global usedLetters
+    global wordCount
     rankedDict = {}
     for word in word_list:
         score = 0
         for ch in word:
-            score = score + frequencyTable[ch]
+            if wordCount <= 3: # don't score used letters for info guesses
+                if ch not in usedLetters:
+                    score = score + frequencyTable[ch]
+            else:
+                score = score + frequencyTable[ch]
         rankedDict[score] = word
     
     sorted_dict = dict(sorted(rankedDict.items()))
 
     # print(sorted_dict) # DEBUGGING
 
-    output = list(sorted_dict.values())[-1]
+    if len(sorted_dict) != 0:
+        output = list(sorted_dict.values())[-1]
+    else:
+        output = ""
     
     return output
 
@@ -63,6 +74,9 @@ def guess_word(game_State):
     grayLetters = {}
 
     graySpecial = {}
+
+    global usedLetters
+    usedLetters = []
 
     charCount = 0 # Ensures the correct amount of characters have been inputted
     prevLetter = '' # Stores letter to use in combination with symbol
@@ -110,6 +124,8 @@ def guess_word(game_State):
                     if inYellow == False:
                         grayLetters[prevLetter] = letterNum #gray just stores letters
 
+            usedLetters.append(prevLetter) # marks letter as used for info guesses
+
             prevLetter = '' # Reset previous letter
         else: # Incorrect character inputted
             print("Unexpected Character in Input, Please Try Again")
@@ -122,6 +138,7 @@ def guess_word(game_State):
         return ""
     
     # Valid input recieved
+    global wordCount 
     wordCount = int((charCount/10))
     # print(str(wordCount) + " Words Inputted") # FOR DEBUGGING PURPOSES
 
@@ -142,28 +159,24 @@ def guess_word(game_State):
     words = [w.strip() for w in words]
     critWords = []
 
-    #input check
-    #for ch in grayLetters:
-        #if ch in greenLetters:
-            #print("Error: Input not valid. Gray letter as Green Letter")
-            #return ''
-        #if ch in yellowLetters:
-            #print("Error: Input not valid. Gray letter as Yellow Letter")
-            #return ''
-
-    #default words and rules
-    if wordCount == 0:
-        guess = 'adieu'
-        return guess
-    elif wordCount == 1:
-        guess = 'wrong'
-        return guess
-    elif wordCount == 2:
-        guess = 'lymph'
-        return guess
-    elif wordCount == 3:
-        guess = 'stack'
-        return guess
+    # Information Guesses
+    if wordCount <= 3:
+        # print (usedLetters) # DEBUGGING
+        for word in words:
+            failState = False
+            wordLetters = [] # Avoids words with repeated letters
+            for ch in word:
+                if ch in wordLetters:
+                    failState = True
+                wordLetters.append(ch)
+            if failState == True:
+                failState = False
+            elif word not in critWords:
+                critWords.append(word)
+        guessWord = rank_word(critWords)
+    
+    
+    # Final Guesses
     elif wordCount > 3:
     #if wordCount > 0:
         for word in words:
@@ -222,7 +235,8 @@ def guess_word(game_State):
         #guessWord = critWords[randrange(randNum)]
         guessWord = rank_word(critWords)
     else:
-        guessWord = 'xBADx'
+        print("No Valid Words Found. Please Try Again")
+        return ""
 
     # for wrd in critWords: # DEBUGGING
     #     print(wrd) 
