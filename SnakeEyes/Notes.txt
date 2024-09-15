@@ -1,3 +1,7 @@
+NEED
+pip install pyinstaller
+pyinstaller --onefile -w (path to py script)
+
 So i had an idea for the project. There's a really fun dice game called snake eyes where one person 
 rolls 2 dice and everyone playing chooses to stay in or leave for that dice roll. If the roll isnt 
 a pair, everyone in who stayed in get that many points, if its a pair, everyone who is still in loses 
