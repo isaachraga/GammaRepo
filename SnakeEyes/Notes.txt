@@ -1,0 +1,38 @@
+So i had an idea for the project. There's a really fun dice game called snake eyes where one person 
+rolls 2 dice and everyone playing chooses to stay in or leave for that dice roll. If the roll isnt 
+a pair, everyone in who stayed in get that many points, if its a pair, everyone who is still in loses 
+the points for that round, its a pair of ones, everyone who is still in loses all the points they've 
+collected so far. If you leave before any type of double is rolled you get to keep the points you 
+collected in the round that far. Once any doubles have been rolled or everyone has left the round, 
+a new round starts. First person to 300 points wins. 
+
+My thought was that this could map pretty cleanly on like a burglary game where each player is a 
+robber and you can choose stay to grab more loot or leave with what you have. A system in the back 
+would act like the dice roller where it would determine the loot amount on rolls, doubles would be 
+an alarm going off and everyone drops their loot for that run and leaves, snake eyes would be cops 
+show up and the players get busted and reset. 
+
+If we wanted to add complexety, we could do purchasable modifiers between rounds to add buffs or 
+protections, choose between different locations with varying risk/reward modifiers, online multiplayer, 
+computer players with different play styles. 
+
+Critical:
+-"Snake Eyes" game logic
+-local multiplayer user controls on keyboard
+-Menu Navigation
+-options/settings
+-Visual/Audio assets
+-Transition/Game state and starts
+
+
+Extras:
+-purchasable modifiers
+    -buffs
+    -protections
+-multiple locations
+    -varying risk/reward per locations
+-online multiplayer
+-cpu players
+-cpu player optional dificulty settings
+
+

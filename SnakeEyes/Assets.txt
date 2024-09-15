@@ -1,0 +1,11 @@
+Visual Assets:
+-robery locations
+-rober characters
+-menu screens
+-
+
+Audio Assets:
+-game music
+-menu sfx
+-alarm
+-police siren
