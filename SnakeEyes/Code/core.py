@@ -178,7 +178,7 @@ class Game:
                     TopPlayer = p
                     HighScore = p.score
 
-            self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins !\nPress Space To Restart"
+            self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
     
     def resetGame(self):
         self.dt = 0
