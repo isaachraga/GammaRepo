@@ -82,8 +82,10 @@ class Game:
                     if self.gameOverFlag:
                         self.resetGame()
                     else: 
+                        #dice-eventually modular values
                         self.num1 = random.randint(1, 6)
                         self.num2 = random.randint(1, 6)
+
                         if self.num1==self.num2:
                             if self.num1 == 1:
                                 if not self.lastRound:
@@ -165,11 +167,9 @@ class Game:
                 if p.score >= self.winScore:
                     self.lastRound = True
                     self.result = "LAST ROUND"
-                    print("last round "+str(self.lastRound))
 
     def gameOver(self):
         if not self.gameOverFlag:
-            print("game over")
             self.gameOverFlag = True
             TopPlayer = Player()
             HighScore = 0
