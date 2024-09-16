@@ -33,12 +33,13 @@ while running:
 
     GAME_FONT.render_to(screen, (10, 350), "Press SPACE to roll", (0, 0, 0))
 
-    GAME_FONT.render_to(screen, (10, 480), "Round: "+str(score), (0, 0, 0))
-    GAME_FONT.render_to(screen, (10, 500), "Score: "+str(score), (0, 0, 0))
+    
+
+  
 
     for event in pygame.event.get():
-        keys = pygame.key.get_pressed()
-        if event.type == pygame.KEYDOWN and keys[pygame.K_SPACE]:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            print("roll")
             #roll dice
             num1 = random.randint(1, 6)
             num2 = random.randint(1, 6)
@@ -54,9 +55,13 @@ while running:
                 result = ""
                 tmpScore = tmpScore+num1+num2
 
-        if event.type == pygame.KEYDOWN and keys[pygame.K_1]:
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_1:
             score = score + tmpScore
-            print("hit me")
+            tmpScore = 0
+            print("leave")
+
+    GAME_FONT.render_to(screen, (10, 480), "Round: "+str(tmpScore), (0, 0, 0))
+    GAME_FONT.render_to(screen, (10, 500), "Score: "+str(score), (0, 0, 0))
                 
         
     
