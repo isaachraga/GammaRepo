@@ -1,6 +1,20 @@
+Artifacts
+progress report
+retrospective
+clear off board
+burndown chart
+
+
+backlog
+canvan for sprint
+
+
+
 NEED
 pip install pyinstaller
-pyinstaller --onefile -w (path to py script)
+pyinstaller --onefile -w (path to py script) C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py
+
+pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py
 testing branch
 
 So i had an idea for the project. There's a really fun dice game called snake eyes where one person 

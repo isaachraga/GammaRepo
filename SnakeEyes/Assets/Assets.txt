@@ -1,11 +1,15 @@
-Visual Assets:
--robery locations
--rober characters
+Visual Assets: pixel art
+-robbery locations(house, bank)
+-robber characters (different personalities/colors, varied attributes)
 -menu screens
--
+-Title logo
 
 Audio Assets:
--game music
--menu sfx
--alarm
+-game loop music
+-pause screen variant music
+-menu loop music
+-menu nav sfx (confirm, navigate, cancel)
+-alarm sound
 -police siren
+-cash sound
+-random number generator sound(waiting to solidify)
