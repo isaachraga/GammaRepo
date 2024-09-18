@@ -55,3 +55,21 @@ Extras:
 -cpu player optional dificulty settings
 
 
+Modifier ideas:
+
+Buffs:
+1. 	Double Points: On a specific dice roll (e.g., double sixes), the player's score for that round is doubled.
+2.	Free Roll: If the player rolls a certain number combination, they get an extra roll without having to cash out.
+3.	Lucky Streak: After a series of successful rolls without cashing out, the player's next score gets a multiplier (e.g., x1.5 or x2).
+4.	Hot Dice: Rolling a specific combination (e.g., 5 and 5) grants a temporary buff that adds +1 to each die roll for the next two turns.
+5.	Cumulative Boost: If a player rolls the same number three times in a row, they gain an increasing score multiplier (e.g., +0.5x per matching roll).
+6.	Bonus Round: If a player rolls "snake eyes" (double ones), they enter a special bonus round where their scores are tripled for three turns.
+
+Protection:
+
+1.	Shield: Rolling certain numbers (e.g., 1 and 6) gives a protection shield that prevents a "RESET" or "SNAKE EYES" penalty for one turn.
+2.	Safe Cash Out: Players who roll a specific number (e.g., a pair of threes) can cash out with no penalty, even if they normally would have lost points.
+3.	Second Chance: If the player rolls a losing combination (e.g., snake eyes or a reset), they get one chance to roll again before the penalty applies.
+4.	Reset Immunity: After cashing out for the first time, the player becomes immune to a reset on their next round.
+5.	Dice Swap: On certain rolls, a player can swap one of their dice values with the other, potentially turning a bad roll into a good one.
+6.	Roll Rewind: After a bad roll, a protection modifier allows the player to "rewind" one turn and use the previous roll result instead.
