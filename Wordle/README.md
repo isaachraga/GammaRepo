@@ -1,4 +1,4 @@
-# Wordle
+# GammaRepo
 Software Engineering Gamma Project Repository
 
 This program is designed to help users win the game Wordle suggesting words based off the gamestate inputted by the user. The program requires you to enter the 4 default words first in every game, then it determines the correct word of the day on one of its next 2 guesses. The input should only be in the following format:
