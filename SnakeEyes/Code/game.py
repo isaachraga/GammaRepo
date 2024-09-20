@@ -1,10 +1,10 @@
 import pygame
-from core import Game
+from scene_manager import SceneManager
 
 def main():
     pygame.init()
-    game = Game()
-    game.run()
+    sceneManager = SceneManager()
+    sceneManager.run()
 
 if __name__ == "__main__":
     main()

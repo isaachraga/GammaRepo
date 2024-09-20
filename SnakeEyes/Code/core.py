@@ -2,17 +2,13 @@ import pygame
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
-from Scenes.scene_selection import SceneSelection
-from Scenes.options import Options
-from Scenes.main_menu import MainMenu
-from Scenes.tutorial import Tutorial
-from Scenes.credits import Credits
 
 ########## GAME ##########
 class Game:
     ##### Initial Setup #####
-    def __init__(self):
-        self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+    def __init__(self, scene_manager):
+        self.scene_manager = scene_manager
+        self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
@@ -23,8 +19,6 @@ class Game:
         self.winScore = 50
         self.lastRound = False
         self.gameOverFlag = False
-        self.pause = False
-        self.scene = "game"
 
         self.p1 = Player()
         self.p2 = Player()
@@ -37,38 +31,10 @@ class Game:
 
         self.Players = [self.p1, self.p2, self.p3, self.p4]
 
-        # Scenes
-        self.scene_selection = SceneSelection(self.screen)
-        self.options = Options(self.screen)
-        self.menu = MainMenu(self.screen)
-        self.tutorial = Tutorial(self.screen)
-        self.credits = Credits(self.screen)
-
     ##### Run Game Loop #####
     def run(self):
-        self.running = True
-        while self.running:
-            match self.scene:
-                case "game":
-                    self.update() # render game
-                    self.render()
-                case "scene": 
-                    self.scene_selection.render()
-                case "options":
-                    self.options.render()
-                case "tutorial":
-                    self.tutorial.render()
-                case "menu":
-                    self.menu.render()
-                case "credits":
-                    self.credits.render()
-                case _:
-                    self.update()
-                    self.render()
-            
-            self.inputManager()  # Always check for input events
-        
-        pygame.quit()
+        self.update() # render game
+        self.render()
 
     ##### Update Game #####
     def update(self):
@@ -102,7 +68,7 @@ class Game:
     def inputManager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.running = False
+                    self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
                 #dice roller
@@ -174,23 +140,8 @@ class Game:
 
                 # Scene Selection
                 if event.key == pygame.K_s:
-                    self.scene = "scene"
+                    self.scene_manager.switch_scene('scene')
 
-                # keys when shift is held for scene selection
-                mods = pygame.key.get_mods()
-                shift_held = mods & pygame.KMOD_SHIFT
-
-                if shift_held: 
-                    if event.key == pygame.K_1:
-                        self.scene = "tutorial"
-                    if event.key == pygame.K_2:
-                        self.scene = "options"
-                    if event.key == pygame.K_3:
-                        self.scene = "menu"
-                    if event.key == pygame.K_4:
-                        self.scene = "game"
-                    if event.key == pygame.K_5:
-                        self.scene = "credits"
 
     def roundCheck(self):
         count = 0
