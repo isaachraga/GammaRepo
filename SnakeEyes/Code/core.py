@@ -2,6 +2,11 @@ import pygame
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
+from Scenes.scene_selection import SceneSelection
+from Scenes.options import Options
+from Scenes.main_menu import MainMenu
+from Scenes.tutorial import Tutorial
+from Scenes.credits import Credits
 
 ########## GAME ##########
 class Game:
@@ -18,8 +23,8 @@ class Game:
         self.winScore = 50
         self.lastRound = False
         self.gameOverFlag = False
-
-        #self.player_pos = pygame.Vector2(self.screen.get_width() / 2, self.screen.get_height() / 2)
+        self.pause = False
+        self.scene = "game"
 
         self.p1 = Player()
         self.p2 = Player()
@@ -32,15 +37,38 @@ class Game:
 
         self.Players = [self.p1, self.p2, self.p3, self.p4]
 
+        # Scenes
+        self.scene_selection = SceneSelection(self.screen)
+        self.options = Options(self.screen)
+        self.menu = MainMenu(self.screen)
+        self.tutorial = Tutorial(self.screen)
+        self.credits = Credits(self.screen)
+
     ##### Run Game Loop #####
     def run(self):
         self.running = True
         while self.running:
-            self.update()
-            self.render()
+            match self.scene:
+                case "game":
+                    self.update() # render game
+                    self.render()
+                case "scene": 
+                    self.scene_selection.render()
+                case "options":
+                    self.options.render()
+                case "tutorial":
+                    self.tutorial.render()
+                case "menu":
+                    self.menu.render()
+                case "credits":
+                    self.credits.render()
+                case _:
+                    self.update()
+                    self.render()
+            
+            self.inputManager()  # Always check for input events
+        
         pygame.quit()
-
-    
 
     ##### Update Game #####
     def update(self):
@@ -58,9 +86,9 @@ class Game:
         self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
 
         self.GAME_FONT.render_to(self.screen, (10, 250), self.result, (0, 0, 0))
-
         self.GAME_FONT.render_to(self.screen, (10, 350), "Press SPACE to roll", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
 
         self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
@@ -143,7 +171,26 @@ class Game:
                     self.p4.score = self.p4.score + self.p4.tmpScore
                     self.p4.tmpScore = 0
                     self.p4.stillIn = False
-                
+
+                # Scene Selection
+                if event.key == pygame.K_s:
+                    self.scene = "scene"
+
+                # keys when shift is held for scene selection
+                mods = pygame.key.get_mods()
+                shift_held = mods & pygame.KMOD_SHIFT
+
+                if shift_held: 
+                    if event.key == pygame.K_1:
+                        self.scene = "tutorial"
+                    if event.key == pygame.K_2:
+                        self.scene = "options"
+                    if event.key == pygame.K_3:
+                        self.scene = "menu"
+                    if event.key == pygame.K_4:
+                        self.scene = "game"
+                    if event.key == pygame.K_5:
+                        self.scene = "credits"
 
     def roundCheck(self):
         count = 0
