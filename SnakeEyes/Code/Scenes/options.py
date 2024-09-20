@@ -24,4 +24,5 @@ class Options:
     def render(self):
         self.screen.fill((255, 255, 255))
         self.GAME_FONT.render_to(self.screen, (10, 130), "Options", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
         pygame.display.flip()
