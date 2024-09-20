@@ -2,7 +2,7 @@ import pygame
 from settings import Settings
 from core import Game
 from Scenes.scene_selection import SceneSelection
-from Scenes.options import Options
+from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
 from Scenes.tutorial import Tutorial
 from Scenes.credits import Credits
@@ -12,7 +12,7 @@ class SceneManager:
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.scenes = {
             'tutorial': Tutorial(self),
-            'options': Options(self),
+            'options': OptionsMenu(self),
             'menu': MainMenu(self),
             'game': Game(self),
             'credits': Credits(self),
