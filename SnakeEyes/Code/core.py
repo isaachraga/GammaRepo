@@ -2,11 +2,6 @@ import pygame
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
-# from Scenes.scene_selection import SceneSelection
-# from Scenes.options import Options
-# from Scenes.main_menu import MainMenu
-# from Scenes.tutorial import Tutorial
-# from Scenes.credits import Credits
 
 ########## GAME ##########
 class Game:
