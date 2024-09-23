@@ -155,34 +155,11 @@ class Game:
 
     ##### Run Game Loop #####
     def run(self):
-        
-        self.running = True
-        while self.running:
-            match self.scene:
-                case "game":
-                    self.update() # render game
-                    self.render()
-                case "scene": 
-                    self.scene_selection.render()
-                #case "options":
-                    #self.options.render()
-                case "tutorial":
-                    self.tutorial.render()
-                case "menu":
-                    self.menu.render()
-                case "credits":
-                    self.credits.render()
-                case _:
-                    self.update()
-                    self.render()
-            
-            self.inputManager()  # Always check for input events
-        
-        pygame.quit()
+        self.update() # render game
+        self.render()
 
     ##### Update Game #####
     def update(self):
-        
         self.roundCheck()
         self.inputManager()
         self.lastRoundCheck()
@@ -339,7 +316,7 @@ class Game:
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                    self.running = False
+                    self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
                 #dice roller
@@ -439,17 +416,17 @@ class Game:
 
                 if shift_held: 
                     if event.key == pygame.K_s:
-                        self.scene = "scene"
+                        self.scene_manager.switch_scene("scene")
                     if event.key == pygame.K_1:
-                        self.scene = "tutorial"
+                        self.scene_manager.switch_scene("tutorial")
                     if event.key == pygame.K_2:
-                        self.scene = "options"
+                        self.scene_manager.switch_scene("options")
                     if event.key == pygame.K_3:
-                        self.scene = "menu"
+                        self.scene_manager.switch_scene("menu")
                     if event.key == pygame.K_4:
-                        self.scene = "game"
+                        self.scene_manager.switch_scene("game")
                     if event.key == pygame.K_5:
-                        self.scene = "credits"
+                        self.scene_manager.switch_scene("credits")
 
     def roundCheck(self):
         count = 0
