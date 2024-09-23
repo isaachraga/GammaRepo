@@ -12,12 +12,13 @@ import math
 ### BUGS ###
 # players cant move while touching a boundary
 # need to set up police roll
+# if store gets alarmed and last turn, players still have a chance to win
 
 
-### Features ###
+### FEATURES ###
 # need to set up police roll once an alarm has been triggered
 
-
+##### CONTROLS #####
 #P1 Controls - wasd/1-confirm/2-cash out
 #P2 Controls - tfgh/3-confirm/4-cash out
 #P3 Controls - ijkl/5-confirm/6-cash out
