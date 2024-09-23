@@ -2,11 +2,11 @@ import pygame
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
-from Scenes.scene_selection import SceneSelection
-from Scenes.options import Options
-from Scenes.main_menu import MainMenu
-from Scenes.tutorial import Tutorial
-from Scenes.credits import Credits
+#from Scenes.scene_selection import SceneSelection
+#from Scenes.options import Options
+#from Scenes.main_menu import MainMenu
+#from Scenes.tutorial import Tutorial
+#from Scenes.credits import Credits
 import math
 
 ### BUGS ###
@@ -26,8 +26,11 @@ import math
 ########## GAME ##########
 class Game:
     ##### Initial Setup #####
-    def __init__(self):
-        self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+    def __init__(self, scene_manager):
+        self.scene_manager = scene_manager
+        self.screen = scene_manager.screen
+    
+        #self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
@@ -50,13 +53,14 @@ class Game:
         self.storeReset()
 
         
-
+        '''
         # Scenes
         self.scene_selection = SceneSelection(self.screen)
         self.options = Options(self.screen)
         self.menu = MainMenu(self.screen)
         self.tutorial = Tutorial(self.screen)
         self.credits = Credits(self.screen)
+        '''
 
     def storeReset(self):
         self.store1 = Store()
@@ -159,8 +163,8 @@ class Game:
                     self.render()
                 case "scene": 
                     self.scene_selection.render()
-                case "options":
-                    self.options.render()
+                #case "options":
+                    #self.options.render()
                 case "tutorial":
                     self.tutorial.render()
                 case "menu":
