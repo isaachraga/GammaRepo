@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype  # Import the freetype module.
 from settings import Settings
-import pygame_gui # pip install pygame_gui
+import pygame_gui # To install, run: 'python -m pip install pygame_gui==0.6.9'
 
 ########## OPTIONS MENU ##########
 class OptionsMenu:
