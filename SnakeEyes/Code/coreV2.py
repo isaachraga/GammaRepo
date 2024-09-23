@@ -10,8 +10,9 @@ from Scenes.credits import Credits
 import math
 
 ### BUGS ###
-# p1 is not turning the store green
-# ready check needs to only check with players who are still in
+# players cant move while touching a boundary
+# need to set up police roll
+
 
 ### Features ###
 # need to set up police roll once an alarm has been triggered
@@ -45,20 +46,10 @@ class Game:
         self.moveSpeed = 300
 
         self.playerReset()
+        self.playerLocReset()
+        self.storeReset()
 
-        self.store1 = Store()
-        self.store2 = Store()
-        self.store3 = Store()
-        self.store1.position = pygame.Vector2(100, 100)
-        self.store2.position = pygame.Vector2(300, 100)
-        self.store3.position = pygame.Vector2(500, 100)
         
-
-        self.Stores = [self.store1,self.store2,self.store3]
-
-        for s in self.Stores:
-            s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
-
 
         # Scenes
         self.scene_selection = SceneSelection(self.screen)
@@ -66,6 +57,29 @@ class Game:
         self.menu = MainMenu(self.screen)
         self.tutorial = Tutorial(self.screen)
         self.credits = Credits(self.screen)
+
+    def storeReset(self):
+        self.store1 = Store()
+        self.store1.storeNum = 1
+        self.store1.position = pygame.Vector2(300, 100)
+
+        self.store2 = Store()
+        self.store2.storeNum = 2
+        self.store2.position = pygame.Vector2(500, 100)
+
+        self.store3 = Store()
+        self.store3.storeNum = 3
+        self.store3.position = pygame.Vector2(700, 100)
+        
+        self.store4 = Store()
+        self.store4.storeNum = 4
+        self.store4.position = pygame.Vector2(900, 100)
+        
+
+        self.Stores = [self.store1,self.store2,self.store3, self.store4]
+
+        for s in self.Stores:
+            s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
 
 
     def playerReset(self):
@@ -76,8 +90,7 @@ class Game:
         self.p1.left = pygame.K_a
         self.p1.right = pygame.K_d
         self.p1.ready = pygame.K_1
-        self.p1.cashOut = pygame.K_2
-        self.p1.position = pygame.Vector2(500,500)
+        self.p1.cashOut = pygame.K_2 
         self.p1.color = (255,0,0)
         self.p1.gr = pygame.Vector2(30,60)
         self.p1.yl = pygame.Vector2(30,80)
@@ -91,22 +104,50 @@ class Game:
         self.p2.right = pygame.K_h
         self.p2.ready = pygame.K_3
         self.p2.cashOut = pygame.K_4
-        self.p2.position = pygame.Vector2(700,500)
         self.p2.color = (0,0,255)
         self.p2.gr = pygame.Vector2(1250,60)
         self.p2.yl = pygame.Vector2(1250,80)
         self.p2.rd = pygame.Vector2(1250,100)
 
-        #self.p3 = Player()
-        #self.p4 = Player()
+        self.p3 = Player()
+        self.p3.playerNum = 3
+        self.p3.up = pygame.K_i
+        self.p3.down = pygame.K_k
+        self.p3.left = pygame.K_j
+        self.p3.right = pygame.K_l
+        self.p3.ready = pygame.K_5
+        self.p3.cashOut = pygame.K_6
+        self.p3.color = (0,255,0)
+        self.p3.gr = pygame.Vector2(30,260)
+        self.p3.yl = pygame.Vector2(30,280)
+        self.p3.rd = pygame.Vector2(30,300)
         
         
-        #self.p3.playerNum = 3
-        #self.p4.playerNum = 4
+        
+        self.p4 = Player()
+        self.p4.playerNum = 4
+        self.p4.up = pygame.K_UP
+        self.p4.down = pygame.K_DOWN
+        self.p4.left = pygame.K_LEFT
+        self.p4.right = pygame.K_RIGHT
+        self.p4.ready = pygame.K_7
+        self.p4.cashOut = pygame.K_8
+        self.p4.color = (0,255,255)
+        self.p4.gr = pygame.Vector2(1250,260)
+        self.p4.yl = pygame.Vector2(1250,280)
+        self.p4.rd = pygame.Vector2(1250,300)
+        
         
 
         #self.Players = [self.p1, self.p2, self.p3, self.p4]
-        self.Players = [self.p1,self.p2]
+        self.Players = [self.p1,self.p2, self.p3, self.p4]
+
+    def playerLocReset(self):
+        self.p1.position = pygame.Vector2(500,500)
+        self.p2.position = pygame.Vector2(700,500)
+        self.p3.position = pygame.Vector2(900,500)
+        self.p4.position = pygame.Vector2(1100,500)
+
     ##### Run Game Loop #####
     def run(self):
         
@@ -147,44 +188,50 @@ class Game:
     def render(self):
         self.screen.fill((255,255,255))
 
-        self.status()
+        
         
         
         for s in self.Stores:
             for p in self.Players:
-                collide = s.collider.colliderect(p.collider)
-                if s.status != -1:
-                    if collide:
-                        s.color = (0, 255, 0)
-                        if p not in s.players:
-                            s.players.append(p)
-                            #print(s.players)
-                        self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-20), "Ready?", (0, 0, 0))
-                        
-                    else:
-                        s.color = (0, 0, 255)
-                        if p in s.players:
-                            s.players.remove(p)
-                            p.status = 0
-                            #print(s.players)
+                if p.status != -1:
+                    collide = s.collider.colliderect(p.collider)
+                    if s.status != -1:
+                        if collide:
+                            s.color = (0, 255, 0)
+                            if p not in s.players:
+                                s.players.append(p)
+                                #print(s.players)
+                            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+                            
+                        else:
+                            if len(s.players) == 0:
+                                s.color = (0, 0, 255)
+                            if p in s.players:
+                                s.players.remove(p)
+                                p.status = 0
+                                #print(s.players)
                             
                 
         ##### STORES #####
 
         for s in self.Stores:
             pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-40), s.scoreText, (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-60), s.scoreText, (0, 0, 0))
 
         ##### PLAYERS #####
         for p in self.Players:
-            pygame.draw.circle(self.screen, p.color , p.position, 20)
+            if p.status != -1:
+                pygame.draw.circle(self.screen, p.color , p.position, 20)
+
+        
+        self.status()
         
         
         ##### DEBUG #####
         #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
 
-        self.GAME_FONT.render_to(self.screen, (10, 250), self.result, (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
 
         if self.ready:
             self.GAME_FONT.render_to(self.screen, (10, 350), "Press SPACE to roll", (0, 0, 0))
@@ -213,9 +260,22 @@ class Game:
                 self.ready = False
 
     def status(self):
+        for s in self.Stores:
+            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-40), "Store "+str(s.storeNum), (0, 0, 0))
+            if s.status == -1:
+                s.color = (255,0,0)
+                
+
         for p in self.Players:
-            self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.rd.x-20, p.rd.y+20), "P"+str(p.playerNum), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+
+            if p.status != -1:
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (0, 0, 0))
+                
+
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
             pygame.draw.circle(self.screen, "black" , p.rd, 10)
@@ -229,9 +289,7 @@ class Game:
 
         
 
-        for s in self.Stores:
-            if s.status == -1:
-                s.color = (255,0,0)
+        
         
 
     ##### Game Functions #####
@@ -247,23 +305,29 @@ class Game:
 
         ##### Player Controls #####
         for p in self.Players:
-            tempX=0
-            tempY=0
-            if keys[p.up]:
-                tempY -= self.moveSpeed
-            if keys[p.down]:
-                tempY += self.moveSpeed
-            if keys[p.left]:
-                tempX -= self.moveSpeed
-            if keys[p.right]:
-                tempX += self.moveSpeed
+            if p.status != -1:
+                tempX=0
+                tempY=0
+                if keys[p.up]:
+                    tempY -= self.moveSpeed
+                if keys[p.down]:
+                    tempY += self.moveSpeed
+                if keys[p.left]:
+                    tempX -= self.moveSpeed
+                if keys[p.right]:
+                    tempX += self.moveSpeed
 
-            if tempX != 0 and tempY != 0:
-                tempX = tempX*(math.sqrt(2)/2)
-                tempY = tempY*(math.sqrt(2)/2)
-            p.position.x += tempX * dt
-            p.position.y += tempY * dt
-            p.collider.center = p.position
+                
+
+                if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                    if tempX != 0 and tempY != 0:
+                        tempX = tempX*(math.sqrt(2)/2)
+                        tempY = tempY*(math.sqrt(2)/2)
+                    p.position.x += tempX * dt
+                    p.position.y += tempY * dt
+                    p.collider.center = p.position
+
+                
 
         
 
@@ -356,6 +420,9 @@ class Game:
                         p.score = p.score + p.tmpScore
                         p.tmpScore = 0
                         p.status = -1
+                        for s in self.Stores:
+                            if p in s.players:
+                                s.players.remove(p)
                 
                 
                 # Scene Selection
@@ -391,6 +458,8 @@ class Game:
                     p.status = 0
                     p.tmpScore = 0
                     count = 0
+                    self.storeReset()
+                    self.playerLocReset()
             else:
                 count = 0
                 self.gameOver()
@@ -423,6 +492,8 @@ class Game:
         self.lastRound = False
         self.allAlarms = False
         self.playerReset()
+        self.playerLocReset()
+        self.storeReset()
         self.gameOverFlag = False
     
 
@@ -458,6 +529,7 @@ class Store:
     def __init__(self):
         self.num1 = 0
         self.num2 = 0
+        self.storeNum = 0
         self.scoreText = ""
         self.status = 0 #0 - ready | -1 alarmed
         self.color = (0,0,255)
