@@ -18,7 +18,7 @@ class SceneManager:
             'credits': Credits(self),
             'scene': SceneSelection(self)
         }
-        self.current_scene = 'game'
+        self.current_scene = 'menu'
 
     def run(self):
         self.running = True

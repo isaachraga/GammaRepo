@@ -46,6 +46,7 @@ class Game:
         self.scene = "game"
         self.ready = False
         self.allAlarms = False
+        self.numPlayers = 2
 
         self.moveSpeed = 300
 
@@ -113,7 +114,7 @@ class Game:
         self.p2.gr = pygame.Vector2(1250,60)
         self.p2.yl = pygame.Vector2(1250,80)
         self.p2.rd = pygame.Vector2(1250,100)
-
+        '''
         self.p3 = Player()
         self.p3.playerNum = 3
         self.p3.up = pygame.K_i
@@ -141,17 +142,17 @@ class Game:
         self.p4.gr = pygame.Vector2(1250,260)
         self.p4.yl = pygame.Vector2(1250,280)
         self.p4.rd = pygame.Vector2(1250,300)
-        
+        '''
         
 
         #self.Players = [self.p1, self.p2, self.p3, self.p4]
-        self.Players = [self.p1,self.p2, self.p3, self.p4]
+        self.Players = [self.p1,self.p2]
 
     def playerLocReset(self):
         self.p1.position = pygame.Vector2(500,500)
         self.p2.position = pygame.Vector2(700,500)
-        self.p3.position = pygame.Vector2(900,500)
-        self.p4.position = pygame.Vector2(1100,500)
+        #self.p3.position = pygame.Vector2(900,500)
+        #self.p4.position = pygame.Vector2(1100,500)
 
     ##### Run Game Loop #####
     def run(self):
@@ -316,7 +317,7 @@ class Game:
         for event in pygame.event.get():
             
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                    self.running = False
 
             if event.type == pygame.KEYDOWN:
                 #dice roller
@@ -434,7 +435,7 @@ class Game:
             if p.status == -1:
                 count = count + 1
 
-        if count == 4:
+        if count == self.numPlayers:
             if not self.lastRound:
                 for p in self.Players:
                     p.status = 0
