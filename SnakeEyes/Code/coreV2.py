@@ -39,7 +39,7 @@ class Game:
         #self.num1 = 0
         #self.num2 = 0
         self.result = ""
-        self.winScore = 50
+        self.winScore = 200
         self.lastRound = False
         self.gameOverFlag = False
         self.pause = False
@@ -316,8 +316,9 @@ class Game:
 
         for event in pygame.event.get():
             
-            if event.type == pygame.QUIT:
-                    self.running = False
+            if event.type == pygame.QUIT:   
+                self.scene_manager.quit()
+                self.running = False
 
             if event.type == pygame.KEYDOWN:
                 #dice roller
