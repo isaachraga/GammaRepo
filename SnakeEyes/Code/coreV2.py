@@ -47,6 +47,7 @@ class Game:
         self.ready = False
         self.allAlarms = False
         self.numPlayers = 2
+        self.controllers = []
 
         self.moveSpeed = 300
 
@@ -282,6 +283,9 @@ class Game:
         
         keys = pygame.key.get_pressed()
         
+        
+        pygame.joystick.init()  #Initialize joystick module
+        
 
         ## need boundaries
 
@@ -429,6 +433,11 @@ class Game:
                         self.scene_manager.switch_scene("game")
                     if event.key == pygame.K_5:
                         self.scene_manager.switch_scene("credits")
+
+            if event.type == pygame.JOYDEVICEADDED:
+                controller = pygame.joystick.Joystick(event.device_index)
+                self.controllers.append(controller)
+
 
     def roundCheck(self):
         count = 0
