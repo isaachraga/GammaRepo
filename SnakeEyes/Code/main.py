@@ -1,6 +1,4 @@
 import pygame
-#from core import Game
-#from coreV2 import Game
 from scene_manager import SceneManager
 
 

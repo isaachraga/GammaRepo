@@ -2,11 +2,6 @@ import pygame
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
-#from Scenes.scene_selection import SceneSelection
-#from Scenes.options import Options
-#from Scenes.main_menu import MainMenu
-#from Scenes.tutorial import Tutorial
-#from Scenes.credits import Credits
 import math
 
 ### BUGS ###
@@ -31,13 +26,10 @@ class Game:
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
     
-        #self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
         self.dt = 0
-        #self.num1 = 0
-        #self.num2 = 0
         self.result = ""
         self.winScore = 200
         self.lastRound = False
@@ -55,15 +47,6 @@ class Game:
         self.playerLocReset()
         self.storeReset()
 
-        
-        '''
-        # Scenes
-        self.scene_selection = SceneSelection(self.screen)
-        self.options = Options(self.screen)
-        self.menu = MainMenu(self.screen)
-        self.tutorial = Tutorial(self.screen)
-        self.credits = Credits(self.screen)
-        '''
 
     def storeReset(self):
         self.store1 = Store()
@@ -129,8 +112,6 @@ class Game:
         self.p3.yl = pygame.Vector2(30,280)
         self.p3.rd = pygame.Vector2(30,300)
         
-        
-        
         self.p4 = Player()
         self.p4.playerNum = 4
         self.p4.up = pygame.K_UP
@@ -184,7 +165,6 @@ class Game:
                             s.color = (0, 255, 0)
                             if p not in s.players:
                                 s.players.append(p)
-                                #print(s.players)
                             self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
                             
                         else:
@@ -193,7 +173,6 @@ class Game:
                             if p in s.players:
                                 s.players.remove(p)
                                 p.status = 0
-                                #print(s.players)
                             
                 
         ##### STORES #####
@@ -339,7 +318,7 @@ class Game:
 
                         
                     if self.gameOverFlag:
-                        self.resetGame()
+                        self.snakeEyes()
                     elif self.allAlarms:
                         self.resetGame()
                     else: 
@@ -437,9 +416,29 @@ class Game:
             if event.type == pygame.JOYDEVICEADDED:
                 controller = pygame.joystick.Joystick(event.device_index)
                 self.controllers.append(controller)
-
-
+    
     def roundCheck(self):
+        count = 0
+        for p in self.Players:
+            if p.status == -1:
+                count = count + 1
+
+        if count == self.numPlayers:
+            if not self.lastRound:
+                for p in self.Players:
+                    p.status = 0
+                    p.tmpScore = 0
+                    count = 0
+                    self.storeReset()
+                    self.playerLocReset()
+            else:
+                count = 0
+                self.gameOver()
+            self.scene_manager.switch_scene('status')
+        
+        
+
+    def snakeEyes(self):
         count = 0
         for p in self.Players:
             if p.status == -1:
@@ -488,6 +487,11 @@ class Game:
         self.playerLocReset()
         self.storeReset()
         self.gameOverFlag = False
+
+    def getScore(self, playerNum):
+        for p in self.Players:
+            if p.playerNum == playerNum:
+                return str(p.score)
     
 
 
@@ -496,7 +500,6 @@ class Player:
     def __init__(self):
         self.tmpScore = 0
         self.score = 0
-        #self.stillIn = True
         self.status = 0 #-1 - cashed out | 0 - waiting | 1 ready
         self.playerNum = 0
         self.color = (255, 0, 0)
@@ -508,6 +511,7 @@ class Player:
         self.gr = pygame.Vector2(0, 0)
         self.yl = pygame.Vector2(0, 0)
         self.rd = pygame.Vector2(0, 0)
+
         ##### Controlls #####
         self.up = pygame.K_w
         self.down = pygame.K_s

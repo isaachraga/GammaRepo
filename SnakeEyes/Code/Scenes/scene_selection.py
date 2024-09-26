@@ -27,6 +27,7 @@ class SceneSelection:
                     self.scene_manager.switch_scene('game')
                 if event.key == pygame.K_5:
                     self.scene_manager.switch_scene('credits')
+                
 
     def render(self):
         self.screen.fill((255, 255, 255))

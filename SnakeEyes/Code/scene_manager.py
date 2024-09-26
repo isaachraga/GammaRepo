@@ -1,6 +1,8 @@
 import pygame
 from settings import Settings
 from game import Game
+from game_status import GameStatus
+from game_mods import GameMods
 from Scenes.scene_selection import SceneSelection
 from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
@@ -18,6 +20,11 @@ class SceneManager:
             'credits': Credits(self),
             'scene': SceneSelection(self)
         }
+
+        self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
+        self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
+        
+        
         self.current_scene = 'menu'
 
     def run(self):
