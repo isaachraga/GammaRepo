@@ -1,6 +1,6 @@
 import pygame
 from settings import Settings
-from coreV2 import Game
+from game import Game
 from Scenes.scene_selection import SceneSelection
 from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
