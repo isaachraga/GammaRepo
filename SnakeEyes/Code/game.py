@@ -258,6 +258,9 @@ class Game:
 
     ##### Game Functions #####
     def inputManager(self):
+        if self.statusFlag:
+            self.scene_manager.switch_scene('status')
+
         dt = self.clock.tick(60) / 1000
 
         
@@ -308,8 +311,7 @@ class Game:
                 #dice roller
                 if event.key == pygame.K_SPACE:
 
-                    if self.statusFlag:
-                        self.scene_manager.switch_scene('status')
+                    
 
                     #check for all alarms
                     count = 0
@@ -475,7 +477,6 @@ class Game:
         self.num1 = 0
         self.num2 = 0
         self.result = ""
-        self.winScore = 50
         self.lastRound = False
         self.allAlarms = False
         self.playerReset()

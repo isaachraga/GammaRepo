@@ -18,13 +18,13 @@ class SceneManager:
             'options': OptionsMenu(self),
             'menu': MainMenu(self),
             'game': Game(self),
-            'pause': Pause(self),
             'credits': Credits(self),
             'scene': SceneSelection(self)
         }
 
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
         self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
+        self.scenes['pause'] = Pause(self, self.scenes.get('game'))
         
         
         self.current_scene = 'menu'

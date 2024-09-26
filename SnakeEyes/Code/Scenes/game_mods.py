@@ -19,6 +19,7 @@ class GameMods:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
+                    self.game.statusFlag = False
                     self.scene_manager.switch_scene('game')
                 # Scene Selection
                 if event.key == pygame.K_s:
