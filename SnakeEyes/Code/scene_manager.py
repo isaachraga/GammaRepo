@@ -1,8 +1,9 @@
 import pygame
 from settings import Settings
 from game import Game
-from game_status import GameStatus
-from game_mods import GameMods
+from Scenes.game_status import GameStatus
+from Scenes.game_mods import GameMods
+from Scenes.pause import Pause
 from Scenes.scene_selection import SceneSelection
 from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
@@ -17,6 +18,7 @@ class SceneManager:
             'options': OptionsMenu(self),
             'menu': MainMenu(self),
             'game': Game(self),
+            'pause': Pause(self),
             'credits': Credits(self),
             'scene': SceneSelection(self)
         }

@@ -1,7 +1,7 @@
 import pygame
 from settings import Settings
 
-class SceneSelection:
+class Pause:
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.screen = self.scene_manager.screen
@@ -35,6 +35,6 @@ class SceneSelection:
         self.GAME_FONT.render_to(self.screen, (10, 100), "1. Tutorial", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 130), "2. Options", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 160), "3. Main Menu", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Start Game", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Return to game", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 220), "5. Credits", (0, 0, 0))
         pygame.display.flip()

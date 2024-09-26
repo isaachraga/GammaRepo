@@ -40,6 +40,7 @@ class Game:
         self.allAlarms = False
         self.numPlayers = 2
         self.controllers = []
+        self.statusFlag = False
 
         self.moveSpeed = 300
 
@@ -307,6 +308,9 @@ class Game:
                 #dice roller
                 if event.key == pygame.K_SPACE:
 
+                    if self.statusFlag:
+                        self.scene_manager.switch_scene('status')
+
                     #check for all alarms
                     count = 0
                     for s in self.Stores:
@@ -401,17 +405,7 @@ class Game:
 
                 if shift_held: 
                     if event.key == pygame.K_s:
-                        self.scene_manager.switch_scene("scene")
-                    if event.key == pygame.K_1:
-                        self.scene_manager.switch_scene("tutorial")
-                    if event.key == pygame.K_2:
-                        self.scene_manager.switch_scene("options")
-                    if event.key == pygame.K_3:
-                        self.scene_manager.switch_scene("menu")
-                    if event.key == pygame.K_4:
-                        self.scene_manager.switch_scene("game")
-                    if event.key == pygame.K_5:
-                        self.scene_manager.switch_scene("credits")
+                        self.scene_manager.switch_scene("pause")
 
             if event.type == pygame.JOYDEVICEADDED:
                 controller = pygame.joystick.Joystick(event.device_index)
@@ -434,7 +428,8 @@ class Game:
             else:
                 count = 0
                 self.gameOver()
-            self.scene_manager.switch_scene('status')
+            self.statusFlag = True
+            
         
         
 

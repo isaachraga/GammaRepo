@@ -2,8 +2,9 @@ import pygame
 from settings import Settings
 
 class GameMods:
-    def __init__(self, scene_manager):
+    def __init__(self, scene_manager, game):
         self.scene_manager = scene_manager
+        self.game = game
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
     
@@ -21,7 +22,7 @@ class GameMods:
                     self.scene_manager.switch_scene('game')
                 # Scene Selection
                 if event.key == pygame.K_s:
-                    self.scene_manager.switch_scene('scene')
+                    self.scene_manager.switch_scene('pause')
 
     def render(self):
         self.screen.fill((255, 255, 255))
