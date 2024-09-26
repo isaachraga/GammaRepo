@@ -6,7 +6,7 @@ import math
 
 ### BUGS ###
 # players cant move while touching a boundary
-# need to set up police roll
+#snake eyes needs to display and take another input before moving
 # if store gets alarmed and last turn, players still have a chance to win
 
 
@@ -41,6 +41,7 @@ class Game:
         self.numPlayers = 2
         self.controllers = []
         self.statusFlag = False
+        self.alarmedStores = 0
 
         self.moveSpeed = 300
 
@@ -50,21 +51,26 @@ class Game:
 
 
     def storeReset(self):
+        print("store reset")
         self.store1 = Store()
         self.store1.storeNum = 1
-        self.store1.position = pygame.Vector2(300, 100)
+        self.store1.position = pygame.Vector2(300, 400)
+        self.assignStoreStats(self.store1)
 
         self.store2 = Store()
         self.store2.storeNum = 2
-        self.store2.position = pygame.Vector2(500, 100)
+        self.store2.position = pygame.Vector2(500, 400)
+        self.assignStoreStats(self.store2)
 
         self.store3 = Store()
         self.store3.storeNum = 3
-        self.store3.position = pygame.Vector2(700, 100)
+        self.store3.position = pygame.Vector2(700, 400)
+        self.assignStoreStats(self.store3)
         
         self.store4 = Store()
         self.store4.storeNum = 4
-        self.store4.position = pygame.Vector2(900, 100)
+        self.store4.position = pygame.Vector2(900, 400)
+        self.assignStoreStats(self.store4)
         
 
         self.Stores = [self.store1,self.store2,self.store3, self.store4]
@@ -180,7 +186,7 @@ class Game:
 
         for s in self.Stores:
             pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-60), s.scoreText, (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-100), s.scoreText, (0, 0, 0))
 
         ##### PLAYERS #####
         for p in self.Players:
@@ -198,10 +204,15 @@ class Game:
         self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
 
         if self.ready:
-            self.GAME_FONT.render_to(self.screen, (10, 350), "Press SPACE to roll", (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to try your luck...", (0, 0, 0))
         else:
-            self.GAME_FONT.render_to(self.screen, (10, 350), "Waiting for Players", (0, 0, 0))
-        
+            self.GAME_FONT.render_to(self.screen, (350, 120), "Waiting for Players to Select a Store", (0, 0, 0))
+
+        if self.alarmedStores > 0:
+            if self.status != "SNAKE EYES":
+                self.GAME_FONT.render_to(self.screen, (350, 180), "Police are on their way!", (0, 0, 0))
+            else: 
+                self.GAME_FONT.render_to(self.screen, (300, 180), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
 
@@ -212,22 +223,37 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 580), "Finishline Score: "+str(self.winScore)+" (Highest Score Past Finish Line Wins!)", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
         
         pygame.display.flip()
 
     def readyCheck(self):
+        count = 0
         for p in self.Players:
-            if p.status != 0:
-                self.ready = True
-            else:
-                self.ready = False
+            if p.status == 0:
+                count = count + 1
+        
+        if count != 0:
+            self.ready = False
+        else:
+            self.ready = True
+           
+        
 
     def status(self):
         for s in self.Stores:
-            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-40), "Store "+str(s.storeNum), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
             if s.status == -1:
                 s.color = (255,0,0)
+            else:
+                risk = ''
+                for x in range(s.risk):
+                    risk = risk + '*'
+                self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-60), "Risk: "+risk, (0, 0, 0))
+                reward = ''
+                for x in range(s.reward):
+                    reward = reward + '$'
+                self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-40), "Reward: "+reward, (0, 0, 0))
                 
 
         for p in self.Players:
@@ -319,6 +345,8 @@ class Game:
                         if s.status == -1:
                             count = count + 1
                     
+                    self.alarmedStores = count
+                    
                     if count == len(self.Stores):
                         self.allAlarms = True
 
@@ -332,12 +360,10 @@ class Game:
                             #dice-eventually modular values
                             for s in self.Stores:
                                 if len(s.players) != 0:
-                                    
-                                    s.num1 = random.randint(1, 6)
-                                    s.num2 = random.randint(1, 6)
-
-                                    if s.num1==s.num2:
-                                        if s.num1 == 1:
+                                    #police roll
+                                    if self.alarmedStores > 0:
+                                        print("Police Roll")
+                                        if self.roll(1,(len(self.Stores)-self.alarmedStores+3),1,1) == -1:
                                             s.scoreText = "!POLICE!"
                                             if not self.lastRound:
                                                 self.result = "SNAKE EYES"
@@ -353,30 +379,34 @@ class Game:
                                                         p.score = 0
                                                     p.status = -1
                                                     
-                                                    
-                                        else:
-                                            s.scoreText = "!ALARMED!"
-                                            s.status=-1
-                                            if not self.lastRound:
-                                                self.result = "RESET"
-                                                for p in s.players:
-                                                    p.status = 0
-                                                    p.tmpScore = 0
-                                                    
-                                            else:
-                                                for p in s.players:
-                                                    p.status = -1
-                                                    p.tmpScore = 0
-                                            s.players.clear()
-                                                    
+                                    
+                                    #roll for value/alarm
+                                    print("Award Roll")
+                                    self.award = self.roll(1,6,s.risk,s.reward) 
 
+                                    if self.award == -1 and self.result != "SNAKE EYES":
+                                        s.scoreText = "!ALARMED!"
+                                        self.alarmedStores = self.alarmedStores + 1
+                                        s.status=-1
+                                        if not self.lastRound:
+                                            self.result = "RESET"
+                                            for p in s.players:
+                                                p.status = 0
+                                                p.tmpScore = 0
+                                                
+                                        else:
+                                            for p in s.players:
+                                                p.status = -1
+                                                p.tmpScore = 0
+                                        s.players.clear()
                                     else:
                                         self.result = ""
                                         for p in s.players:
                                             if p.status == 1:
-                                                p.tmpScore = p.tmpScore+s.num1+s.num2
+                                                p.tmpScore = p.tmpScore+self.award
                                                 p.status = 0
-                                                s.scoreText = "+"+str(s.num1+s.num2)
+                                                s.scoreText = "+"+str(self.award)
+                                    
                                     
 
                 #Player Ready
@@ -412,7 +442,45 @@ class Game:
             if event.type == pygame.JOYDEVICEADDED:
                 controller = pygame.joystick.Joystick(event.device_index)
                 self.controllers.append(controller)
+
+    def roll(self, num1, num2, riskMod, rewardMod):
+        self.roll1 = random.randint(num1, num2-(riskMod-1))
+        self.roll2 = random.randint(num1, num2-(riskMod-1))
+        if self.roll1 == self.roll2:
+            print("Failed Roll: "+ str(self.roll1) +", "+ str(self.roll2))
+            return -1
+        else: 
+            print("Successfull Roll: "+ str(self.roll1) +", "+ str(self.roll2)+", "+str((self.roll1+self.roll2)*self.rewardScale(rewardMod)))
+            return (self.roll1+self.roll2)*self.rewardScale(rewardMod)
+
+    def rewardScale(self, rewardMod):
+        match rewardMod:
+            case 1:
+                return 1.0
+            case 2:
+                return 1.5
+            case 3:
+                return 2.0
+            case 4:
+                return 3.0
+            case 5:
+                return 5.0
     
+    def assignStoreStats(self, store):
+        #print("store stat assignment")
+        store.risk = random.randint(1,5)
+        #print("store risk:" +str(store.risk))
+        store.reward = (store.risk + random.randint(1,4) - 2)
+        #print("store reward:" +str(store.reward))
+        if store.reward < 1:
+            store.reward = 1
+        elif store.reward > 5:
+            store.reward = 5
+        
+        #print("store reward:" +str(store.reward))
+
+        print("Store "+str(store.storeNum)+": " + str(store.risk)+", "+str(store.reward))
+        
     def roundCheck(self):
         count = 0
         for p in self.Players:
@@ -425,6 +493,7 @@ class Game:
                     p.status = 0
                     p.tmpScore = 0
                     count = 0
+                    self.alarmedStores = 0
                     self.storeReset()
                     self.playerLocReset()
             else:
@@ -479,6 +548,7 @@ class Game:
         self.result = ""
         self.lastRound = False
         self.allAlarms = False
+        self.alarmedStores = 0
         self.playerReset()
         self.playerLocReset()
         self.storeReset()

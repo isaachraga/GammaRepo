@@ -22,6 +22,14 @@ class Modifier:
                 if self.duration == 0:
                     self.deactivate()
 
+#Isaac mod ideas
+# Raise all store rewards by one (max of 5)
+# Lower all store rewards by one (min of 5)
+
+
+
+
+
 
 # Score Enhancers
 def lucky_streak_modifier(player, dice_rolls, game):

@@ -3,6 +3,7 @@ from settings import Settings
 from game import Game
 from Scenes.game_status import GameStatus
 from Scenes.game_mods import GameMods
+from Scenes.game_win import GameWin
 from Scenes.pause import Pause
 from Scenes.scene_selection import SceneSelection
 from Scenes.options import OptionsMenu
@@ -25,6 +26,7 @@ class SceneManager:
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
         self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
         self.scenes['pause'] = Pause(self, self.scenes.get('game'))
+        self.scenes['win'] = GameWin(self, self.scenes.get('game'))
         
         
         self.current_scene = 'menu'
