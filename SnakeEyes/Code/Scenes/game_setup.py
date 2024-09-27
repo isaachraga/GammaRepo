@@ -16,6 +16,8 @@ class GameSetup:
 
         self.clock = pygame.time.Clock() #Needed for pygame_gui
 
+        self.tests = Tests() #For automated testing
+
         self.makeGUI()
 
     def makeGUI(self):
@@ -300,7 +302,7 @@ class GameSetup:
                     self.scene_manager.switch_scene('scene')
                 # Run Tests
                 if event.key == pygame.K_t:
-                    self.run_tests()
+                    self.tests.run_tests(self)
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
@@ -503,72 +505,79 @@ class GameSetup:
 
 
 
-    def run_tests(self):
-        ### Test initial preferences ###
-        assert(Preferences.RED_PLAYER_TYPE == self.player_type_options[self.red_player_index])
-        assert (Preferences.RED_CONTROLS == self.control_type_options[self.red_control_index])
-        assert (Preferences.BLUE_PLAYER_TYPE == self.player_type_options[self.blue_player_index])
-        assert (Preferences.BLUE_CONTROLS == self.control_type_options[self.blue_control_index])
-        assert (Preferences.YELLOW_PLAYER_TYPE == self.player_type_options[self.yellow_player_index])
-        assert (Preferences.YELLOW_CONTROLS == self.control_type_options[self.yellow_control_index])
-        assert (Preferences.GREEN_PLAYER_TYPE == self.player_type_options[self.green_player_index])
-        assert (Preferences.GREEN_CONTROLS == self.control_type_options[self.green_control_index])
-
-
-        ### Test Player Selection ###
-        initial_index = self.red_player_index
-        #Select next player type
-        self.playerTypeSelect('red', 1)  #Move to the right
-        new_index = self.red_player_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.red_player_label.text == self.player_type_options[new_index])  #Ensure label updated
-        #Select previous player type
-        self.playerTypeSelect('red', -1)  #Move to the left
-        assert (initial_index == self.red_player_index)  #Ensure it has returned to initial index
-
-
-        ### Test Control Scheme Selection ###
-        initial_index = self.red_control_index
-        #Select next control scheme
-        self.controlSchemeSelect('red', 1)  #Move to the right
-        new_index = self.red_control_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.red_control_label.text == self.control_type_options[new_index])  #Ensure label updated
-        #Select previous control scheme
-        self.controlSchemeSelect('red', -1)  #Move to the left
-        assert (initial_index == self.red_control_index)  #Ensure it has returned to initial index
-
-
-        ### Test Score Selection ###
-        initial_score = Preferences.FINISHLINE_SCORE
-        #Simulate button press to decrease score
-        simulated_event = pygame.event.Event( #Simulate left click event on the button
-            pygame.USEREVENT,
-            {
-                'user_type': pygame_gui.UI_BUTTON_PRESSED,
-                'ui_element': self.finish_score_dec,
-                'mouse_button': 1
-            }
-        )
-        pygame.event.post(simulated_event)
-        self.run() #Allow updates to happen
-        assert (Preferences.FINISHLINE_SCORE == initial_score - 10)  #Check that score decreased by 10
-
-        initial_score = Preferences.FINISHLINE_SCORE
-        #Simulate button press to decrease score
-        simulated_event = pygame.event.Event( #Simulate left click event on the button
-            pygame.USEREVENT,
-            {
-                'user_type': pygame_gui.UI_BUTTON_PRESSED,
-                'ui_element': self.finish_score_inc,
-                'mouse_button': 1
-            }
-        )
-        pygame.event.post(simulated_event)
-        self.run() #Allow updates to happen
-        assert (Preferences.FINISHLINE_SCORE == initial_score + 10)  #Check that score increased by 10
-
+########## GAME SETUP TESTS ##########
+class Tests:
+    def run_tests(self, testedClass):
+        self.testedClass = testedClass
+        print("Testing Initial Preferences")
+        self.test_initial_preferences()
+        print("Testing Player Selection")
+        self.test_player_selection()
+        print("Testing Control Selection")
+        self.test_control_selection()
+        print("Testing Finishline Score Selection")
+        self.test_score_selection()
         print("All Tests Passed!")
+
+    def simulate_gui_click(self, ui_element):
+        simulated_event = pygame.event.Event( #Simulate left click event on the button
+            pygame.USEREVENT,{
+                'user_type': pygame_gui.UI_BUTTON_PRESSED,
+                'ui_element': ui_element,
+                'mouse_button': 1
+            })
+        pygame.event.post(simulated_event)
+        self.testedClass.run() #Allow updates to happen
+
+    def test_initial_preferences(self):
+        assert(Preferences.RED_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.red_player_index])
+        assert (Preferences.RED_CONTROLS == self.testedClass.control_type_options[self.testedClass.red_control_index])
+        assert (Preferences.BLUE_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.blue_player_index])
+        assert (Preferences.BLUE_CONTROLS == self.testedClass.control_type_options[self.testedClass.blue_control_index])
+        assert (Preferences.YELLOW_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.yellow_player_index])
+        assert (Preferences.YELLOW_CONTROLS == self.testedClass.control_type_options[self.testedClass.yellow_control_index])
+        assert (Preferences.GREEN_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.green_player_index])
+        assert (Preferences.GREEN_CONTROLS == self.testedClass.control_type_options[self.testedClass.green_control_index])
+
+    def test_player_selection(self):
+        initial_index = self.testedClass.red_player_index
+        #Select next player option
+        self.simulate_gui_click(self.testedClass.red_player_right)
+        new_index = self.testedClass.red_player_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.testedClass.red_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
+        #Wait
+        pygame.time.wait(100)
+        #Select previous player option
+        self.simulate_gui_click(self.testedClass.red_player_left)
+        assert (initial_index == self.testedClass.red_player_index)  #Ensure it has returned to initial index
+        assert (self.testedClass.red_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
+
+    def test_control_selection(self):
+        initial_index = self.testedClass.red_control_index
+        #Select next control scheme
+        self.simulate_gui_click(self.testedClass.red_control_right)
+        new_index = self.testedClass.red_control_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.testedClass.red_control_label.text == self.testedClass.control_type_options[new_index])  #Ensure label updated
+        #Wait
+        pygame.time.wait(100)
+        #Select previous control scheme
+        self.simulate_gui_click(self.testedClass.red_control_left)
+        assert (initial_index == self.testedClass.red_control_index)  #Ensure it has returned to initial index
+        assert (self.testedClass.red_control_label.text == self.testedClass.control_type_options[initial_index])  #Ensure label updated
+
+    def test_score_selection(self):
+        #Decrease finishline score
+        initial_score = Preferences.FINISHLINE_SCORE
+        self.simulate_gui_click(self.testedClass.finish_score_dec)
+        assert (Preferences.FINISHLINE_SCORE == initial_score - 10)  #Check that score decreased by 10
+        #Wait
+        pygame.time.wait(100)
+        #Increase finishline score
+        initial_score = Preferences.FINISHLINE_SCORE
+        self.simulate_gui_click(self.testedClass.finish_score_inc)
+        assert (Preferences.FINISHLINE_SCORE == initial_score + 10)  #Check that score increased by 10
 
 
 
