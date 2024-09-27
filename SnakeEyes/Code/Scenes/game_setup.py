@@ -298,6 +298,9 @@ class GameSetup:
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
+                # Run Tests
+                if event.key == pygame.K_t:
+                    self.run_tests()
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
@@ -351,6 +354,8 @@ class GameSetup:
                     if event.ui_element == self.finish_score_inc:
                         Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + 10
                         self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
+
+
 
     #Function to handle changing player type
     def playerTypeSelect(self, color, direction):
@@ -493,3 +498,78 @@ class GameSetup:
         self.ui_manager.draw_ui(self.screen) 
 
         pygame.display.flip()
+
+
+
+
+
+    def run_tests(self):
+        ### Test initial preferences ###
+        assert(Preferences.RED_PLAYER_TYPE == self.player_type_options[self.red_player_index])
+        assert (Preferences.RED_CONTROLS == self.control_type_options[self.red_control_index])
+        assert (Preferences.BLUE_PLAYER_TYPE == self.player_type_options[self.blue_player_index])
+        assert (Preferences.BLUE_CONTROLS == self.control_type_options[self.blue_control_index])
+        assert (Preferences.YELLOW_PLAYER_TYPE == self.player_type_options[self.yellow_player_index])
+        assert (Preferences.YELLOW_CONTROLS == self.control_type_options[self.yellow_control_index])
+        assert (Preferences.GREEN_PLAYER_TYPE == self.player_type_options[self.green_player_index])
+        assert (Preferences.GREEN_CONTROLS == self.control_type_options[self.green_control_index])
+
+
+        ### Test Player Selection ###
+        initial_index = self.red_player_index
+        #Select next player type
+        self.playerTypeSelect('red', 1)  #Move to the right
+        new_index = self.red_player_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.red_player_label.text == self.player_type_options[new_index])  #Ensure label updated
+        #Select previous player type
+        self.playerTypeSelect('red', -1)  #Move to the left
+        assert (initial_index == self.red_player_index)  #Ensure it has returned to initial index
+
+
+        ### Test Control Scheme Selection ###
+        initial_index = self.red_control_index
+        #Select next control scheme
+        self.controlSchemeSelect('red', 1)  #Move to the right
+        new_index = self.red_control_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.red_control_label.text == self.control_type_options[new_index])  #Ensure label updated
+        #Select previous control scheme
+        self.controlSchemeSelect('red', -1)  #Move to the left
+        assert (initial_index == self.red_control_index)  #Ensure it has returned to initial index
+
+
+        ### Test Score Selection ###
+        initial_score = Preferences.FINISHLINE_SCORE
+        #Simulate button press to decrease score
+        simulated_event = pygame.event.Event( #Simulate left click event on the button
+            pygame.USEREVENT,
+            {
+                'user_type': pygame_gui.UI_BUTTON_PRESSED,
+                'ui_element': self.finish_score_dec,
+                'mouse_button': 1
+            }
+        )
+        pygame.event.post(simulated_event)
+        self.run() #Allow updates to happen
+        assert (Preferences.FINISHLINE_SCORE == initial_score - 10)  #Check that score decreased by 10
+
+        initial_score = Preferences.FINISHLINE_SCORE
+        #Simulate button press to decrease score
+        simulated_event = pygame.event.Event( #Simulate left click event on the button
+            pygame.USEREVENT,
+            {
+                'user_type': pygame_gui.UI_BUTTON_PRESSED,
+                'ui_element': self.finish_score_inc,
+                'mouse_button': 1
+            }
+        )
+        pygame.event.post(simulated_event)
+        self.run() #Allow updates to happen
+        assert (Preferences.FINISHLINE_SCORE == initial_score + 10)  #Check that score increased by 10
+
+        print("All Tests Passed!")
+
+
+
+
