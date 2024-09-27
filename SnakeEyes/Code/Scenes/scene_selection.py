@@ -27,6 +27,8 @@ class SceneSelection:
                     self.scene_manager.switch_scene('game')
                 if event.key == pygame.K_5:
                     self.scene_manager.switch_scene('credits')
+                if event.key == pygame.K_6:
+                    self.scene_manager.switch_scene('setup')
                 
 
     def render(self):
@@ -37,4 +39,5 @@ class SceneSelection:
         self.GAME_FONT.render_to(self.screen, (10, 160), "3. Main Menu", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 190), "4. Start Game", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 220), "5. Credits", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 250), "6. Game Setup", (0, 0, 0))
         pygame.display.flip()

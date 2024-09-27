@@ -1,5 +1,3 @@
-
-
 {
     "defaults":
     {
@@ -10,14 +8,14 @@
             "disabled_bg":"#25292e",
             "selected_bg":"#193754",
             "dark_bg":"#15191e",
-            "normal_text":"#c5cbd8",
-            "hovered_text":"#FFFFFF",
-            "selected_text":"#FFFFFF",
+            "normal_text":"#000000",
+            "hovered_text":"#000000",
+            "selected_text":"#000000",
             "disabled_text":"#6d736f",
             "link_text": "#0000EE",
             "link_hover": "#2020FF",
             "link_selected": "#551A8B",
-            "text_shadow": "#777777",
+            "text_shadow": "#FFFFFF",
             "normal_border": "#DDDDDD",
             "hovered_border": "#B0B0B0",
             "disabled_border": "#808080",
@@ -35,7 +33,13 @@
             "name": "HighlandGothicFLF-Bold",
             "size": "20",
             "regular_path": "Fonts/HighlandGothicFLF-Bold.ttf"
-        }
+        },
+        "misc":
+         {
+             "text_shadow": "1",
+             "text_shadow_size": "1",
+             "text_shadow_offset": "0,0"
+         }
     },
 
     
@@ -67,5 +71,47 @@
             "shape": "rounded_rectangle",
             "shape_corner_radius": "6"
         }
+    },
+
+    "panel":
+    {
+        "colours":
+         {
+             "normal_border": "#000000"
+         },
+        "misc":
+         {
+             "shape": "rounded_rectangle",
+             "shape_corner_radius": "8",
+             "border_width": "2"
+         }
+    },
+    "#red_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#FF7F7F"
+         }
+    },
+    "#blue_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#7F7FFF"
+         }
+    },
+    "#yellow_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#FFF59E"
+         }
+    },
+    "#green_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#7FFF7F"
+         }
     }
 }

@@ -10,6 +10,7 @@ from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
 from Scenes.tutorial import Tutorial
 from Scenes.credits import Credits
+from Scenes.game_setup import GameSetup
 
 class SceneManager:
     def __init__(self):
@@ -20,7 +21,8 @@ class SceneManager:
             'menu': MainMenu(self),
             'game': Game(self),
             'credits': Credits(self),
-            'scene': SceneSelection(self)
+            'scene': SceneSelection(self),
+            'setup': GameSetup(self)
         }
 
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
