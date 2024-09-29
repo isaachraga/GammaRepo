@@ -541,6 +541,7 @@ class Tests:
         assert (Preferences.GREEN_CONTROLS == self.testedClass.control_type_options[self.testedClass.green_control_index])
 
     def test_player_selection(self):
+        #Red
         while (Preferences.RED_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
             self.simulate_gui_click(self.testedClass.red_player_right)
         initial_index = self.testedClass.red_player_index
@@ -553,6 +554,48 @@ class Tests:
         self.simulate_gui_click(self.testedClass.red_player_left)
         assert (initial_index == self.testedClass.red_player_index)  #Ensure it has returned to initial index
         assert (self.testedClass.red_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
+        
+        #Blue
+        while (Preferences.BLUE_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
+            self.simulate_gui_click(self.testedClass.blue_player_right)
+        initial_index = self.testedClass.blue_player_index
+        #Select next player option
+        self.simulate_gui_click(self.testedClass.blue_player_right)
+        new_index = self.testedClass.blue_player_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.testedClass.blue_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
+        #Select previous player option
+        self.simulate_gui_click(self.testedClass.blue_player_left)
+        assert (initial_index == self.testedClass.blue_player_index)  #Ensure it has returned to initial index
+        assert (self.testedClass.blue_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
+        
+        #Yellow
+        while (Preferences.YELLOW_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
+            self.simulate_gui_click(self.testedClass.yellow_player_right)
+        initial_index = self.testedClass.yellow_player_index
+        #Select next player option
+        self.simulate_gui_click(self.testedClass.yellow_player_right)
+        new_index = self.testedClass.yellow_player_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.testedClass.yellow_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
+        #Select previous player option
+        self.simulate_gui_click(self.testedClass.yellow_player_left)
+        assert (initial_index == self.testedClass.yellow_player_index)  #Ensure it has returned to initial index
+        assert (self.testedClass.yellow_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
+        
+        #Green
+        while (Preferences.GREEN_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
+            self.simulate_gui_click(self.testedClass.green_player_right)
+        initial_index = self.testedClass.green_player_index
+        #Select next player option
+        self.simulate_gui_click(self.testedClass.green_player_right)
+        new_index = self.testedClass.green_player_index
+        assert (initial_index != new_index)  #Ensure it has changed
+        assert (self.testedClass.green_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
+        #Select previous player option
+        self.simulate_gui_click(self.testedClass.green_player_left)
+        assert (initial_index == self.testedClass.green_player_index)  #Ensure it has returned to initial index
+        assert (self.testedClass.green_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
 
     def test_control_selection(self):
         while (Preferences.RED_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
