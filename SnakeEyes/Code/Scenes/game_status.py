@@ -27,9 +27,10 @@ class GameStatus:
     def render(self):
         self.screen.fill((255, 255, 255))
         self.GAME_FONT.render_to(self.screen, (10, 130), "Game Status", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (350, 680), "Press SPACE to continue...", (0, 0, 0))
         pCount = 1
         for p in self.game.Players:
-            self.GAME_FONT.render_to(self.screen, (10+((pCount-1)*200), 170), "P"+str(pCount)+" Score: "+self.game.getScore(pCount), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (10+((pCount-1)*300), 170), "P"+str(pCount)+" Score: "+self.game.getScore(pCount), (0, 0, 0))
             pCount = pCount + 1
             
 
