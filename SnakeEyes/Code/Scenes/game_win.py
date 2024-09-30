@@ -27,15 +27,15 @@ class GameWin:
 
     def render(self):
         self.screen.fill((255, 255, 255))
-        
 
-        winner = self.game.Players[0]
+        self.GAME_FONT.render_to(self.screen, (350, 680), "Press SPACE to return to main menu", (0, 0, 0))
+
+        
         pCount = 1
         for p in self.game.Players:
-            if p.score > winner.score:
-                winner = p
-            self.GAME_FONT.render_to(self.screen, (10+((pCount-1)*200), 170), "P"+str(pCount)+" Score: "+self.game.getScore(pCount), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (10+((pCount-1)*300), 170), "P"+str(pCount)+" Score: "+self.game.getScore(pCount), (0, 0, 0))
             pCount = pCount + 1
+            
 
-        self.GAME_FONT.render_to(self.screen, (10, 130), "Player "+str(p.playerNum)+ " Wins!    Score: "+self.game.getScore(p.playerNum), (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (350, 20), self.game.result, (0, 0, 0))
         pygame.display.flip()

@@ -28,4 +28,6 @@ class GameMods:
     def render(self):
         self.screen.fill((255, 255, 255))
         self.GAME_FONT.render_to(self.screen, (10, 130), "Game Mods", (0, 0, 0))
+        
+        self.GAME_FONT.render_to(self.screen, (350, 680), "Press SPACE to continue...", (0, 0, 0))
         pygame.display.flip()

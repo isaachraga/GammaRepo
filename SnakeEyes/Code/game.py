@@ -6,18 +6,11 @@ import math
 
 ### BUGS ###
 # players cant move while touching a boundary
-# snake eyes needs to display and take another input before moving
-# if store gets alarmed and last turn, players still have a chance to win
+# dont set off police on first alarm
+# last round hanling with police call/all alarms going straight to win screen
 
 
-### FEATURES ###
-# need to set up police roll once an alarm has been triggered
 
-##### CONTROLS #####
-#P1 Controls - wasd/1-confirm/2-cash out
-#P2 Controls - tfgh/3-confirm/4-cash out
-#P3 Controls - ijkl/5-confirm/6-cash out
-#P4 Controls - up left right down/7-confirm/8-cash out
 
 ########## GAME ##########
 class Game:
@@ -31,7 +24,7 @@ class Game:
 
         self.dt = 0
         self.result = ""
-        self.winScore = 200
+        self.winScore = 500
         self.lastRound = False
         self.gameOverFlag = False
         self.pause = False
@@ -52,7 +45,6 @@ class Game:
 
 
     def storeReset(self):
-        #print("store reset")
         self.store1 = Store()
         self.store1.storeNum = 1
         self.store1.position = pygame.Vector2(300, 400)
@@ -103,9 +95,9 @@ class Game:
         self.p2.ready = pygame.K_3
         self.p2.cashOut = pygame.K_4
         self.p2.color = (0,0,255)
-        self.p2.gr = pygame.Vector2(1250,60)
-        self.p2.yl = pygame.Vector2(1250,80)
-        self.p2.rd = pygame.Vector2(1250,100)
+        self.p2.gr = pygame.Vector2(1150,60)
+        self.p2.yl = pygame.Vector2(1150,80)
+        self.p2.rd = pygame.Vector2(1150,100)
         '''
         self.p3 = Player()
         self.p3.playerNum = 3
@@ -138,6 +130,10 @@ class Game:
         #self.Players = [self.p1, self.p2, self.p3, self.p4]
         self.Players = [self.p1,self.p2]
 
+    def playerStatusReset(self):
+        for p in self.Players:
+            p.status = 0
+
     def playerLocReset(self):
         self.p1.position = pygame.Vector2(500,500)
         self.p2.position = pygame.Vector2(700,500)
@@ -151,7 +147,6 @@ class Game:
 
     ##### Update Game #####
     def update(self):
-        self.roundCheck()
         self.inputManager()
         self.lastRoundCheck()
         self.readyCheck()
@@ -161,9 +156,7 @@ class Game:
     def render(self):
         self.screen.fill((255,255,255))
 
-        
-        
-        
+        ##### STORE COLLIDERS #####
         for s in self.Stores:
             for p in self.Players:
                 if p.status != -1:
@@ -198,16 +191,18 @@ class Game:
         self.status()
         
         
-        ##### DEBUG #####
+        ##### DEBUG / STATUS #####
         #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
 
         #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
-
-        if self.ready:
-            self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to try your luck...", (0, 0, 0))
+        if self.police:
+                self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to continue...", (0, 0, 0))
         else:
-            self.GAME_FONT.render_to(self.screen, (350, 120), "Waiting for Players to Select a Store", (0, 0, 0))
+            if self.ready:
+                    self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to try your luck...", (0, 0, 0))
+            else:
+                self.GAME_FONT.render_to(self.screen, (350, 120), "Waiting for Players to Select a Store", (0, 0, 0))
 
         if self.alarmedStores > 0:
             if not self.police:
@@ -228,8 +223,12 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
+        if self.lastRound:
+            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
+
         
         pygame.display.flip()
+
 
     def readyCheck(self):
         count = 0
@@ -243,7 +242,6 @@ class Game:
             self.ready = True
            
         
-
     def status(self):
         for s in self.Stores:
             self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
@@ -341,66 +339,56 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 #dice roller
                 if event.key == pygame.K_SPACE:
-
-                    if self.allAlarms or self.police:
-                        print("all alarm or police")
-                        self.snakeEyes()
-                        self.resetGame()
+                    self.roundCheck()
+                    #NEED LAST ROUND
+                    if self.police:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
+                    elif self.allAlarms:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
                     else: 
                         if self.ready:
-                            #dice-eventually modular values
+                            
                             for s in self.Stores:
                                 if len(s.players) != 0:
                                     #police roll
                                     if self.alarmedStores > 0:
-                                        #print("Police Roll")
-                                        if self.roll(1,(len(self.Stores)-self.alarmedStores+3),1,1) == -1:
+                                        if self.roll(1,(len(self.Stores)+9-self.alarmedStores),1,1) == -1:
+                                            self.resetTempScores()
                                             s.scoreText = "!POLICE!"
                                             s.status = -1
                                             self.police = True
-                                            '''
-                                            if not self.lastRound:
-                                                self.result = "SNAKE EYES"
-                                                for p in self.Players:
-                                                    p.tmpScore = 0
-                                                    if p.status == 1:
-                                                        p.score = 0
-                                                    p.status = -1
-                                            else:
-                                                for p in self.Players:
-                                                    p.tmpScore = 0
-                                                    if p.status == 1:
-                                                        p.score = 0
-                                                    p.status = -1
-                                                    '''
+                                            self.snakeEyes()
+                                            
+                                            
+                                            
                                                     
-                                    
-                                    #roll for value/alarm
-                                    #print("Award Roll")
-                                    self.award = self.roll(1,6,s.risk,s.reward) 
+                                    if not self.police:
+                                        #roll for value/alarm
+                                        self.award = self.roll(1,9,s.risk,s.reward) 
 
-                                    if self.award == -1 and self.result != "SNAKE EYES":
-                                        s.scoreText = "!ALARMED!"
-                                        self.alarmedStores = self.alarmedStores + 1
-                                        s.status=-1
-                                        if not self.lastRound:
-                                            self.result = "RESET"
+                                        if self.award == -1:
+                                            s.scoreText = "!ALARMED!"
+                                            self.alarmedStores = self.alarmedStores + 1
+                                            s.status=-1
+                                            
                                             for p in s.players:
                                                 p.status = 0
                                                 p.tmpScore = 0
                                                 
+                                            s.players.clear()
                                         else:
+                                            self.result = ""
                                             for p in s.players:
-                                                p.status = -1
-                                                p.tmpScore = 0
-                                        s.players.clear()
-                                    else:
-                                        self.result = ""
-                                        for p in s.players:
-                                            if p.status == 1:
-                                                p.tmpScore = p.tmpScore+self.award
-                                                p.status = 0
-                                                s.scoreText = "+"+str(self.award)
+                                                if p.status == 1:
+                                                    p.tmpScore = p.tmpScore+self.award
+                                                    p.status = 0
+                                                    s.scoreText = "+"+str(self.award)
                     #check for all alarms
                     count = 0
                     for s in self.Stores:
@@ -431,12 +419,12 @@ class Game:
                         for s in self.Stores:
                             if p in s.players:
                                 s.players.remove(p)
+                        self.roundCheck()
                 
                 
                 # Scene Selection
                 
 
-                # keys when shift is held for scene selection
                 mods = pygame.key.get_mods()
                 shift_held = mods & pygame.KMOD_SHIFT
 
@@ -452,10 +440,8 @@ class Game:
         self.roll1 = random.randint(num1, num2-(riskMod-1))
         self.roll2 = random.randint(num1, num2-(riskMod-1))
         if self.roll1 == self.roll2:
-            #print("Failed Roll: "+ str(self.roll1) +", "+ str(self.roll2))
             return -1
         else: 
-            #print("Successfull Roll: "+ str(self.roll1) +", "+ str(self.roll2)+", "+str((self.roll1+self.roll2)*self.rewardScale(rewardMod)))
             return (self.roll1+self.roll2)*self.rewardScale(rewardMod)
 
     def rewardScale(self, rewardMod):
@@ -482,7 +468,7 @@ class Game:
             store.reward = 5
         
     def roundCheck(self):
-        '''
+        
         count = 0
         for p in self.Players:
             if p.status == -1:
@@ -501,52 +487,48 @@ class Game:
                 count = 0
                 self.gameOver()
             self.statusFlag = True
-            '''
+            
             
     
         
         
 
     def snakeEyes(self):
+        
+        
+        for p in self.Players:
+                if p.status != -1:
+                    p.score = 0
+                #p.status = -1
         if not self.lastRound:
             self.result = "SNAKE EYES"
-            for p in self.Players:
-                p.tmpScore = 0
-                if p.status == 1:
-                    p.score = 0
-                p.status = -1
-        else:
-            for p in self.Players:
-                p.tmpScore = 0
-                if p.status == 1:
-                    p.score = 0
-                p.status = -1
+        #else:
+            #self.gameOver()
+        
 
-        '''
+    def resetTempScores(self):
+        for p in self.Players:
+                p.tmpScore = 0
+
+    def activePlayers(self):
         count = 0
         for p in self.Players:
-            if p.status == -1:
-                count = count + 1
+            if p.status != -1:
+                count = count +1
+        
+        return count
 
-        if count == self.numPlayers:
-            if not self.lastRound:
-                for p in self.Players:
-                    p.status = 0
-                    p.tmpScore = 0
-                    count = 0
-                    self.storeReset()
-                    self.playerLocReset()
-            else:
-                count = 0
-                self.gameOver()
-                '''
+
 
     def lastRoundCheck(self):
         if not self.lastRound:
             for p in self.Players:
                 if p.score >= self.winScore:
-                    self.lastRound = True
-                    self.result = "LAST ROUND"
+                    if self.activePlayers() > 0:
+                        self.lastRound = True
+                        self.result = "LAST ROUND"
+                    else:
+                        self.gameOver()
 
     def gameOver(self):
         if not self.gameOverFlag:
@@ -559,9 +541,24 @@ class Game:
                     HighScore = p.score
 
             self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
-    
+            self.scene_manager.switch_scene('win')
+
+
+    def resetRound(self):
+        self.dt = 0
+        self.num1 = 0
+        self.num2 = 0
+        self.result = ""
+        self.allAlarms = False
+        self.police = False
+        self.alarmedStores = 0
+        self.playerStatusReset()
+        self.resetTempScores()
+        self.playerLocReset()
+        self.storeReset()
+        self.scene_manager.switch_scene('status')
+
     def resetGame(self):
-        #print("reset Game")
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
