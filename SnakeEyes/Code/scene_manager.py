@@ -16,11 +16,13 @@ from Scenes.tutorial_money import Money
 from Scenes.tutorial_alarm import Alarm
 from Scenes.tutorial_police import Police
 from Scenes.game_setup import GameSetup
+from preferences import Preferences
 
 
 
 class SceneManager:
     def __init__(self):
+        
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.scenes = {
             'tutorial': Tutorial(self),
@@ -34,9 +36,9 @@ class SceneManager:
             'money': Money(self),
             'alarm': Alarm(self),
             'police': Police(self),
-            'setup': GameSetup(self)
+            #'setup': GameSetup(self)
         }
-
+        self.scenes['setup'] = GameSetup(self, self.scenes.get('game'))
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
         self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
         self.scenes['pause'] = Pause(self, self.scenes.get('game'))

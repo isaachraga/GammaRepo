@@ -3,6 +3,7 @@ import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
 import math
+from preferences import Preferences
 
 ### BUGS ###
 # players cant move while touching a boundary
@@ -16,6 +17,7 @@ import math
 class Game:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
+        
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
     
@@ -24,7 +26,7 @@ class Game:
 
         self.dt = 0
         self.result = ""
-        self.winScore = 500
+        self.winScore = Preferences.FINISHLINE_SCORE
         self.lastRound = False
         self.gameOverFlag = False
         self.pause = False
@@ -43,6 +45,11 @@ class Game:
         self.playerLocReset()
         self.storeReset()
 
+    def delayedInit(self):
+        self.winScore = Preferences.FINISHLINE_SCORE
+        self.playerReset()
+        self.playerLocReset()
+        self.storeReset()
 
     def storeReset(self):
         self.store1 = Store()
@@ -73,72 +80,100 @@ class Game:
 
 
     def playerReset(self):
-        self.p1 = Player()
-        self.p1.playerNum = 1
-        self.p1.up = pygame.K_w
-        self.p1.down = pygame.K_s
-        self.p1.left = pygame.K_a
-        self.p1.right = pygame.K_d
-        self.p1.ready = pygame.K_1
-        self.p1.cashOut = pygame.K_2 
-        self.p1.color = (255,0,0)
-        self.p1.gr = pygame.Vector2(30,60)
-        self.p1.yl = pygame.Vector2(30,80)
-        self.p1.rd = pygame.Vector2(30,100)
+        self.Players = []
+        if Preferences.RED_PLAYER_TYPE == "Player":
+            self.p1 = Player()
+            self.p1.playerNum = 1
+            self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
+            self.p1.color = (255,0,0)
+            self.p1.gr = pygame.Vector2(30,60)
+            self.p1.yl = pygame.Vector2(30,80)
+            self.p1.rd = pygame.Vector2(30,100)
+            self.Players.append(self.p1)
 
-        self.p2 = Player()
-        self.p2.playerNum = 2
-        self.p2.up = pygame.K_t
-        self.p2.down = pygame.K_g
-        self.p2.left = pygame.K_f
-        self.p2.right = pygame.K_h
-        self.p2.ready = pygame.K_3
-        self.p2.cashOut = pygame.K_4
-        self.p2.color = (0,0,255)
-        self.p2.gr = pygame.Vector2(1150,60)
-        self.p2.yl = pygame.Vector2(1150,80)
-        self.p2.rd = pygame.Vector2(1150,100)
-        '''
-        self.p3 = Player()
-        self.p3.playerNum = 3
-        self.p3.up = pygame.K_i
-        self.p3.down = pygame.K_k
-        self.p3.left = pygame.K_j
-        self.p3.right = pygame.K_l
-        self.p3.ready = pygame.K_5
-        self.p3.cashOut = pygame.K_6
-        self.p3.color = (0,255,0)
-        self.p3.gr = pygame.Vector2(30,260)
-        self.p3.yl = pygame.Vector2(30,280)
-        self.p3.rd = pygame.Vector2(30,300)
+        if Preferences.BLUE_PLAYER_TYPE == "Player":
+            self.p2 = Player()
+            self.p2.playerNum = 2
+            self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
+            self.p2.color = (0,0,255)
+            self.p2.gr = pygame.Vector2(1150,60)
+            self.p2.yl = pygame.Vector2(1150,80)
+            self.p2.rd = pygame.Vector2(1150,100)
+            self.Players.append(self.p2)
         
-        self.p4 = Player()
-        self.p4.playerNum = 4
-        self.p4.up = pygame.K_UP
-        self.p4.down = pygame.K_DOWN
-        self.p4.left = pygame.K_LEFT
-        self.p4.right = pygame.K_RIGHT
-        self.p4.ready = pygame.K_7
-        self.p4.cashOut = pygame.K_8
-        self.p4.color = (0,255,255)
-        self.p4.gr = pygame.Vector2(1250,260)
-        self.p4.yl = pygame.Vector2(1250,280)
-        self.p4.rd = pygame.Vector2(1250,300)
-        '''
+        if Preferences.YELLOW_PLAYER_TYPE == "Player":
+            self.p3 = Player()
+            self.p3.playerNum = 3
+            self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
+            self.p3.color = (204,204,0)
+            self.p3.gr = pygame.Vector2(30,260)
+            self.p3.yl = pygame.Vector2(30,280)
+            self.p3.rd = pygame.Vector2(30,300)
+            self.Players.append(self.p3)
+
+        if Preferences.GREEN_PLAYER_TYPE == "Player":
+            self.p4 = Player()
+            self.p4.playerNum = 4
+            self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
+            self.p4.color = (0,255,0)
+            self.p4.gr = pygame.Vector2(1150,260)
+            self.p4.yl = pygame.Vector2(1150,280)
+            self.p4.rd = pygame.Vector2(1150,300)
+            self.Players.append(self.p4)
+        
         
 
-        #self.Players = [self.p1, self.p2, self.p3, self.p4]
-        self.Players = [self.p1,self.p2]
+        
 
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
 
     def playerLocReset(self):
-        self.p1.position = pygame.Vector2(500,500)
-        self.p2.position = pygame.Vector2(700,500)
-        #self.p3.position = pygame.Vector2(900,500)
-        #self.p4.position = pygame.Vector2(1100,500)
+        if Preferences.RED_PLAYER_TYPE == "Player":
+            self.p1.position = pygame.Vector2(450,600)
+        if Preferences.BLUE_PLAYER_TYPE == "Player":
+            self.p2.position = pygame.Vector2(550,600)
+        if Preferences.YELLOW_PLAYER_TYPE == "Player":
+            self.p3.position = pygame.Vector2(650,600)
+        if Preferences.GREEN_PLAYER_TYPE == "Player":
+            self.p4.position = pygame.Vector2(750,600)
+
+    def controllerAssignment(self, player, controlls):
+        self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
+        match controlls:
+            case "WASD":
+                player.up = pygame.K_w
+                player.down = pygame.K_s
+                player.left = pygame.K_a
+                player.right = pygame.K_d
+                player.ready = pygame.K_1
+                player.cashOut = pygame.K_2 
+            case "TFGH":
+                player.up = pygame.K_t
+                player.down = pygame.K_g
+                player.left = pygame.K_f
+                player.right = pygame.K_h
+                player.ready = pygame.K_3
+                player.cashOut = pygame.K_4
+            case "IJKL":
+                player.up = pygame.K_i
+                player.down = pygame.K_k
+                player.left = pygame.K_j
+                player.right = pygame.K_l
+                player.ready = pygame.K_5
+                player.cashOut = pygame.K_6
+            case "Arrows":
+                player.up = pygame.K_UP
+                player.down = pygame.K_DOWN
+                player.left = pygame.K_LEFT
+                player.right = pygame.K_RIGHT
+                player.ready = pygame.K_7
+                player.cashOut = pygame.K_8
+            case "Controller":
+                print("Error: Controller control not set up yet")
+            case "None":
+                print("Error: No Control Assigned")
 
     ##### Run Game Loop #####
     def run(self):
@@ -250,7 +285,7 @@ class Game:
             else:
                 risk = ''
                 for x in range(s.risk):
-                    risk = risk + '*'
+                    risk = risk + '* '
                 self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-60), "Risk: "+risk, (0, 0, 0))
                 reward = ''
                 for x in range(s.reward):
@@ -358,7 +393,7 @@ class Game:
                                 if len(s.players) != 0:
                                     #police roll
                                     if self.alarmedStores > 0:
-                                        if self.roll(1,(len(self.Stores)+9-self.alarmedStores),1,1) == -1:
+                                        if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
                                             self.resetTempScores()
                                             s.scoreText = "!POLICE!"
                                             s.status = -1

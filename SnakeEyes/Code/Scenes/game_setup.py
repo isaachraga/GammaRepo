@@ -7,7 +7,8 @@ from preferences import Preferences
 ########## GAME SETUP MENU ##########
 class GameSetup:
     ##### Initial Setup #####
-    def __init__(self, scene_manager):
+    def __init__(self, scene_manager, game):
+        self.game = game
         self.scene_manager = scene_manager
         self.screen = self.scene_manager.screen
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json")
@@ -310,6 +311,7 @@ class GameSetup:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Start Button
                     if event.ui_element == self.start_button:
+                        self.game.delayedInit()
                         self.scene_manager.switch_scene('game')
 
                     #Player Type Select
