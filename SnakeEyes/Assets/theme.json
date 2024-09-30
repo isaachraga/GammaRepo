@@ -3,24 +3,34 @@
     {
         "colours":
         {
-            "normal_bg":"#45494e",
-            "hovered_bg":"#35393e",
-            "disabled_bg":"#25292e",
-            "selected_bg":"#193754",
-            "dark_bg":"#15191e",
+            "normal_bg":"#8f8f8f",
             "normal_text":"#000000",
+            "normal_border": "#1f1f1f",
+
+            "hovered_bg":"#6e6e6e",
             "hovered_text":"#000000",
-            "selected_text":"#000000",
+            "hovered_border": "#1f1f1f",
+
+            "disabled_bg":"#25292e",
             "disabled_text":"#6d736f",
+            "disabled_border": "#1f1f1f",
+
+            "selected_bg":"#193754",
+            "selected_text":"#000000",
+            "selected_border": "#1f1f1f",
+
+            "active_bg": "#474747",
+            "active_text": "#b3b3b3",
+            "active_border": "#1f1f1f",
+
+            "dark_bg":"#15191e",
+            
+            "text_shadow": "#FFFFFF",
+
             "link_text": "#0000EE",
             "link_hover": "#2020FF",
             "link_selected": "#551A8B",
-            "text_shadow": "#FFFFFF",
-            "normal_border": "#DDDDDD",
-            "hovered_border": "#B0B0B0",
-            "disabled_border": "#808080",
-            "selected_border": "#8080B0",
-            "active_border": "#8080B0",
+            
             "filled_bar":"#f4251b",
             "unfilled_bar":"#CCCCCC"
         }
@@ -47,7 +57,9 @@
     {
         "misc":
         {
-
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "5",
+            "border_width": "1"
         },
         "font": {
             "name": "HighlandGothicFLF-Bold",

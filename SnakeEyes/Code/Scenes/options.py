@@ -99,7 +99,7 @@ class OptionsMenu:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Back Button
                     if event.ui_element == self.back_button:
-                        print("Back Button Clicked (Change Scene)")
+                        self.scene_manager.switch_scene('menu')
 
                     #Example Option Select
                     if event.ui_element == self.example_left_arrow:
@@ -128,21 +128,24 @@ class OptionsMenu:
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (50, 50, 50), rect)
+        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
+        rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
+        pygame.draw.rect(self.screen, (205, 205, 205), rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("OPTIONS")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (255, 255, 255))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (0, 0, 0))
 
         volume_slider_rect = self.volume_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "VOLUME", (255, 255, 255))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "VOLUME", (0, 0, 0))
 
         example_option_rect = self.example_option_label.get_relative_rect()
         example_option_text_rect = self.OPTIONS_FONT.get_rect("EXAMPLE OPTION")
         example_option_text_rect.center = (example_option_rect.centerx, example_option_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, example_option_text_rect, "EXAMPLE OPTION", (255, 255, 255))
+        self.OPTIONS_FONT.render_to(self.screen, example_option_text_rect, "EXAMPLE OPTION", (0, 0, 0))
 
         self.OPTIONS_FONT.render_to(self.screen, (0, 0), "Press S for scene selection", (0, 0, 0))
 

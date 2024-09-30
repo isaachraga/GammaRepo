@@ -484,7 +484,7 @@ class GameSetup:
         pygame.draw.line(self.screen, (0, 0, 0), (920, 0), (920, 720), 3)
         pygame.draw.line(self.screen, (0, 0, 0), (920, 360), (1280, 360), 3)
 
-        self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (0, 0), "Press T for Testing", (0, 0, 0))
         
         game_preferences_text = self.HEADER_FONT.get_rect("GAME PREFERENCES")
         game_preferences_text.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
@@ -626,7 +626,6 @@ class Tests:
         assert (Preferences.FINISHLINE_SCORE == 10)
         while (Preferences.FINISHLINE_SCORE < initial_score):
             self.simulate_gui_click(self.testedClass.finish_score_inc)
-
 
 
 
