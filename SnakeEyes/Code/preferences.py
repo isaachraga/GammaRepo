@@ -2,13 +2,13 @@
 #Edit to change default options
 
 class Preferences:
-    FINISHLINE_SCORE = 200
+    FINISHLINE_SCORE = 500
 
     #Player types: Player, CPU, or None
     RED_PLAYER_TYPE = "Player"
     BLUE_PLAYER_TYPE = "Player"
-    YELLOW_PLAYER_TYPE = "Player"
-    GREEN_PLAYER_TYPE = "Player"
+    YELLOW_PLAYER_TYPE = "None"
+    GREEN_PLAYER_TYPE = "None"
 
     #Player control schemes
     RED_CONTROLS = "WASD"
