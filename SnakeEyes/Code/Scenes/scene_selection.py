@@ -18,26 +18,24 @@ class SceneSelection:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_1:
-                    self.scene_manager.switch_scene('tutorial')
-                if event.key == pygame.K_2:
-                    self.scene_manager.switch_scene('options')
-                if event.key == pygame.K_3:
-                    self.scene_manager.switch_scene('menu')
-                if event.key == pygame.K_4:
-                    self.scene_manager.switch_scene('game')
-                if event.key == pygame.K_5:
-                    self.scene_manager.switch_scene('credits')
-                if event.key == pygame.K_6:
                     self.scene_manager.switch_scene('setup')
+                if event.key == pygame.K_2:
+                    self.scene_manager.switch_scene('tutorial')
+                if event.key == pygame.K_3:
+                    self.scene_manager.switch_scene('options')
+                if event.key == pygame.K_4:
+                    self.scene_manager.switch_scene('credits')  
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.switch_scene('menu')
+                    
                 
 
     def render(self):
         self.screen.fill((255, 255, 255))
         self.GAME_FONT.render_to(self.screen, (10, 70), "Tap a number key to change the scene", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 100), "1. Tutorial", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 130), "2. Options", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 160), "3. Main Menu", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Start Game", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 220), "5. Credits", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 250), "6. Game Setup", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 100), "1. Start New Game", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 130), "2. Tutorial", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 160), "3. Options", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Credits", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 220), "ESC. Title Screen", (0, 0, 0))
         pygame.display.flip()

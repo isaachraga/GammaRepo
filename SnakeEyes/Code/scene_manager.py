@@ -36,9 +36,9 @@ class SceneManager:
             'money': Money(self),
             'alarm': Alarm(self),
             'police': Police(self),
-            'setup': GameSetup(self)
+            #'setup': GameSetup(self)
         }
-
+        self.scenes['setup'] = GameSetup(self, self.scenes.get('game'))
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
         self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
         self.scenes['pause'] = Pause(self, self.scenes.get('game'))

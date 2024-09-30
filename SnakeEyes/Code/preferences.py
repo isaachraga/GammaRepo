@@ -13,5 +13,5 @@ class Preferences:
     #Player control schemes
     RED_CONTROLS = "WASD"
     BLUE_CONTROLS = "TFGH"
-    YELLOW_CONTROLS = "IJKL"
-    GREEN_CONTROLS = "Arrows"
+    YELLOW_CONTROLS = "None"
+    GREEN_CONTROLS = "None"
