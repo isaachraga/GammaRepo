@@ -16,11 +16,13 @@ from Scenes.tutorial_money import Money
 from Scenes.tutorial_alarm import Alarm
 from Scenes.tutorial_police import Police
 from Scenes.game_setup import GameSetup
+from preferences import Preferences
 
 
 
 class SceneManager:
     def __init__(self):
+        
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.scenes = {
             'tutorial': Tutorial(self),

@@ -17,6 +17,7 @@ from preferences import Preferences
 class Game:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
+        
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
     
