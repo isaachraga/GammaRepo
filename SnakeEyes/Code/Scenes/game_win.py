@@ -20,12 +20,22 @@ class GameWin:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.game.statusFlag = False
-                    self.scene_manager.switch_scene('game')
+                    self.scene_manager.switch_scene('menu')
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('pause')
 
     def render(self):
         self.screen.fill((255, 255, 255))
-        self.GAME_FONT.render_to(self.screen, (10, 130), "Game Winner", (0, 0, 0))
+        
+
+        winner = self.game.Players[0]
+        pCount = 1
+        for p in self.game.Players:
+            if p.score > winner.score:
+                winner = p
+            self.GAME_FONT.render_to(self.screen, (10+((pCount-1)*200), 170), "P"+str(pCount)+" Score: "+self.game.getScore(pCount), (0, 0, 0))
+            pCount = pCount + 1
+
+        self.GAME_FONT.render_to(self.screen, (10, 130), "Player "+str(p.playerNum)+ " Wins!    Score: "+self.game.getScore(p.playerNum), (0, 0, 0))
         pygame.display.flip()
