@@ -29,14 +29,12 @@ class SceneManager:
             'game': Game(self),
             'credits': Credits(self),
             'scene': SceneSelection(self),
-
             'goal': Goal(self),
             'how': HowToPlay(self),
             'money': Money(self),
             'alarm': Alarm(self),
-            'police': Police(self)
+            'police': Police(self),
             'setup': GameSetup(self)
-
         }
 
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
