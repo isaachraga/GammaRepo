@@ -10,6 +10,12 @@ from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
 from Scenes.tutorial import Tutorial
 from Scenes.credits import Credits
+from Scenes.tutorial_goal import Goal
+from Scenes.tutorial_how_to_play import HowToPlay
+from Scenes.tutorial_money import Money
+from Scenes.tutorial_alarm import Alarm
+from Scenes.tutorial_police import Police
+
 
 class SceneManager:
     def __init__(self):
@@ -20,7 +26,12 @@ class SceneManager:
             'menu': MainMenu(self),
             'game': Game(self),
             'credits': Credits(self),
-            'scene': SceneSelection(self)
+            'scene': SceneSelection(self),
+            'goal': Goal(self),
+            'how': HowToPlay(self),
+            'money': Money(self),
+            'alarm': Alarm(self),
+            'police': Police(self)
         }
 
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))

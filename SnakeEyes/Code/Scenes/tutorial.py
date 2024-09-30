@@ -18,6 +18,8 @@ class Tutorial:
                     self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.scene_manager.switch_scene('goal')
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
@@ -35,7 +37,13 @@ class Tutorial:
     def render(self):
         self.screen.fill((255, 255, 255))
         self.GAME_FONT.render_to(self.screen, (350, 10), "Tutorial", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 30), "Sticky Fingers description", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 40), "You and up to 4 players are placed in various shopping malls ", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 70), "and are tasked with choosing stores to rob in order to", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 100), "make the most amount of money, all while avoiding", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 130), "being caught by the police!", (0, 0, 0))
+
+        self.GAME_FONT.render_to(self.screen, (10, 190), "Press SPACE to learn how to play!", (0, 0, 0))
+        
         self.controlStart = 500
         self.GAME_FONT.render_to(self.screen, (10, self.controlStart), "Control Schemes: (press a/s or right/left to scroll)", (0, 0, 0))
         match self.controlSchemeNum:
