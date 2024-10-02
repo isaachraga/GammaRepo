@@ -197,6 +197,8 @@ class Game:
     ##### Render Game #####
     def render(self):
         self.screen.fill((255,255,255))
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
+        self.screen.blit(self.loadingScreen, (0,0))
 
         ##### STORE COLLIDERS #####
         for s in self.Stores:
