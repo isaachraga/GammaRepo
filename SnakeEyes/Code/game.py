@@ -6,11 +6,19 @@ from settings import Settings
 import math
 from preferences import Preferences
 
+
+### TO DO ###
+# Document Code
+# Implement Car Option
+# Remove cash out option
+
 ### BUGS ###
 # players cant move while touching a boundary
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
-#players can walk on buildings
+# players can walk on buildings
+# quit game and restart is bugged
+#
 
 
 ### FEATURE CHANGES ###
@@ -32,6 +40,7 @@ class Game:
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
+        ### Flags and General Game Vars ###
         self.dt = 0
         self.result = ""
         self.winScore = Preferences.FINISHLINE_SCORE
@@ -47,9 +56,6 @@ class Game:
         self.statusFlag = False
         self.alarmedStores = 0
         self.testing = False
-
-        
-
         self.moveSpeed = 300
 
         self.playerReset()
@@ -58,12 +64,14 @@ class Game:
 
         self.tests = Tests() #automated testing
 
+    ### Initializes the game after updated the preferences ###
     def delayedInit(self):
         self.winScore = Preferences.FINISHLINE_SCORE
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
 
+    ### Resets all stores to starting state ###
     def storeReset(self):
         self.store1 = Store()
         self.store1.storeNum = 1
@@ -91,7 +99,7 @@ class Game:
         for s in self.Stores:
             s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
 
-
+    ### Resets all players to starting state based on setup ###
     def playerReset(self):
         self.Players = []
         if Preferences.RED_PLAYER_TYPE == "Player":
@@ -133,15 +141,48 @@ class Game:
             self.p4.yl = pygame.Vector2(1210,280)
             self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
+
+        self.CarReset()
+
+    ### Resets all carts to starting state ###
+    def CarReset(self):
+        self.Cars = []
         
+        if Preferences.RED_PLAYER_TYPE == "Player":
+            self.c1 = Car()
+            self.c1.playerNum = self.p1.playerNum
+            self.c1.position = pygame.Vector2(110, 520)
+            self.Cars.append(self.c1)
+
+        if Preferences.BLUE_PLAYER_TYPE == "Player":
+            self.c2 = Car()
+            self.c2.playerNum = self.p2.playerNum
+            self.c2.position = pygame.Vector2(310, 520)
+            self.Cars.append(self.c2)
         
+        if Preferences.YELLOW_PLAYER_TYPE == "Player":
+            self.c3 = Car()
+            self.c3.playerNum = self.p3.playerNum
+            self.c3.position = pygame.Vector2(715, 520)
+            self.Cars.append(self.c3)
+        
+        if Preferences.GREEN_PLAYER_TYPE == "Player":
+            self.c4 = Car()
+            self.c4.playerNum = self.p4.playerNum
+            self.c4.position = pygame.Vector2(1020, 520)
+            self.Cars.append(self.c4)
+
+        for c in self.Cars:
+            c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
+
 
         
-
+    
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
 
+    ### Resets player location to starting point
     def playerLocReset(self):
         if Preferences.RED_PLAYER_TYPE == "Player":
             self.p1.position = pygame.Vector2(140,470)
@@ -152,6 +193,7 @@ class Game:
         if Preferences.GREEN_PLAYER_TYPE == "Player":
             self.p4.position = pygame.Vector2(1040,470)
 
+    ### Handles control assignment from game setup ###
     def controllerAssignment(self, player, controlls):
         self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
         match controlls:
@@ -190,7 +232,7 @@ class Game:
 
     ##### Run Game Loop #####
     def run(self):
-        self.update() # render game
+        self.update() 
         self.render()
 
     ##### Update Game #####
@@ -202,11 +244,16 @@ class Game:
 
     ##### Render Game #####
     def render(self):
+        ### Fill Background ###
         self.screen.fill((255,255,255))
+        ### Set Background Image ###
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.screen.blit(self.loadingScreen, (0,0))
 
+
+
         ##### DEBUG / STATUS #####
+
         #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
 
@@ -244,7 +291,7 @@ class Game:
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
-            
+
 
         ##### STORE COLLIDERS #####
         for s in self.Stores:
@@ -264,6 +311,21 @@ class Game:
                             if p in s.players:
                                 s.players.remove(p)
                                 p.status = 0
+
+        ##### CAR COLLIDERS #####
+        for c in self.Cars:
+            for p in self.Players:
+                if c.playerNum == p.playerNum:
+                    collide = c.collider.colliderect(p.collider)
+                    if collide and p.status != -1:
+                        c.ready = True
+                        self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
+                        self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
+                        
+                    else:
+                        c.ready = False
+                        
+                        
                             
                 
         ##### STORES #####
@@ -277,6 +339,10 @@ class Game:
         for p in self.Players:
             if p.status != -1:
                 pygame.draw.circle(self.screen, p.color , p.position, 20)
+
+        ##### CARS(TESTING) #####
+        #for c in self.Cars:
+            #pygame.draw.rect(self.screen, (255,255,255), (c.position.x, c.position.y, 60,150))
 
         
         self.status()
@@ -404,6 +470,7 @@ class Game:
 
             if event.type == pygame.KEYDOWN:
 
+                #### Used for Keyboard Emulation Testing ####
                 if self.testing:
                     if not self.police:
                         for p in self.Players:
@@ -497,11 +564,22 @@ class Game:
                 #Player Ready
                 for p in self.Players:
                     if event.key == p.ready:
+                        #### if at store, set to ready
                         for s in self.Stores:
                             if p in s.players:
                                 if p.status != -1:
                                     p.status = 1
+                        
+                        #if at car, cash out
+                        for c in self.Cars:
+                            if c.playerNum == p.playerNum:
+                                if c.ready:
+                                    p.score = p.score + p.tmpScore
+                                    p.tmpScore = 0
+                                    p.status = -1
+                                    self.roundCheck()
 
+                '''
                 #Player Cash Out
                 for p in self.Players:
                     if event.key == p.cashOut:
@@ -512,7 +590,7 @@ class Game:
                             if p in s.players:
                                 s.players.remove(p)
                         self.roundCheck()
-                
+                '''
                 
                 # Scene Selection
                 
@@ -703,6 +781,13 @@ class Player:
         self.ready = pygame.K_1
         self.cashOut = pygame.K_2
         #store status locations for programatic access
+
+class Car:
+    def __init__(self):
+        self.playerNum = 0
+        self.position = pygame.Vector2(0, 0)
+        self.collider = pygame.Rect(self.position.x, self.position.y, 60,150)
+        self.ready = False
 
 ########## STORE ##########
 class Store:
