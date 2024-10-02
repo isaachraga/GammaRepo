@@ -9,8 +9,7 @@ from preferences import Preferences
 
 ### TO DO ###
 # Document Code
-# Implement Car Option
-# Remove cash out option
+
 
 ### BUGS ###
 # players cant move while touching a boundary
@@ -22,7 +21,6 @@ from preferences import Preferences
 
 
 ### FEATURE CHANGES ###
-# remove cash out button
 # attach vault score to vehicle
 
 
@@ -260,22 +258,22 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
         
         if self.police:
-                self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to continue...", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
         else:
             if self.ready:
-                    self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to try your luck...", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to try your luck...", (255, 255, 255))
             else:
-                self.GAME_FONT.render_to(self.screen, (350, 380), "Waiting for Players to Select a Store", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
                 
 
         if self.alarmedStores > 0:
             if not self.police:
                 if self.allAlarms:
-                    self.GAME_FONT.render_to(self.screen, (350, 460), "All stores alarmed, time to leave the mall...", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "All stores alarmed, time to leave the mall...", (255, 255, 255))
                 else:
-                    self.GAME_FONT.render_to(self.screen, (350, 460), "Police are on their way!", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "Police are on their way!", (255, 255, 255))
             else: 
-                self.GAME_FONT.render_to(self.screen, (200, 460), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (200, 430), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
         #self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
 
@@ -300,10 +298,10 @@ class Game:
                     collide = s.collider.colliderect(p.collider)
                     if s.status != -1:
                         if collide:
-                            s.color = (0, 255, 0)
+                            #s.color = (0, 255, 0)
                             if p not in s.players:
                                 s.players.append(p)
-                            #self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+                            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y+50), "Ready?", (255,255,255))
                             
                         else:
                             if len(s.players) == 0:
@@ -331,7 +329,7 @@ class Game:
         ##### STORES #####
 
         for s in self.Stores:
-            pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
+            #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
             #needs to clear each round
             self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
 
@@ -498,6 +496,11 @@ class Game:
 
                 #dice roller
                 if event.key == pygame.K_SPACE:
+                    #clear all store text
+                    for s in self.Stores:
+                        if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                            s.scoreText = ''
+
                     self.roundCheck()
                     #NEED LAST ROUND
                     if self.police:
