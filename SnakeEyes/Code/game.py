@@ -1,4 +1,5 @@
 import pygame
+import pygame.locals
 import pygame.freetype  # Import the freetype module.
 import random
 from settings import Settings
@@ -18,6 +19,7 @@ class Game:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
         
+
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
     
@@ -38,12 +40,17 @@ class Game:
         self.controllers = []
         self.statusFlag = False
         self.alarmedStores = 0
+        self.testing = False
+
+        
 
         self.moveSpeed = 300
 
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+
+        self.tests = Tests() #automated testing
 
     def delayedInit(self):
         self.winScore = Preferences.FINISHLINE_SCORE
@@ -330,6 +337,7 @@ class Game:
         keys = pygame.key.get_pressed()
         
         
+        
         pygame.joystick.init()  #Initialize joystick module
         
 
@@ -337,6 +345,7 @@ class Game:
 
 
         ##### Player Controls #####
+        
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
@@ -371,7 +380,39 @@ class Game:
                 self.scene_manager.quit()
                 self.running = False
 
+            ##### Player Controls #####
+        
+            
+
+                
+
             if event.type == pygame.KEYDOWN:
+
+                if self.testing:
+                    if not self.police:
+                        for p in self.Players:
+                            if p.status != -1:
+                                tempX=0
+                                tempY=0
+                                if event.key==p.up:
+                                    tempY -= self.moveSpeed
+                                if event.key==p.down:
+                                    tempY += self.moveSpeed
+                                if event.key==p.left:
+                                    tempX -= self.moveSpeed
+                                if event.key==p.right:
+                                    tempX += self.moveSpeed
+
+                                
+
+                                if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                                    if tempX != 0 and tempY != 0:
+                                        tempX = tempX*(math.sqrt(2)/2)
+                                        tempY = tempY*(math.sqrt(2)/2)
+                                    p.position.x += tempX * dt
+                                    p.position.y += tempY * dt
+                                    p.collider.center = p.position
+
                 #dice roller
                 if event.key == pygame.K_SPACE:
                     self.roundCheck()
@@ -465,7 +506,12 @@ class Game:
 
                 if shift_held: 
                     if event.key == pygame.K_s:
-                        self.scene_manager.switch_scene("pause")
+                        if not self.testing:
+                            self.scene_manager.switch_scene("pause")
+                    if event.key == pygame.K_y:
+                        self.tests.run_tests(self)
+                        
+                        
 
             if event.type == pygame.JOYDEVICEADDED:
                 controller = pygame.joystick.Joystick(event.device_index)
@@ -657,3 +703,105 @@ class Store:
         self.reward = 0
         self.collider = pygame.Rect(self.position.x, self.position.y, 20,20)
         self.players = []
+
+########## AUTOMATED TESTING ##########
+class Tests:
+    
+    def run_tests(self, testedClass):
+        self.testedClass = testedClass
+        self.testedClass.testing = True
+        print("RUNNING TESTS:")
+        print("- Testing Keyboard Inputs WASD")
+        self.test_keyboard_inputs_wasd()
+        print("- Testing Keyboard Inputs TFGH")
+        self.test_keyboard_inputs_tfgh()
+        print("- Testing Keyboard Inputs IJKL")
+        self.test_keyboard_inputs_ijkl()
+        print("- Testing Keyboard Inputs ARROWS")
+        self.test_keyboard_inputs_arrows()
+        print("All Tests Passed!")
+        self.testedClass.testing = False
+
+    def test_keyboard_inputs_wasd(self):
+        #Testing a
+        self.test_keyboard_input_left(pygame.K_a, "WASD")
+        #Testing d
+        self.test_keyboard_input_right(pygame.K_d, "WASD")
+        #Testing w
+        self.test_keyboard_input_up(pygame.K_w, "WASD")
+        #Testing s
+        self.test_keyboard_input_down(pygame.K_s, "WASD")
+    
+    def test_keyboard_inputs_tfgh(self):
+        #Testing a
+        self.test_keyboard_input_left(pygame.K_f, "TFGH")
+        #Testing d
+        self.test_keyboard_input_right(pygame.K_h, "TFGH")
+        #Testing w
+        self.test_keyboard_input_up(pygame.K_t, "TFGH")
+        #Testing s
+        self.test_keyboard_input_down(pygame.K_g, "TFGH")
+    
+    def test_keyboard_inputs_ijkl(self):
+        #Testing a
+        self.test_keyboard_input_left(pygame.K_j, "IJKL")
+        #Testing d
+        self.test_keyboard_input_right(pygame.K_l, "IJKL")
+        #Testing w
+        self.test_keyboard_input_up(pygame.K_i, "IJKL")
+        #Testing s
+        self.test_keyboard_input_down(pygame.K_k, "IJKL")
+    
+    def test_keyboard_inputs_arrows(self):
+        #Testing a
+        self.test_keyboard_input_left(pygame.K_LEFT, "Arrows")
+        #Testing d
+        self.test_keyboard_input_right(pygame.K_RIGHT, "Arrows")
+        #Testing w
+        self.test_keyboard_input_up(pygame.K_UP, "Arrows")
+        #Testing s
+        self.test_keyboard_input_down(pygame.K_DOWN, "Arrows")
+
+        
+
+    def test_keyboard_input_left(self, key, controller):
+        self.testedClass.controllerAssignment(self.testedClass.Players[0], controller)
+        location = self.testedClass.Players[0].position.x
+        newevent = pygame.event.Event(pygame.KEYDOWN, key=key, mod=pygame.locals.KMOD_NONE)  
+        pygame.event.post(newevent)  
+        self.testedClass.run() 
+        assert(self.testedClass.Players[0].position.x < location)
+        self.testedClass.playerReset()
+        self.testedClass.playerLocReset()
+        
+    def test_keyboard_input_right(self, key, controller):
+        self.testedClass.controllerAssignment(self.testedClass.Players[0], controller)
+        location = self.testedClass.Players[0].position.x
+        newevent = pygame.event.Event(pygame.KEYDOWN, key=key, mod=pygame.locals.KMOD_NONE)  
+        pygame.event.post(newevent)  
+        self.testedClass.run() 
+        
+        assert(self.testedClass.Players[0].position.x > location)
+        self.testedClass.playerReset()
+        self.testedClass.playerLocReset()
+
+    def test_keyboard_input_up(self, key, controller):
+        self.testedClass.controllerAssignment(self.testedClass.Players[0], controller)
+        location = self.testedClass.Players[0].position.y
+        newevent = pygame.event.Event(pygame.KEYDOWN, key=key, mod=pygame.locals.KMOD_NONE)  
+        pygame.event.post(newevent)  
+        self.testedClass.run() 
+        assert(self.testedClass.Players[0].position.y < location)
+        self.testedClass.playerReset()
+        self.testedClass.playerLocReset()
+
+    def test_keyboard_input_down(self, key, controller):
+        self.testedClass.controllerAssignment(self.testedClass.Players[0], controller)
+        location = self.testedClass.Players[0].position.y
+        newevent = pygame.event.Event(pygame.KEYDOWN, key=key, mod=pygame.locals.KMOD_NONE)  
+        pygame.event.post(newevent)  
+        self.testedClass.run() 
+        assert(self.testedClass.Players[0].position.y > location)
+        self.testedClass.playerReset()
+        self.testedClass.playerLocReset()
+            
