@@ -9,14 +9,19 @@ from preferences import Preferences
 
 ### TO DO ###
 # Document Code
-# Implement Car Option
-# Remove cash out option
+
 
 ### BUGS ###
 # players cant move while touching a boundary
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
 # players can walk on buildings
+# quit game and restart is bugged
+#
+
+
+### FEATURE CHANGES ###
+# attach vault score to vehicle
 
 
 ########## GAME ##########
@@ -48,6 +53,7 @@ class Game:
         self.testing = False
 
         self.moveSpeed = 300
+        self.roundSkipped = False
 
         self.playerReset()
         self.playerLocReset()
@@ -212,22 +218,22 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
         
         if self.police:
-                self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to continue...", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
         else:
             if self.ready:
-                    self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to try your luck...", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to try your luck...", (255, 255, 255))
             else:
-                self.GAME_FONT.render_to(self.screen, (350, 380), "Waiting for Players to Select a Store", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
                 
 
         if self.alarmedStores > 0:
             if not self.police:
                 if self.allAlarms:
-                    self.GAME_FONT.render_to(self.screen, (350, 460), "All stores alarmed, time to leave the mall...", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "All stores alarmed, time to leave the mall...", (255, 255, 255))
                 else:
-                    self.GAME_FONT.render_to(self.screen, (350, 460), "Police are on their way!", (255, 255, 255))
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "Police are on their way!", (255, 255, 255))
             else: 
-                self.GAME_FONT.render_to(self.screen, (200, 460), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (200, 430), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
         #self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
 
@@ -246,16 +252,18 @@ class Game:
 
 
         ##### STORE COLLIDERS #####
+        ### checks for any players colliding with the store col, adds them to the store if they're not in yet
         for s in self.Stores:
             for p in self.Players:
                 if p.status != -1:
                     collide = s.collider.colliderect(p.collider)
                     if s.status != -1:
                         if collide:
-                            s.color = (0, 255, 0)
                             if p not in s.players:
                                 s.players.append(p)
+
                             # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+
 
                         else:
                             if len(s.players) == 0:
@@ -264,11 +272,30 @@ class Game:
                                 s.players.remove(p)
                                 p.status = 0
 
+
+        ##### CAR COLLIDERS #####
+        ### check for specified player's colision, sets option for cash out if collision is true
+        for c in self.Cars:
+            for p in self.Players:
+                if c.playerNum == p.playerNum:
+                    collide = c.collider.colliderect(p.collider)
+                    if collide and p.status != -1:
+                        c.ready = True
+                        self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
+                        self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
+                        
+                    else:
+                        c.ready = False
+                        
+                        
+                            
+                
         ##### STORES #####
 
         for s in self.Stores:
-            pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            # needs to clear each round
+            #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
+            #needs to clear each round
+
             self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
 
         ##### PLAYERS #####
@@ -276,47 +303,17 @@ class Game:
             if p.status != -1:
                 pygame.draw.circle(self.screen, p.color , p.position, 20)
 
+
+
+        # runs the status updates for all dynamic objects
+
         self.status()
 
-        ##### DEBUG / STATUS #####
-        # self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
-
-        if self.police:
-            self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to continue...", (0, 0, 0))
-        else:
-            if self.ready:
-                self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to try your luck...", (0, 0, 0))
-            else:
-                self.GAME_FONT.render_to(self.screen, (350, 600), "Waiting for Players to Select a Store", (0, 0, 0))
-
-        if self.alarmedStores > 0:
-            if not self.police:
-                if self.allAlarms:
-                    self.GAME_FONT.render_to(self.screen, (350, 180), "All stores alarmed, time to leave the mall...", (0, 0, 0))
-                else:
-                    self.GAME_FONT.render_to(self.screen, (350, 180), "Police are on their way!", (0, 0, 0))
-            else: 
-                self.GAME_FONT.render_to(self.screen, (200, 180), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
-        if self.lastRound:
-            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
+        
 
         pygame.display.flip()
 
+    ### checks ready status for all players
     def readyCheck(self):
         count = 0
         for p in self.Players:
@@ -327,7 +324,8 @@ class Game:
             self.ready = False
         else:
             self.ready = True
-
+    
+    ### displays the status of players and stores
     def status(self):
         for s in self.Stores:
             # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
@@ -364,6 +362,9 @@ class Game:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
 
     ##### Game Functions #####
+
+
+    ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
             self.scene_manager.switch_scene('status')
@@ -372,7 +373,11 @@ class Game:
 
         keys = pygame.key.get_pressed()
 
+
         # pygame.joystick.init()  #Initialize joystick module
+
+        ## need boundaries set up more precisely 
+
 
         ## need boundaries
 
@@ -402,15 +407,16 @@ class Game:
 
         for event in pygame.event.get():
 
+            ### handles application exit ###
+
             if event.type == pygame.QUIT:   
                 self.scene_manager.quit()
                 self.running = False
 
-            ##### Player Controls #####
 
             if event.type == pygame.KEYDOWN:
 
-                #### Used for Keyboard Emulation Testing ####
+                #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
                 if self.testing:
                     if not self.police:
                         for p in self.Players:
@@ -436,13 +442,22 @@ class Game:
 
                 # dice roller
                 if event.key == pygame.K_SPACE:
+
+                    #clear all store text
+                    for s in self.Stores:
+                        if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                            s.scoreText = ''
+
                     self.roundCheck()
-                    # NEED LAST ROUND
+
+                    
+                    ### handles if police have been triggered
                     if self.police:
                         if self.lastRound:
                             self.gameOver()
                         else:
                             self.resetRound()
+                    ### handles if all alarms were set off
                     elif self.allAlarms:
                         if self.lastRound:
                             self.gameOver()
@@ -453,8 +468,9 @@ class Game:
 
                             for s in self.Stores:
                                 if len(s.players) != 0:
-                                    # police roll
-                                    if self.alarmedStores > 0:
+
+                                    #police roll if a store is alarmed
+                                    if self.alarmedStores > 0 and self.roundSkipped:
                                         if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
                                             self.resetTempScores()
                                             s.scoreText = "!POLICE!"
@@ -494,7 +510,14 @@ class Game:
                     if count == len(self.Stores):
                         self.allAlarms = True
 
-                # Player Ready
+
+                    # delays police roll from happening until the first alarmed round has finished
+                    if self.alarmedStores > 0 and not self.roundSkipped:
+                        self.roundSkipped = True
+
+                                    
+
+                #Player Ready
                 for p in self.Players:
                     if event.key == p.ready:
                         #### if at store, set to ready
@@ -530,6 +553,7 @@ class Game:
             #     controller = pygame.joystick.Joystick(event.device_index)
             #     self.controllers.append(controller)
 
+    ### handles rolls, num 1 is the lowest number, num2 is highest number, risk is the level of risk mod applied, reward is the level of reward mod applied
     def roll(self, num1, num2, riskMod, rewardMod):
         self.roll1 = random.randint(num1, num2-(riskMod-1))
         self.roll2 = random.randint(num1, num2-(riskMod-1))
@@ -538,6 +562,7 @@ class Game:
         else: 
             return (self.roll1+self.roll2)*self.rewardScale(rewardMod)
 
+    ### handles the reward scaling
     def rewardScale(self, rewardMod):
         match rewardMod:
             case 1:
@@ -551,6 +576,7 @@ class Game:
             case 5:
                 return 5.0
 
+
     def assignStoreStats(self, store):
 
         store.risk = random.randint(1,5)
@@ -561,6 +587,8 @@ class Game:
         elif store.reward > 5:
             store.reward = 5
 
+        
+    ### looks through players to see if the round is over and how to handle it ###
     def roundCheck(self):
 
         count = 0
@@ -581,7 +609,12 @@ class Game:
                 count = 0
                 self.gameOver()
             self.statusFlag = True
-
+            
+            
+    
+        
+        
+    ### handles snake eyes roll ##
     def snakeEyes(self):
 
         for p in self.Players:
@@ -597,6 +630,7 @@ class Game:
         for p in self.Players:
             p.tmpScore = 0
 
+    ### get's num of active players
     def activePlayers(self):
         count = 0
         for p in self.Players:
@@ -604,6 +638,7 @@ class Game:
                 count = count +1
 
         return count
+
 
     def lastRoundCheck(self):
         if not self.lastRound:
@@ -640,6 +675,7 @@ class Game:
         self.resetTempScores()
         self.playerLocReset()
         self.storeReset()
+        self.roundSkipped = False
         self.scene_manager.switch_scene('status')
 
     def resetGame(self):
@@ -656,6 +692,7 @@ class Game:
         self.storeReset()
         self.gameOverFlag = False
         self.statusFlag = True
+        self.roundSkipped = False
         self.scene_manager.switch_scene('status')
 
     def getScore(self, playerNum):
