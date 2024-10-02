@@ -13,6 +13,11 @@ from preferences import Preferences
 #players can walk on buildings
 
 
+### FEATURE CHANGES ###
+# remove cash out button
+# attach vault score to vehicle
+
+
 
 
 ########## GAME ##########
@@ -94,9 +99,9 @@ class Game:
             self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
             self.p1.color = (255,0,0)
-            self.p1.gr = pygame.Vector2(30,60)
-            self.p1.yl = pygame.Vector2(30,80)
-            self.p1.rd = pygame.Vector2(30,100)
+            self.p1.gr = pygame.Vector2(25,60)
+            self.p1.yl = pygame.Vector2(25,80)
+            self.p1.rd = pygame.Vector2(25,100)
             self.Players.append(self.p1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
@@ -104,9 +109,9 @@ class Game:
             self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
             self.p2.color = (0,0,255)
-            self.p2.gr = pygame.Vector2(1150,60)
-            self.p2.yl = pygame.Vector2(1150,80)
-            self.p2.rd = pygame.Vector2(1150,100)
+            self.p2.gr = pygame.Vector2(1210,60)
+            self.p2.yl = pygame.Vector2(1210,80)
+            self.p2.rd = pygame.Vector2(1210,100)
             self.Players.append(self.p2)
         
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
@@ -114,9 +119,9 @@ class Game:
             self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
             self.p3.color = (204,204,0)
-            self.p3.gr = pygame.Vector2(30,260)
-            self.p3.yl = pygame.Vector2(30,280)
-            self.p3.rd = pygame.Vector2(30,300)
+            self.p3.gr = pygame.Vector2(25,260)
+            self.p3.yl = pygame.Vector2(25,280)
+            self.p3.rd = pygame.Vector2(25,300)
             self.Players.append(self.p3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
@@ -124,9 +129,9 @@ class Game:
             self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
             self.p4.color = (0,255,0)
-            self.p4.gr = pygame.Vector2(1150,260)
-            self.p4.yl = pygame.Vector2(1150,280)
-            self.p4.rd = pygame.Vector2(1150,300)
+            self.p4.gr = pygame.Vector2(1210,260)
+            self.p4.yl = pygame.Vector2(1210,280)
+            self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
         
         
@@ -139,13 +144,13 @@ class Game:
 
     def playerLocReset(self):
         if Preferences.RED_PLAYER_TYPE == "Player":
-            self.p1.position = pygame.Vector2(450,600)
+            self.p1.position = pygame.Vector2(140,470)
         if Preferences.BLUE_PLAYER_TYPE == "Player":
-            self.p2.position = pygame.Vector2(550,600)
+            self.p2.position = pygame.Vector2(340,470)
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
-            self.p3.position = pygame.Vector2(650,600)
+            self.p3.position = pygame.Vector2(750,470)
         if Preferences.GREEN_PLAYER_TYPE == "Player":
-            self.p4.position = pygame.Vector2(750,600)
+            self.p4.position = pygame.Vector2(1040,470)
 
     def controllerAssignment(self, player, controlls):
         self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
@@ -201,6 +206,46 @@ class Game:
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.screen.blit(self.loadingScreen, (0,0))
 
+        ##### DEBUG / STATUS #####
+        #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
+
+        #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
+        
+        if self.police:
+                self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to continue...", (255, 255, 255))
+        else:
+            if self.ready:
+                    self.GAME_FONT.render_to(self.screen, (350, 380), "Press SPACE to try your luck...", (255, 255, 255))
+            else:
+                self.GAME_FONT.render_to(self.screen, (350, 380), "Waiting for Players to Select a Store", (255, 255, 255))
+                
+
+        if self.alarmedStores > 0:
+            if not self.police:
+                if self.allAlarms:
+                    self.GAME_FONT.render_to(self.screen, (350, 460), "All stores alarmed, time to leave the mall...", (255, 255, 255))
+                else:
+                    self.GAME_FONT.render_to(self.screen, (350, 460), "Police are on their way!", (255, 255, 255))
+            else: 
+                self.GAME_FONT.render_to(self.screen, (200, 460), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
+        #self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
+
+        #self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore), (0, 0, 0))
+        
+        #self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
+        
+        #self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
+        if self.lastRound:
+            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
+
+            
+
         ##### STORE COLLIDERS #####
         for s in self.Stores:
             for p in self.Players:
@@ -237,43 +282,7 @@ class Game:
         self.status()
         
         
-        ##### DEBUG / STATUS #####
-        #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
-
-        #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
         
-        if self.police:
-                self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to continue...", (0, 0, 0))
-        else:
-            if self.ready:
-                    self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to try your luck...", (0, 0, 0))
-            else:
-                self.GAME_FONT.render_to(self.screen, (350, 600), "Waiting for Players to Select a Store", (0, 0, 0))
-                
-
-        if self.alarmedStores > 0:
-            if not self.police:
-                if self.allAlarms:
-                    self.GAME_FONT.render_to(self.screen, (350, 180), "All stores alarmed, time to leave the mall...", (0, 0, 0))
-                else:
-                    self.GAME_FONT.render_to(self.screen, (350, 180), "Police are on their way!", (0, 0, 0))
-            else: 
-                self.GAME_FONT.render_to(self.screen, (200, 180), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
-
-        #self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore), (0, 0, 0))
-        
-        #self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
-        #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
-        
-        #self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
-        if self.lastRound:
-            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
         
         pygame.display.flip()
