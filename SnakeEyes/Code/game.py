@@ -17,26 +17,16 @@ from preferences import Preferences
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
 # players can walk on buildings
-# quit game and restart is bugged
-#
-
-
-### FEATURE CHANGES ###
-# remove cash out button
-# attach vault score to vehicle
-
-
 
 
 ########## GAME ##########
 class Game:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
-        
 
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
-    
+
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
@@ -56,6 +46,7 @@ class Game:
         self.statusFlag = False
         self.alarmedStores = 0
         self.testing = False
+
         self.moveSpeed = 300
 
         self.playerReset()
@@ -87,19 +78,17 @@ class Game:
         self.store3.storeNum = 3
         self.store3.position = pygame.Vector2(750, 310)
         self.assignStoreStats(self.store3)
-        
+
         self.store4 = Store()
         self.store4.storeNum = 4
         self.store4.position = pygame.Vector2(1000, 310)
         self.assignStoreStats(self.store4)
-        
 
         self.Stores = [self.store1,self.store2,self.store3, self.store4]
 
         for s in self.Stores:
             s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
 
-    ### Resets all players to starting state based on setup ###
     def playerReset(self):
         self.Players = []
         if Preferences.RED_PLAYER_TYPE == "Player":
@@ -121,7 +110,7 @@ class Game:
             self.p2.yl = pygame.Vector2(1210,80)
             self.p2.rd = pygame.Vector2(1210,100)
             self.Players.append(self.p2)
-        
+
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
             self.p3 = Player()
             self.p3.playerNum = 3
@@ -142,42 +131,6 @@ class Game:
             self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
 
-        self.CarReset()
-
-    ### Resets all carts to starting state ###
-    def CarReset(self):
-        self.Cars = []
-        
-        if Preferences.RED_PLAYER_TYPE == "Player":
-            self.c1 = Car()
-            self.c1.playerNum = self.p1.playerNum
-            self.c1.position = pygame.Vector2(110, 520)
-            self.Cars.append(self.c1)
-
-        if Preferences.BLUE_PLAYER_TYPE == "Player":
-            self.c2 = Car()
-            self.c2.playerNum = self.p2.playerNum
-            self.c2.position = pygame.Vector2(310, 520)
-            self.Cars.append(self.c2)
-        
-        if Preferences.YELLOW_PLAYER_TYPE == "Player":
-            self.c3 = Car()
-            self.c3.playerNum = self.p3.playerNum
-            self.c3.position = pygame.Vector2(715, 520)
-            self.Cars.append(self.c3)
-        
-        if Preferences.GREEN_PLAYER_TYPE == "Player":
-            self.c4 = Car()
-            self.c4.playerNum = self.p4.playerNum
-            self.c4.position = pygame.Vector2(1020, 520)
-            self.Cars.append(self.c4)
-
-        for c in self.Cars:
-            c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
-
-
-        
-    
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
@@ -203,7 +156,7 @@ class Game:
                 player.left = pygame.K_a
                 player.right = pygame.K_d
                 player.ready = pygame.K_1
-                player.cashOut = pygame.K_2 
+                player.cashOut = pygame.K_2
             case "TFGH":
                 player.up = pygame.K_t
                 player.down = pygame.K_g
@@ -240,7 +193,6 @@ class Game:
         self.inputManager()
         self.lastRoundCheck()
         self.readyCheck()
-        
 
     ##### Render Game #####
     def render(self):
@@ -303,8 +255,8 @@ class Game:
                             s.color = (0, 255, 0)
                             if p not in s.players:
                                 s.players.append(p)
-                            #self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
-                            
+                            # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+
                         else:
                             if len(s.players) == 0:
                                 s.color = (0, 0, 255)
@@ -312,27 +264,11 @@ class Game:
                                 s.players.remove(p)
                                 p.status = 0
 
-        ##### CAR COLLIDERS #####
-        for c in self.Cars:
-            for p in self.Players:
-                if c.playerNum == p.playerNum:
-                    collide = c.collider.colliderect(p.collider)
-                    if collide and p.status != -1:
-                        c.ready = True
-                        self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
-                        self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
-                        
-                    else:
-                        c.ready = False
-                        
-                        
-                            
-                
         ##### STORES #####
 
         for s in self.Stores:
             pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            #needs to clear each round
+            # needs to clear each round
             self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
 
         ##### PLAYERS #####
@@ -340,35 +276,61 @@ class Game:
             if p.status != -1:
                 pygame.draw.circle(self.screen, p.color , p.position, 20)
 
-        ##### CARS(TESTING) #####
-        #for c in self.Cars:
-            #pygame.draw.rect(self.screen, (255,255,255), (c.position.x, c.position.y, 60,150))
-
-        
         self.status()
-        
-        
-        
 
-        
+        ##### DEBUG / STATUS #####
+        # self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
+
+        # self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
+
+        if self.police:
+            self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to continue...", (0, 0, 0))
+        else:
+            if self.ready:
+                self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to try your luck...", (0, 0, 0))
+            else:
+                self.GAME_FONT.render_to(self.screen, (350, 600), "Waiting for Players to Select a Store", (0, 0, 0))
+
+        if self.alarmedStores > 0:
+            if not self.police:
+                if self.allAlarms:
+                    self.GAME_FONT.render_to(self.screen, (350, 180), "All stores alarmed, time to leave the mall...", (0, 0, 0))
+                else:
+                    self.GAME_FONT.render_to(self.screen, (350, 180), "Police are on their way!", (0, 0, 0))
+            else: 
+                self.GAME_FONT.render_to(self.screen, (200, 180), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
+
+        # self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore), (0, 0, 0))
+
+        # self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
+        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
+
+        # self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
+        if self.lastRound:
+            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
+
         pygame.display.flip()
-
 
     def readyCheck(self):
         count = 0
         for p in self.Players:
             if p.status == 0:
                 count = count + 1
-        
+
         if count != 0:
             self.ready = False
         else:
             self.ready = True
-           
-        
+
     def status(self):
         for s in self.Stores:
-            #self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
+            # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
             if s.status == -1:
                 s.color = (255,0,0)
             else:
@@ -380,7 +342,6 @@ class Game:
                 for x in range(s.reward):
                     reward = reward + '$'
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: "+reward, (255, 255, 255))
-                
 
         for p in self.Players:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (0, 0, 0))
@@ -390,7 +351,6 @@ class Game:
             if p.status != -1:
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (0, 0, 0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (0, 0, 0))
-                
 
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
@@ -403,11 +363,6 @@ class Game:
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
 
-        
-
-        
-        
-
     ##### Game Functions #####
     def inputManager(self):
         if self.statusFlag:
@@ -415,19 +370,14 @@ class Game:
 
         dt = self.clock.tick(60) / 1000
 
-        
         keys = pygame.key.get_pressed()
-        
-        
-        
-        pygame.joystick.init()  #Initialize joystick module
-        
+
+        # pygame.joystick.init()  #Initialize joystick module
 
         ## need boundaries
 
-
         ##### Player Controls #####
-        
+
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
@@ -442,8 +392,6 @@ class Game:
                     if keys[p.right]:
                         tempX += self.moveSpeed
 
-                    
-
                     if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
                         if tempX != 0 and tempY != 0:
                             tempX = tempX*(math.sqrt(2)/2)
@@ -452,21 +400,13 @@ class Game:
                         p.position.y += tempY * dt
                         p.collider.center = p.position
 
-                
-
-        
-
         for event in pygame.event.get():
-            
+
             if event.type == pygame.QUIT:   
                 self.scene_manager.quit()
                 self.running = False
 
             ##### Player Controls #####
-        
-            
-
-                
 
             if event.type == pygame.KEYDOWN:
 
@@ -486,8 +426,6 @@ class Game:
                                 if event.key==p.right:
                                     tempX += self.moveSpeed
 
-                                
-
                                 if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
                                     if tempX != 0 and tempY != 0:
                                         tempX = tempX*(math.sqrt(2)/2)
@@ -496,10 +434,10 @@ class Game:
                                     p.position.y += tempY * dt
                                     p.collider.center = p.position
 
-                #dice roller
+                # dice roller
                 if event.key == pygame.K_SPACE:
                     self.roundCheck()
-                    #NEED LAST ROUND
+                    # NEED LAST ROUND
                     if self.police:
                         if self.lastRound:
                             self.gameOver()
@@ -512,10 +450,10 @@ class Game:
                             self.resetRound()
                     else: 
                         if self.ready:
-                            
+
                             for s in self.Stores:
                                 if len(s.players) != 0:
-                                    #police roll
+                                    # police roll
                                     if self.alarmedStores > 0:
                                         if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
                                             self.resetTempScores()
@@ -523,23 +461,20 @@ class Game:
                                             s.status = -1
                                             self.police = True
                                             self.snakeEyes()
-                                            
-                                            
-                                            
-                                                    
+
                                     if not self.police:
-                                        #roll for value/alarm
+                                        # roll for value/alarm
                                         self.award = self.roll(1,9,s.risk,s.reward) 
 
                                         if self.award == -1:
                                             s.scoreText = "!ALARMED!"
                                             self.alarmedStores = self.alarmedStores + 1
                                             s.status=-1
-                                            
+
                                             for p in s.players:
                                                 p.status = 0
                                                 p.tmpScore = 0
-                                                
+
                                             s.players.clear()
                                         else:
                                             self.result = ""
@@ -548,20 +483,18 @@ class Game:
                                                     p.tmpScore = p.tmpScore+self.award
                                                     p.status = 0
                                                     s.scoreText = "+"+str(self.award)
-                    #check for all alarms
+                    # check for all alarms
                     count = 0
                     for s in self.Stores:
                         if s.status == -1:
                             count = count + 1
-                    
+
                     self.alarmedStores = count
-                    
+
                     if count == len(self.Stores):
                         self.allAlarms = True
 
-                                    
-
-                #Player Ready
+                # Player Ready
                 for p in self.Players:
                     if event.key == p.ready:
                         #### if at store, set to ready
@@ -569,18 +502,8 @@ class Game:
                             if p in s.players:
                                 if p.status != -1:
                                     p.status = 1
-                        
-                        #if at car, cash out
-                        for c in self.Cars:
-                            if c.playerNum == p.playerNum:
-                                if c.ready:
-                                    p.score = p.score + p.tmpScore
-                                    p.tmpScore = 0
-                                    p.status = -1
-                                    self.roundCheck()
 
-                '''
-                #Player Cash Out
+                # Player Cash Out
                 for p in self.Players:
                     if event.key == p.cashOut:
                         p.score = p.score + p.tmpScore
@@ -590,10 +513,8 @@ class Game:
                             if p in s.players:
                                 s.players.remove(p)
                         self.roundCheck()
-                '''
-                
+
                 # Scene Selection
-                
 
                 mods = pygame.key.get_mods()
                 shift_held = mods & pygame.KMOD_SHIFT
@@ -604,12 +525,10 @@ class Game:
                             self.scene_manager.switch_scene("pause")
                     if event.key == pygame.K_y:
                         self.tests.run_tests(self)
-                        
-                        
 
-            if event.type == pygame.JOYDEVICEADDED:
-                controller = pygame.joystick.Joystick(event.device_index)
-                self.controllers.append(controller)
+            # if event.type == pygame.JOYDEVICEADDED:
+            #     controller = pygame.joystick.Joystick(event.device_index)
+            #     self.controllers.append(controller)
 
     def roll(self, num1, num2, riskMod, rewardMod):
         self.roll1 = random.randint(num1, num2-(riskMod-1))
@@ -631,9 +550,9 @@ class Game:
                 return 3.0
             case 5:
                 return 5.0
-    
+
     def assignStoreStats(self, store):
-        
+
         store.risk = random.randint(1,5)
         store.reward = (store.risk + random.randint(1,4) - 2)
 
@@ -641,9 +560,9 @@ class Game:
             store.reward = 1
         elif store.reward > 5:
             store.reward = 5
-        
+
     def roundCheck(self):
-        
+
         count = 0
         for p in self.Players:
             if p.status == -1:
@@ -662,38 +581,29 @@ class Game:
                 count = 0
                 self.gameOver()
             self.statusFlag = True
-            
-            
-    
-        
-        
 
     def snakeEyes(self):
-        
-        
+
         for p in self.Players:
-                if p.status != -1:
-                    p.score = 0
-                #p.status = -1
+            if p.status != -1:
+                p.score = 0
+            # p.status = -1
         if not self.lastRound:
             self.result = "SNAKE EYES"
-        #else:
-            #self.gameOver()
-        
+        # else:
+        # self.gameOver()
 
     def resetTempScores(self):
         for p in self.Players:
-                p.tmpScore = 0
+            p.tmpScore = 0
 
     def activePlayers(self):
         count = 0
         for p in self.Players:
             if p.status != -1:
                 count = count +1
-        
+
         return count
-
-
 
     def lastRoundCheck(self):
         if not self.lastRound:
@@ -717,7 +627,6 @@ class Game:
 
             self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
             self.scene_manager.switch_scene('win')
-
 
     def resetRound(self):
         self.dt = 0
@@ -753,7 +662,80 @@ class Game:
         for p in self.Players:
             if p.playerNum == playerNum:
                 return str(p.score)
-    
+
+
+########## CONTROLLER ##########
+class Controller:
+    def __init__(self, controller_type='keyboard', controller_ID=None, controller_scheme=None):
+        self.controller_type = controller_type # Can be keyboard or controller
+        self.controller_ID = controller_ID # Joystick ID #'s
+        self.controller_scheme = controller_scheme
+        self.joystick = None
+
+        if self.controller_type == 'joystick' and controller_ID is not None:
+            self.joystick = pygame.joystick.Joystick(controller_ID)
+            # self.joystick.init()  # Might be redundant?
+
+        self.define_controlls()  # Function to define the 2 controll schemes
+
+    def define_controlls(self):
+        if self.controller_type == 'joystick':
+            self.axis_horizontal = 0
+            self.axis_vertical = 1
+            self.action_buttons = {
+                'ready': 0,
+                'cash_out': 1
+            }
+        elif self.controller_type == 'keyboard':
+            self.map_keyboard_controls()
+
+    def map_keyboard_controls(self):
+        control_schemes = {
+            "WASD": {
+                "up": pygame.K_w,
+                "down": pygame.K_s,
+                "left": pygame.K_a,
+                "right": pygame.K_d,
+                "ready": pygame.K_1,
+                "cash_out": pygame.K_2,
+            },
+            "TFGH": {
+                "up": pygame.K_t,
+                "down": pygame.K_g,
+                "left": pygame.K_f,
+                "right": pygame.K_h,
+                "ready": pygame.K_3,
+                "cash_out": pygame.K_4,
+            },
+            "IJKL": {
+                "up": pygame.K_i,
+                "down": pygame.K_k,
+                "left": pygame.K_j,
+                "right": pygame.K_l,
+                "ready": pygame.K_5,
+                "cash_out": pygame.K_6,
+            },
+            "Arrows": {
+                "up": pygame.K_UP,
+                "down": pygame.K_DOWN,
+                "left": pygame.K_LEFT,
+                "right": pygame.K_RIGHT,
+                "ready": pygame.K_7,
+                "cash_out": pygame.K_8,
+            },
+        }
+        scheme = control_schemes.get(self.control_scheme)
+        if scheme:
+            self.up = scheme["up"]
+            self.down = scheme["down"]
+            self.left = scheme["left"]
+            self.right = scheme["right"]
+            self.action_buttons = {
+                "ready": scheme["ready"],
+                "cash_out": scheme["cash_out"],
+            }
+        else:
+            print(f"Error: Unknown control scheme '{self.control_scheme}'")
 
 
 ########## PLAYER ##########
@@ -905,4 +887,3 @@ class Tests:
         assert(self.testedClass.Players[0].position.y > location)
         self.testedClass.playerReset()
         self.testedClass.playerLocReset()
-            
