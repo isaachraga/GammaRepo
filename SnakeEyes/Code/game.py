@@ -10,6 +10,7 @@ from preferences import Preferences
 # players cant move while touching a boundary
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
+#players can walk on buildings
 
 
 
@@ -61,22 +62,22 @@ class Game:
     def storeReset(self):
         self.store1 = Store()
         self.store1.storeNum = 1
-        self.store1.position = pygame.Vector2(300, 400)
+        self.store1.position = pygame.Vector2(250, 310)
         self.assignStoreStats(self.store1)
 
         self.store2 = Store()
         self.store2.storeNum = 2
-        self.store2.position = pygame.Vector2(500, 400)
+        self.store2.position = pygame.Vector2(500, 310)
         self.assignStoreStats(self.store2)
 
         self.store3 = Store()
         self.store3.storeNum = 3
-        self.store3.position = pygame.Vector2(700, 400)
+        self.store3.position = pygame.Vector2(750, 310)
         self.assignStoreStats(self.store3)
         
         self.store4 = Store()
         self.store4.storeNum = 4
-        self.store4.position = pygame.Vector2(900, 400)
+        self.store4.position = pygame.Vector2(1000, 310)
         self.assignStoreStats(self.store4)
         
 
@@ -210,7 +211,7 @@ class Game:
                             s.color = (0, 255, 0)
                             if p not in s.players:
                                 s.players.append(p)
-                            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+                            #self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
                             
                         else:
                             if len(s.players) == 0:
@@ -224,7 +225,8 @@ class Game:
 
         for s in self.Stores:
             pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            self.GAME_FONT.render_to(self.screen, (s.position.x, s.position.y-100), s.scoreText, (0, 0, 0))
+            #needs to clear each round
+            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
 
         ##### PLAYERS #####
         for p in self.Players:
@@ -240,13 +242,15 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
 
         #self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
+        
         if self.police:
-                self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to continue...", (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to continue...", (0, 0, 0))
         else:
             if self.ready:
-                    self.GAME_FONT.render_to(self.screen, (350, 120), "Press SPACE to try your luck...", (0, 0, 0))
+                    self.GAME_FONT.render_to(self.screen, (350, 600), "Press SPACE to try your luck...", (0, 0, 0))
             else:
-                self.GAME_FONT.render_to(self.screen, (350, 120), "Waiting for Players to Select a Store", (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (350, 600), "Waiting for Players to Select a Store", (0, 0, 0))
+                
 
         if self.alarmedStores > 0:
             if not self.police:
@@ -266,7 +270,8 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
+        
+        #self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
@@ -288,18 +293,18 @@ class Game:
         
     def status(self):
         for s in self.Stores:
-            self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
+            #self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
             if s.status == -1:
                 s.color = (255,0,0)
             else:
                 risk = ''
                 for x in range(s.risk):
                     risk = risk + '* '
-                self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-60), "Risk: "+risk, (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-260), "Risk: "+risk, (255, 255, 255))
                 reward = ''
                 for x in range(s.reward):
                     reward = reward + '$'
-                self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-40), "Reward: "+reward, (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: "+reward, (255, 255, 255))
                 
 
         for p in self.Players:
