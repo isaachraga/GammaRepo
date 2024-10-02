@@ -32,7 +32,7 @@ class SceneSelection:
 
     def render(self):
         self.screen.fill((255, 255, 255))
-        self.GAME_FONT.render_to(self.screen, (10, 70), "Tap a number key to change the scene", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 70), "Use keyboard to select an option", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 100), "1. Start New Game", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 130), "2. Tutorial", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 160), "3. Options", (0, 0, 0))

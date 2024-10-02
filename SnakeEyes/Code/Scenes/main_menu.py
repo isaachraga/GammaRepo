@@ -65,6 +65,13 @@ class MainMenu:
 
             if event.type == pygame.KEYDOWN:
                 # Scene Selection
+
+                #self.scene_manager.switch_scene('scene')
+
+   # def render(self):
+        #self.screen.fill((255, 255, 255))
+        #self.GAME_FONT.render_to(self.screen, (10, 130), "Sticky Fingers", (0, 0, 0))
+        #self.GAME_FONT.render_to(self.screen, (10, 395), "Press any key to continue", (0, 0, 0))
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
             
