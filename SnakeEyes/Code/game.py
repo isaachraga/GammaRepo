@@ -51,6 +51,8 @@ class Game:
         self.police = False
         self.numPlayers = 2
         self.controllers = []
+        self.Cars = []
+        self.Players = []
         self.statusFlag = False
         self.alarmedStores = 0
         self.testing = False
