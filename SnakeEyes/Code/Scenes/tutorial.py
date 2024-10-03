@@ -92,21 +92,35 @@ class Tutorial:
                 ((Settings.WIDTH/2 - control_scheme_width/2), (Settings.HEIGHT/2 - control_scheme_height/2)), #Position
                 (control_scheme_width, control_scheme_height)), #Size
             html_text = 
-            '---Keyboard 1--- <br>'
-            'Movement:  Up - W  |  Down - S  |  Left - A  |  Right - D<br>'
-            'Interaction:  Select - 1  |  Cash Out - 2  |  Pause/Menu - SHIFT+S<br><br>'
-            '---Keyboard 2---<br>'
-            'Movement:  Up - T  |  Down - G  |  Left - F  |  Right - H<br>'
-            'Interaction:  Select - 3  |  Cash Out - 4  |  Pause/Menu - SHIFT+S<br><br>'
-            '---Keyboard 3---<br>'
-            'Movement:  Up - I  |  Down - K  |  Left - J  |  Right - L<br>'
-            'Interaction:  Select - 5  |  Cash Out - 6  |  Pause/Menu - SHIFT+S<br><br>'
-            '---Keyboard 4---<br>'
-            'Movement:  Arrow Keys<br>'
-            'Interaction:  Select - 7  |  Cash Out - 8  |  Pause/Menu - SHIFT+S<br><br>'
-            '---Controller---<br>'
-            'Movement:  Right Joystick or D-pad<br>'
-            'Interaction:  Select - South Button  |  Cash Out - East Button  |  Pause/Menu - Start Button',
+            '----- Keyboard 1 ----- <br>'
+            '-- Movement --<br>'
+            'Up - W     Down - S     Left - A     Right - D<br>'
+            '-- Interaction --<br>'
+            'Select - 1     Pause/Menu - SHIFT+S<br><br>'
+
+            '----- Keyboard 2 -----<br>'
+            '-- Movement --<br>'
+            'Up - T     Down - G     Left - F     Right - H<br>'
+            '-- Interaction --<br>'
+            'Select - 3     Pause/Menu - SHIFT+S<br><br>'
+
+            '----- Keyboard 3 -----<br>'
+            '-- Movement --<br>'
+            'Up - I     Down - K     Left - J     Right - L<br>'
+            '-- Interaction --<br>'
+            'Select - 5     Pause/Menu - SHIFT+S<br><br>'
+
+            '----- Keyboard 4 -----<br>'
+            '-- Movement --<br>'
+            'Arrow Keys<br>'
+            '-- Interaction --<br>'
+            'Select - 7     Pause/Menu - SHIFT+S<br><br>'
+
+            '----- Controller -----<br>'
+            '-- Movement --<br>'
+            'Right Joystick or D-pad<br>'
+            '-- Interaction --<br>'
+            'Select - South Button     Pause/Menu - Start Button',
             manager=self.ui_manager
         )
 
