@@ -139,7 +139,7 @@ class Game:
             self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
 
-            self.CarReset()
+        self.CarReset()
 
     ### Resets all carts to starting state ###
     def CarReset(self):
@@ -171,6 +171,7 @@ class Game:
 
         for c in self.Cars:
             c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
+
 
     def playerStatusReset(self):
         for p in self.Players:
