@@ -139,6 +139,39 @@ class Game:
             self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
 
+            self.CarReset()
+
+    ### Resets all carts to starting state ###
+    def CarReset(self):
+        self.Cars = []
+        
+        if Preferences.RED_PLAYER_TYPE == "Player":
+            self.c1 = Car()
+            self.c1.playerNum = self.p1.playerNum
+            self.c1.position = pygame.Vector2(110, 520)
+            self.Cars.append(self.c1)
+
+        if Preferences.BLUE_PLAYER_TYPE == "Player":
+            self.c2 = Car()
+            self.c2.playerNum = self.p2.playerNum
+            self.c2.position = pygame.Vector2(310, 520)
+            self.Cars.append(self.c2)
+        
+        if Preferences.YELLOW_PLAYER_TYPE == "Player":
+            self.c3 = Car()
+            self.c3.playerNum = self.p3.playerNum
+            self.c3.position = pygame.Vector2(715, 520)
+            self.Cars.append(self.c3)
+        
+        if Preferences.GREEN_PLAYER_TYPE == "Player":
+            self.c4 = Car()
+            self.c4.playerNum = self.p4.playerNum
+            self.c4.position = pygame.Vector2(1020, 520)
+            self.Cars.append(self.c4)
+
+        for c in self.Cars:
+            c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
+
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
