@@ -14,7 +14,7 @@ NEED
 pip install pyinstaller
 pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py (path to py script)
 
-pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py
+pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\main.py
 testing branch
 
 So i had an idea for the project. There's a really fun dice game called snake eyes where one person 

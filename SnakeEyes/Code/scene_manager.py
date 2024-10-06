@@ -11,9 +11,13 @@ from Scenes.main_menu import MainMenu
 from Scenes.tutorial import Tutorial
 from Scenes.credits import Credits
 from Scenes.game_setup import GameSetup
+from preferences import Preferences
+
+
 
 class SceneManager:
     def __init__(self):
+        
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.scenes = {
             'tutorial': Tutorial(self),
@@ -22,9 +26,9 @@ class SceneManager:
             'game': Game(self),
             'credits': Credits(self),
             'scene': SceneSelection(self),
-            'setup': GameSetup(self)
+            #'setup': GameSetup(self)
         }
-
+        self.scenes['setup'] = GameSetup(self, self.scenes.get('game'))
         self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
         self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
         self.scenes['pause'] = Pause(self, self.scenes.get('game'))
