@@ -1,14 +1,23 @@
 import pygame
 from settings import Settings
-from coreV2 import Game
+from game import Game
+from Scenes.game_status import GameStatus
+from Scenes.game_mods import GameMods
+from Scenes.game_win import GameWin
+from Scenes.pause import Pause
 from Scenes.scene_selection import SceneSelection
 from Scenes.options import OptionsMenu
 from Scenes.main_menu import MainMenu
 from Scenes.tutorial import Tutorial
 from Scenes.credits import Credits
+from Scenes.game_setup import GameSetup
+from preferences import Preferences
+
+
 
 class SceneManager:
     def __init__(self):
+        
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
         self.scenes = {
             'tutorial': Tutorial(self),
@@ -16,8 +25,16 @@ class SceneManager:
             'menu': MainMenu(self),
             'game': Game(self),
             'credits': Credits(self),
-            'scene': SceneSelection(self)
+            'scene': SceneSelection(self),
+            #'setup': GameSetup(self)
         }
+        self.scenes['setup'] = GameSetup(self, self.scenes.get('game'))
+        self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
+        self.scenes['mods'] = GameMods(self, self.scenes.get('game'))
+        self.scenes['pause'] = Pause(self, self.scenes.get('game'))
+        self.scenes['win'] = GameWin(self, self.scenes.get('game'))
+        
+        
         self.current_scene = 'menu'
 
     def run(self):

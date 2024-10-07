@@ -3,4 +3,9 @@
 
 /[Bb]uild/
 /[Dd]ist/
+/SnakeEyes/Code/__pycache__/
+/SnakeEyes/Code/Scenes/__pycache__/
+/SnakeEyes/Code/__pycache__/*.pyc
+/SnakeEyes/Code/Scenes/__pycache__/*.pyc
+*.pyc
 

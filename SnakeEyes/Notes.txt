@@ -1,3 +1,40 @@
+10/1-10/7
+TUE
+Y: None
+T: None
+I: Nothing
+
+WED
+Y: NONE
+T: Updated needed assets, added background image, sent clarification memos in discord, re-organized visual/audio asset listing and assignment, added car objects to replace cash-out button, reworked gameplay screen, documented code 
+I: Nothing
+
+THU
+Y: Updated needed assets, added background image, sent clarification memos in discord, re-organized visual/audio asset listing and assignment, added car objects to replace cash-out button, reworked gameplay screen, documented code 
+T: None
+I: Nothing
+
+FRI
+Y: None
+T: None
+I: Nothing
+
+SAT
+Y: None
+T: None
+I: Nothing
+
+SUN
+Y: None
+T: None
+I: Nothing
+
+MON
+Y: None
+T: Bug fixes, automated testing
+I: Nothing
+
+
 Artifacts
 progress report
 retrospective
@@ -14,7 +51,7 @@ NEED
 pip install pyinstaller
 pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py (path to py script)
 
-pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\game.py
+pyinstaller --onefile -w C:\Users\isaac\OneDrive\Desktop\GammaRepo\GammaRepo\SnakeEyes\Code\main.py
 testing branch
 
 So i had an idea for the project. There's a really fun dice game called snake eyes where one person 

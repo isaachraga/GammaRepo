@@ -50,23 +50,23 @@ class OptionsMenu:
         self.option_label_width = 150
         self.option_label_heigth = 50
 
-        self.example_options = ["Option 1", "Option 2", "Option 3", "Option 4"]
-        self.example_current_option_index = 0
-        self.example_option_label = pygame_gui.elements.UILabel(
+        self.fullscreen_options = ["Disabled", "Enabled"]
+        self.fullscreen_option_index = 0
+        self.fullscreen_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 (((Settings.WIDTH / 2) - (self.option_label_width / 2)), (300)), #Position
                 (self.option_label_width, self.option_label_heigth)),  #Size
-            text=self.example_options[self.example_current_option_index],  # Show current option
+            text=self.fullscreen_options[self.fullscreen_option_index],  # Show current option
             manager=self.ui_manager
         )
-        self.example_left_arrow = pygame_gui.elements.UIButton(
+        self.fullscreen_left_arrow = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
                 (((Settings.WIDTH / 2) - (self.option_label_width / 2) - (self.option_select_width)), (300)), #Position
                 (self.option_select_width, self.option_select_height)),  #Size
             text='<',
             manager=self.ui_manager
         )
-        self.example_right_arrow = pygame_gui.elements.UIButton(
+        self.fullscreen_right_arrow = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
                 (((Settings.WIDTH / 2) + (self.option_label_width / 2)), (300)), #Position
                 (self.option_select_width, self.option_select_height)),  #Size
@@ -99,19 +99,25 @@ class OptionsMenu:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Back Button
                     if event.ui_element == self.back_button:
-                        print("Back Button Clicked (Change Scene)")
+                        self.scene_manager.switch_scene('menu')
 
-                    #Example Option Select
-                    if event.ui_element == self.example_left_arrow:
-                        self.example_current_option_index -= 1
-                        self.example_current_option_index %= len(self.example_options)  #Wrap list
-                        self.example_option_label.set_text(self.example_options[self.example_current_option_index])
-                        print(f"Example Option Selected: {self.example_current_option_index + 1}")
-                    elif event.ui_element == self.example_right_arrow:
-                        self.example_current_option_index += 1
-                        self.example_current_option_index %= len(self.example_options)  #Wrap list
-                        self.example_option_label.set_text(self.example_options[self.example_current_option_index])
-                        print(f"Example Option Selected: {self.example_current_option_index + 1}")
+                    #Fullscreen Option Select
+                    if event.ui_element == self.fullscreen_left_arrow:
+                        self.fullscreen_option_index -= 1
+                        self.fullscreen_option_index %= len(self.fullscreen_options)  #Wrap list
+                        self.fullscreen_label.set_text(self.fullscreen_options[self.fullscreen_option_index])
+                        if (self.fullscreen_options[self.fullscreen_option_index] == "Enabled"): #Enable fullscreen
+                            self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
+                        else: #Disable fullscreen
+                            self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+                    elif event.ui_element == self.fullscreen_right_arrow:
+                        self.fullscreen_option_index += 1
+                        self.fullscreen_option_index %= len(self.fullscreen_options)  #Wrap list
+                        self.fullscreen_label.set_text(self.fullscreen_options[self.fullscreen_option_index])
+                        if (self.fullscreen_options[self.fullscreen_option_index] == "Enabled"): #Enable fullscreen
+                            self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
+                        else: #Disable fullscreen
+                            self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
             
                 # Check if slider is being used
                 if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
@@ -128,21 +134,24 @@ class OptionsMenu:
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (50, 50, 50), rect)
+        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
+        rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
+        pygame.draw.rect(self.screen, (205, 205, 205), rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("OPTIONS")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (255, 255, 255))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (0, 0, 0))
 
         volume_slider_rect = self.volume_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "VOLUME", (255, 255, 255))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "VOLUME", (0, 0, 0))
 
-        example_option_rect = self.example_option_label.get_relative_rect()
-        example_option_text_rect = self.OPTIONS_FONT.get_rect("EXAMPLE OPTION")
-        example_option_text_rect.center = (example_option_rect.centerx, example_option_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, example_option_text_rect, "EXAMPLE OPTION", (255, 255, 255))
+        fullscreen_rect = self.fullscreen_label.get_relative_rect()
+        fullscreen_text_rect = self.OPTIONS_FONT.get_rect("FULLSCREEN")
+        fullscreen_text_rect.center = (fullscreen_rect.centerx, fullscreen_rect.top - Settings.FONT_SIZE)
+        self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", (0, 0, 0))
 
         self.OPTIONS_FONT.render_to(self.screen, (0, 0), "Press S for scene selection", (0, 0, 0))
 
