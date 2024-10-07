@@ -35,6 +35,12 @@ class Game:
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
 
+        
+        self.initialization()
+        
+        self.tests = Tests() #automated testing
+
+    def initialization(self):
         ### Flags and General Game Vars ###
         self.dt = 0
         self.result = ""
@@ -46,7 +52,7 @@ class Game:
         self.ready = False
         self.allAlarms = False
         self.police = False
-        self.numPlayers = 2
+        self.numPlayers = 0
         self.controllers = []
         self.Cars = []
         self.Players = []
@@ -60,8 +66,6 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
-
-        self.tests = Tests() #automated testing
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
@@ -139,7 +143,9 @@ class Game:
             self.p4.rd = pygame.Vector2(1210,300)
             self.Players.append(self.p4)
 
+        self.numPlayers = len(self.Players)
         self.CarReset()
+
 
     ### Resets all carts to starting state ###
     def CarReset(self):
@@ -556,13 +562,22 @@ class Game:
                 #Player Ready
                 for p in self.Players:
                     if event.key == p.ready:
+                        for c in self.Cars:
+                            ##### if at car cash out
+                            if c.ready and c.playerNum == p.playerNum:
+                                p.score = p.score + p.tmpScore
+                                p.tmpScore = 0
+                                p.status = -1
+                                self.roundCheck()
+                            else:
                         #### if at store, set to ready
-                        for s in self.Stores:
-                            if p in s.players:
-                                if p.status != -1:
-                                    p.status = 1
+                                for s in self.Stores:
+                                    if p in s.players:
+                                        if p.status != -1:
+                                            p.status = 1
 
                 # Player Cash Out
+                '''
                 for p in self.Players:
                     if event.key == p.cashOut:
                         p.score = p.score + p.tmpScore
@@ -572,6 +587,7 @@ class Game:
                             if p in s.players:
                                 s.players.remove(p)
                         self.roundCheck()
+                        '''
 
                 # Scene Selection
 
@@ -729,7 +745,7 @@ class Game:
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
-        self.scene_manager.switch_scene('status')
+        #self.scene_manager.switch_scene('status')
 
     def getScore(self, playerNum):
         for p in self.Players:
@@ -757,7 +773,7 @@ class Controller:
             self.axis_vertical = 1
             self.action_buttons = {
                 'ready': 0,
-                'cash_out': 1
+                #'cash_out': 1
             }
         elif self.controller_type == 'keyboard':
             self.map_keyboard_controls()
@@ -770,7 +786,7 @@ class Controller:
                 "left": pygame.K_a,
                 "right": pygame.K_d,
                 "ready": pygame.K_1,
-                "cash_out": pygame.K_2,
+                #"cash_out": pygame.K_2,
             },
             "TFGH": {
                 "up": pygame.K_t,
@@ -778,7 +794,7 @@ class Controller:
                 "left": pygame.K_f,
                 "right": pygame.K_h,
                 "ready": pygame.K_3,
-                "cash_out": pygame.K_4,
+                #"cash_out": pygame.K_4,
             },
             "IJKL": {
                 "up": pygame.K_i,
@@ -786,7 +802,7 @@ class Controller:
                 "left": pygame.K_j,
                 "right": pygame.K_l,
                 "ready": pygame.K_5,
-                "cash_out": pygame.K_6,
+                #"cash_out": pygame.K_6,
             },
             "Arrows": {
                 "up": pygame.K_UP,
@@ -794,10 +810,11 @@ class Controller:
                 "left": pygame.K_LEFT,
                 "right": pygame.K_RIGHT,
                 "ready": pygame.K_7,
-                "cash_out": pygame.K_8,
+                #"cash_out": pygame.K_8,
             },
         }
         scheme = control_schemes.get(self.control_scheme)
+
         if scheme:
             self.up = scheme["up"]
             self.down = scheme["down"]
@@ -805,7 +822,7 @@ class Controller:
             self.right = scheme["right"]
             self.action_buttons = {
                 "ready": scheme["ready"],
-                "cash_out": scheme["cash_out"],
+                #"cash_out": scheme["cash_out"],
             }
         else:
             print(f"Error: Unknown control scheme '{self.control_scheme}'")
@@ -834,7 +851,7 @@ class Player:
         self.left = pygame.K_a
         self.right = pygame.K_d
         self.ready = pygame.K_1
-        self.cashOut = pygame.K_2
+        ##self.cashOut = pygame.K_2
         #store status locations for programatic access
 
 class Car:

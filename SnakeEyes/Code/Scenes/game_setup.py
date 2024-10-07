@@ -311,6 +311,7 @@ class GameSetup:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Start Button
                     if event.ui_element == self.start_button:
+                        self.game.initialization()
                         self.game.delayedInit()
                         self.scene_manager.switch_scene('game')
 
