@@ -8,16 +8,14 @@ from preferences import Preferences
 
 
 ### TO DO ###
-# Document Code
 
 
 ### BUGS ###
-# players cant move while touching a boundary
+# store collision needs fixed
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
 # players can walk on buildings
-# quit game and restart is bugged
-#
+
 
 
 ### FEATURE CHANGES ###
@@ -37,7 +35,7 @@ class Game:
 
         
         self.initialization()
-        
+
         self.tests = Tests() #automated testing
 
     def initialization(self):
@@ -62,6 +60,7 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
+        self.storeCollider = pygame.Rect((170, 0, 940, 250)) ### bugged, needs fixed
 
         self.playerReset()
         self.playerLocReset()
@@ -333,6 +332,7 @@ class Game:
                             
                 
         ##### STORES #####
+        #pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
 
         for s in self.Stores:
             #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
@@ -389,8 +389,11 @@ class Game:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             if p.status != -1:
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (0, 0, 0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (0, 0, 0))
+                
+                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-38), "P"+str(p.playerNum), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (255, 255, 255))
 
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
@@ -439,13 +442,37 @@ class Game:
                     if keys[p.right]:
                         tempX += self.moveSpeed
 
-                    if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
-                        if tempX != 0 and tempY != 0:
-                            tempX = tempX*(math.sqrt(2)/2)
-                            tempY = tempY*(math.sqrt(2)/2)
-                        p.position.x += tempX * dt
-                        p.position.y += tempY * dt
-                        p.collider.center = p.position
+                    ### current boundary locations, is bugged and needs 
+                    if tempX != 0 or tempY != 0:
+                                    # if both, check for both
+                                    if tempX != 0 and tempY != 0:
+                                        #print("both")
+                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = tempX*(math.sqrt(2)/2)
+                                        else:
+                                            tempX = 0
+                                        
+                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = tempY*(math.sqrt(2)/2)
+                                        else:
+                                            tempY = 0
+                                        #print("vars: "+tempX+" "+tempY)
+                                           
+                                        
+                                    # if h check      
+                                    elif tempX != 0 and tempY == 0:
+                                        #print("X")
+                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = 0
+                                    # if y check 
+                                    elif tempX == 0 and tempY != 0:
+                                        #print("Y")
+                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = 0 
+
+                                    p.position.x += tempX * dt
+                                    p.position.y += tempY * dt
+                                    p.collider.center = p.position
 
         for event in pygame.event.get():
 
@@ -474,10 +501,34 @@ class Game:
                                 if event.key==p.right:
                                     tempX += self.moveSpeed
 
-                                if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                                #if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                                if tempX != 0 or tempY != 0:
+                                    # if both, check for both
                                     if tempX != 0 and tempY != 0:
-                                        tempX = tempX*(math.sqrt(2)/2)
-                                        tempY = tempY*(math.sqrt(2)/2)
+                                        #print("both")
+                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = tempX*(math.sqrt(2)/2)
+                                        else:
+                                            tempX = 0
+                                        
+                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = tempY*(math.sqrt(2)/2)
+                                        else:
+                                            tempY = 0
+                                        #print("vars: "+tempX+" "+tempY)
+                                           
+                                        
+                                    # if h check      
+                                    elif tempX != 0 and tempY == 0:
+                                        #print("X")
+                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = 0
+                                    # if y check 
+                                    elif tempX == 0 and tempY != 0:
+                                        #print("Y")
+                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = 0 
+
                                     p.position.x += tempX * dt
                                     p.position.y += tempY * dt
                                     p.collider.center = p.position
@@ -604,6 +655,48 @@ class Game:
             # if event.type == pygame.JOYDEVICEADDED:
             #     controller = pygame.joystick.Joystick(event.device_index)
             #     self.controllers.append(controller)
+
+    def boundaryCollision(self, player, tempX, tempY, locX, locY):
+        #print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
+        
+        valid = False
+        #exterior boarder
+        if(tempX != 0):
+            if (locX < 1260 or tempX < 0) and (locX> 20 or tempX > 0):
+                valid = True
+            else:
+                #print("Border Hit")
+                return False
+        
+        if(tempY != 0):
+            if (locY < 700 or tempY < 0) and (locY > 20 or tempY > 0):
+                valid = True
+            else:
+                #print("Border Hit")
+                return False
+        
+
+        #stores & cars
+        tempCol = pygame.Rect(0,0,100,100)
+
+        if(tempX != 0):
+            tempCol.center = pygame.Vector2(player.position.x+tempX/100, player.position.y)
+            #print("New Location X: "+str(tempCol.center))
+        if(tempY != 0):
+            tempCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/100)
+            #print("New Location Y: "+str(tempCol.center))
+
+        collide = self.storeCollider.colliderect(tempCol)
+
+        if collide:
+            #print("Collision")
+            return False
+        
+            
+        
+        return valid
+            
+    
 
     ### handles rolls, num 1 is the lowest number, num2 is highest number, risk is the level of risk mod applied, reward is the level of reward mod applied
     def roll(self, num1, num2, riskMod, rewardMod):
