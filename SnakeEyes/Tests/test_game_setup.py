@@ -1,6 +1,6 @@
 #For pytest, file must start with 'test_'
 #For pytest, function must start with 'test_'
-#To run manually, do 'python -m pytest'
+#To run manually, do 'python -m pytest --log-cli-level=INFO'
 
 import pygame
 import pytest
@@ -8,6 +8,8 @@ import pygame_gui
 from unittest.mock import MagicMock  #Import MagicMock for mocking
 import os
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
+import logging
+logging.basicConfig(level=logging.INFO) #Add logging for test feedback
 
 from SnakeEyes.Code.Scenes.game_setup import GameSetup
 from SnakeEyes.Code.preferences import Preferences
@@ -51,6 +53,7 @@ def simulate_gui_click(tested_class, ui_element):
 ########## TESTS ##########
 
 def test_initial_preferences(setup_game_setup):
+    logging.info("Testing initial preferences.")
     game_setup = setup_game_setup
 
     assert Preferences.RED_PLAYER_TYPE == game_setup.player_type_options[game_setup.red_player_index]
@@ -63,6 +66,7 @@ def test_initial_preferences(setup_game_setup):
     assert Preferences.GREEN_CONTROLS == game_setup.control_type_options[game_setup.green_control_index]
 
 def test_player_selection(setup_game_setup):
+    logging.info("Testing player selection.")
     game_setup = setup_game_setup
 
     # Red Player
@@ -102,6 +106,7 @@ def test_player_selection(setup_game_setup):
     assert initial_index == game_setup.green_player_index  # Ensure index returned to initial
 
 def test_control_selection(setup_game_setup):
+    logging.info("Testing control selection.")
     game_setup = setup_game_setup
 
     while Preferences.RED_PLAYER_TYPE != 'Player':
@@ -113,6 +118,7 @@ def test_control_selection(setup_game_setup):
     assert initial_index == game_setup.red_control_index
 
 def test_score_selection(setup_game_setup):
+    logging.info("Testing finishline score selection.")
     game_setup = setup_game_setup
 
     # Increase finish line score
