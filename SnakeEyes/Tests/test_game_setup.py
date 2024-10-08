@@ -1,16 +1,19 @@
 #For pytest, file must start with 'test_'
 #For pytest, function must start with 'test_'
-#To run manually, do 'python -m pytest --log-cli-level=INFO'
+#To run manually, run 'python -m pytest SnakeEyes/Tests/test_game_setup.py --log-cli-level=INFO'
+#To run all tests, run 'python -m pytest SnakeEyes/Tests --log-cli-level=INFO'
 
 import pygame
 import pytest
 import pygame_gui
-from unittest.mock import MagicMock  #Import MagicMock for mocking
 import os
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
 import logging
 logging.basicConfig(level=logging.INFO) #Add logging for test feedback
+import warnings
+warnings.filterwarnings("ignore", category=DeprecationWarning) #Supress Deprecation Warnings
 
+from SnakeEyes.Code.scene_manager import SceneManager
 from SnakeEyes.Code.Scenes.game_setup import GameSetup
 from SnakeEyes.Code.preferences import Preferences
 from SnakeEyes.Code.settings import Settings
@@ -19,20 +22,20 @@ from SnakeEyes.Code.settings import Settings
 
 ########## SETUP ##########
 @pytest.fixture
-def mock_scene_manager():
-    scene_manager = MagicMock()  #Mock the SceneManager
-    scene_manager.switch_scene.return_value = "Scene Switch Called" #Mock scene switch function
+def setup_scene_manager():
+    pygame.init()
+    scene_manager = SceneManager()
     return scene_manager
 
 @pytest.fixture
-def mock_game():
-    game = MagicMock()  #Mock the Game
+def setup_game(setup_scene_manager):
+    game = setup_scene_manager.scenes['game']
     return game
 
 @pytest.fixture 
-def setup_game_setup(mock_scene_manager, mock_game):
+def setup_game_setup(setup_scene_manager, setup_game):
     pygame.init()
-    game_setup = GameSetup(mock_scene_manager, mock_game) #Instantiate GameSetup
+    game_setup = GameSetup(setup_scene_manager, setup_game) #Instantiate GameSetup
     game_setup.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
     return game_setup
 

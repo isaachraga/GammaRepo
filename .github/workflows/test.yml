@@ -27,4 +27,4 @@ jobs:
         pip install -r SnakeEyes/requirements.txt
 
     - name: Run tests
-      run: python -m pytest --log-cli-level=INFO  
+      run: python -m pytest SnakeEyes/Tests --log-cli-level=INFO  

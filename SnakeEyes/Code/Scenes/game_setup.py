@@ -4,7 +4,7 @@ import pygame_gui
 try:
     from settings import Settings
     from preferences import Preferences
-except ImportError:
+except ImportError: #Use absolute file positions when testing
     from SnakeEyes.Code.settings import Settings
     from SnakeEyes.Code.preferences import Preferences
 
@@ -20,8 +20,6 @@ class GameSetup:
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
 
         self.clock = pygame.time.Clock() #Needed for pygame_gui
-
-        self.tests = Tests() #For automated testing
 
         self.makeGUI()
 
@@ -305,9 +303,6 @@ class GameSetup:
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
-                # Run Tests
-                if event.key == pygame.K_t:
-                    self.tests.run_tests(self)
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
@@ -490,8 +485,6 @@ class GameSetup:
         pygame.draw.rect(self.screen, (225, 225, 225), rect)
         pygame.draw.line(self.screen, (0, 0, 0), (920, 0), (920, 720), 3)
         pygame.draw.line(self.screen, (0, 0, 0), (920, 360), (1280, 360), 3)
-
-        self.GAME_FONT.render_to(self.screen, (0, 0), "Press T for Testing", (0, 0, 0))
         
         game_preferences_text = self.HEADER_FONT.get_rect("GAME PREFERENCES")
         game_preferences_text.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
@@ -507,133 +500,4 @@ class GameSetup:
         self.ui_manager.draw_ui(self.screen) 
 
         pygame.display.flip()
-
-
-
-
-
-########## GAME SETUP TESTS ##########
-class Tests:
-    def run_tests(self, testedClass):
-        self.testedClass = testedClass
-        print("RUNNING TESTS:")
-        print("- Testing Initial Preferences")
-        self.test_initial_preferences()
-        print("- Testing Player Selection")
-        self.test_player_selection()
-        print("- Testing Control Selection")
-        self.test_control_selection()
-        print("- Testing Finishline Score Selection")
-        self.test_score_selection()
-        print("All Tests Passed!")
-
-    def simulate_gui_click(self, ui_element):
-        simulated_event = pygame.event.Event( #Simulate left click event on pygame_gui button
-            pygame.USEREVENT,{
-                'user_type': pygame_gui.UI_BUTTON_PRESSED,
-                'ui_element': ui_element,
-                'mouse_button': 1
-            })
-        pygame.event.post(simulated_event)
-        self.testedClass.run() #Allow updates to happen
-
-    def test_initial_preferences(self):
-        assert(Preferences.RED_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.red_player_index])
-        assert (Preferences.RED_CONTROLS == self.testedClass.control_type_options[self.testedClass.red_control_index])
-        assert (Preferences.BLUE_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.blue_player_index])
-        assert (Preferences.BLUE_CONTROLS == self.testedClass.control_type_options[self.testedClass.blue_control_index])
-        assert (Preferences.YELLOW_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.yellow_player_index])
-        assert (Preferences.YELLOW_CONTROLS == self.testedClass.control_type_options[self.testedClass.yellow_control_index])
-        assert (Preferences.GREEN_PLAYER_TYPE == self.testedClass.player_type_options[self.testedClass.green_player_index])
-        assert (Preferences.GREEN_CONTROLS == self.testedClass.control_type_options[self.testedClass.green_control_index])
-
-    def test_player_selection(self):
-        #Red
-        while (Preferences.RED_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
-            self.simulate_gui_click(self.testedClass.red_player_right)
-        initial_index = self.testedClass.red_player_index
-        #Select next player option
-        self.simulate_gui_click(self.testedClass.red_player_right)
-        new_index = self.testedClass.red_player_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.testedClass.red_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
-        #Select previous player option
-        self.simulate_gui_click(self.testedClass.red_player_left)
-        assert (initial_index == self.testedClass.red_player_index)  #Ensure it has returned to initial index
-        assert (self.testedClass.red_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
-        
-        #Blue
-        while (Preferences.BLUE_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
-            self.simulate_gui_click(self.testedClass.blue_player_right)
-        initial_index = self.testedClass.blue_player_index
-        #Select next player option
-        self.simulate_gui_click(self.testedClass.blue_player_right)
-        new_index = self.testedClass.blue_player_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.testedClass.blue_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
-        #Select previous player option
-        self.simulate_gui_click(self.testedClass.blue_player_left)
-        assert (initial_index == self.testedClass.blue_player_index)  #Ensure it has returned to initial index
-        assert (self.testedClass.blue_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
-        
-        #Yellow
-        while (Preferences.YELLOW_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
-            self.simulate_gui_click(self.testedClass.yellow_player_right)
-        initial_index = self.testedClass.yellow_player_index
-        #Select next player option
-        self.simulate_gui_click(self.testedClass.yellow_player_right)
-        new_index = self.testedClass.yellow_player_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.testedClass.yellow_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
-        #Select previous player option
-        self.simulate_gui_click(self.testedClass.yellow_player_left)
-        assert (initial_index == self.testedClass.yellow_player_index)  #Ensure it has returned to initial index
-        assert (self.testedClass.yellow_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
-        
-        #Green
-        while (Preferences.GREEN_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
-            self.simulate_gui_click(self.testedClass.green_player_right)
-        initial_index = self.testedClass.green_player_index
-        #Select next player option
-        self.simulate_gui_click(self.testedClass.green_player_right)
-        new_index = self.testedClass.green_player_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.testedClass.green_player_label.text == self.testedClass.player_type_options[new_index])  #Ensure label updated
-        #Select previous player option
-        self.simulate_gui_click(self.testedClass.green_player_left)
-        assert (initial_index == self.testedClass.green_player_index)  #Ensure it has returned to initial index
-        assert (self.testedClass.green_player_label.text == self.testedClass.player_type_options[initial_index])  #Ensure label updated
-
-    def test_control_selection(self):
-        while (Preferences.RED_PLAYER_TYPE != 'Player'): #Ensure 'Player' is selected
-            self.simulate_gui_click(self.testedClass.red_player_right)
-        initial_index = self.testedClass.red_control_index
-        #Select next control scheme
-        self.simulate_gui_click(self.testedClass.red_control_right)
-        new_index = self.testedClass.red_control_index
-        assert (initial_index != new_index)  #Ensure it has changed
-        assert (self.testedClass.red_control_label.text == self.testedClass.control_type_options[new_index])  #Ensure label updated
-        #Select previous control scheme
-        self.simulate_gui_click(self.testedClass.red_control_left)
-        assert (initial_index == self.testedClass.red_control_index)  #Ensure it has returned to initial index
-        assert (self.testedClass.red_control_label.text == self.testedClass.control_type_options[initial_index])  #Ensure label updated
-
-    def test_score_selection(self):
-        #Increase finishline score
-        initial_score = Preferences.FINISHLINE_SCORE
-        self.simulate_gui_click(self.testedClass.finish_score_inc)
-        assert (Preferences.FINISHLINE_SCORE == initial_score + 10)  #Check that score increased by 10
-        #Decrease finishline score
-        self.simulate_gui_click(self.testedClass.finish_score_dec)
-        assert (Preferences.FINISHLINE_SCORE == initial_score)  #Check that score decreased by 10
-        #Check score can't go to 0
-        while (Preferences.FINISHLINE_SCORE > 10):
-            self.simulate_gui_click(self.testedClass.finish_score_dec)
-        self.simulate_gui_click(self.testedClass.finish_score_dec)
-        assert (Preferences.FINISHLINE_SCORE == 10)
-        while (Preferences.FINISHLINE_SCORE < initial_score):
-            self.simulate_gui_click(self.testedClass.finish_score_inc)
-
-
-
 

@@ -1,5 +1,8 @@
 import pygame
-from settings import Settings
+try:
+    from settings import Settings
+except ImportError: #Use absolute file positions when testing
+    from SnakeEyes.Code.settings import Settings
 
 class GameMods:
     def __init__(self, scene_manager, game):
