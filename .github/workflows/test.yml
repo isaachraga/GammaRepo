@@ -10,11 +10,14 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+    
+    - name: Set PYTHONPATH
+      run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)" >> $GITHUB_ENV
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -27,4 +30,4 @@ jobs:
         pip install -r SnakeEyes/requirements.txt
 
     - name: Run tests
-      run: pytest  
+      run: python -m pytest  
