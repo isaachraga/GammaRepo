@@ -1,8 +1,8 @@
 import pygame
 import pygame.freetype
 import pygame_gui
-from settings import Settings
-from preferences import Preferences
+from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.preferences import Preferences
 
 ########## GAME SETUP MENU ##########
 class GameSetup:
