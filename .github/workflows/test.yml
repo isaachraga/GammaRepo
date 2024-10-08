@@ -1,12 +1,9 @@
 name: Sticky Fingers Tests
 
 on:
-    push:
-      branches:
-        - GithubTesting
     pull_request:
       branches:
-        - GithubTesting
+        - main
 
 jobs:
   test:

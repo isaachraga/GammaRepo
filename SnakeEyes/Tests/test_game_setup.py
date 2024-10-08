@@ -10,8 +10,6 @@ import os
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
 import logging
 logging.basicConfig(level=logging.INFO) #Add logging for test feedback
-import warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning) #Supress Deprecation Warnings
 
 from SnakeEyes.Code.scene_manager import SceneManager
 from SnakeEyes.Code.Scenes.game_setup import GameSetup
@@ -20,7 +18,9 @@ from SnakeEyes.Code.settings import Settings
 
 
 
-########## SETUP ##########
+###############################################
+#################### SETUP ####################
+###############################################
 @pytest.fixture
 def setup_scene_manager():
     pygame.init()
@@ -53,8 +53,9 @@ def simulate_gui_click(tested_class, ui_element):
 
 
 
-########## TESTS ##########
-
+###############################################
+#################### TESTS ####################
+###############################################
 def test_initial_preferences(setup_game_setup):
     logging.info("Testing initial preferences.")
     game_setup = setup_game_setup
