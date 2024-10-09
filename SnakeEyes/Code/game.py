@@ -276,7 +276,7 @@ class Game:
         ### Fill Background ###
         self.screen.fill((255,255,255))
         ### Set Background Image ###
-        self.loadingScreen = pygame.image.load('Assets/Environment/Background/Background.png')
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.screen.blit(self.loadingScreen, (0,0))
 
         ##### DEBUG / STATUS #####
