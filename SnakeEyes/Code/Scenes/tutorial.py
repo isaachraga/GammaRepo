@@ -1,6 +1,6 @@
 import pygame
-from settings import Settings
 import pygame_gui
+from SnakeEyes.Code.settings import Settings
 
 class Tutorial:
     def __init__(self, scene_manager):

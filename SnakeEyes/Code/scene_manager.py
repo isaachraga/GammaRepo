@@ -1,17 +1,18 @@
 import pygame
-from settings import Settings
-from game import Game
-from Scenes.game_status import GameStatus
-from Scenes.game_mods import GameMods
-from Scenes.game_win import GameWin
-from Scenes.pause import Pause
-from Scenes.scene_selection import SceneSelection
-from Scenes.options import OptionsMenu
-from Scenes.main_menu import MainMenu
-from Scenes.tutorial import Tutorial
-from Scenes.credits import Credits
-from Scenes.game_setup import GameSetup
-from preferences import Preferences
+from SnakeEyes.Code.game import Game
+from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.preferences import Preferences
+from SnakeEyes.Code.Scenes.game_status import GameStatus
+from SnakeEyes.Code.Scenes.game_mods import GameMods
+from SnakeEyes.Code.Scenes.game_win import GameWin
+from SnakeEyes.Code.Scenes.pause import Pause
+from SnakeEyes.Code.Scenes.scene_selection import SceneSelection
+from SnakeEyes.Code.Scenes.options import OptionsMenu
+from SnakeEyes.Code.Scenes.main_menu import MainMenu
+from SnakeEyes.Code.Scenes.tutorial import Tutorial
+from SnakeEyes.Code.Scenes.credits import Credits
+from SnakeEyes.Code.Scenes.game_setup import GameSetup
+
 
 
 
@@ -49,7 +50,7 @@ class SceneManager:
         self.current_scene = new_scene
 
     def get_scene(self):
-        return self.scenes[self.current_scene]
+        return self.current_scene
     
     def quit(self):
         self.running = False

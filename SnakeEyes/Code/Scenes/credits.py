@@ -1,5 +1,5 @@
 import pygame
-from settings import Settings
+from SnakeEyes.Code.settings import Settings
 
 class Credits:
     def __init__(self, scene_manager):
