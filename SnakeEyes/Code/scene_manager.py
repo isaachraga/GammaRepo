@@ -50,7 +50,7 @@ class SceneManager:
         self.current_scene = new_scene
 
     def get_scene(self):
-        return self.scenes[self.current_scene]
+        return self.current_scene
     
     def quit(self):
         self.running = False
