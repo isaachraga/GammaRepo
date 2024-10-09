@@ -2,14 +2,9 @@
 #This makes file paths compatible with the paths our tests expect
 import sys
 import os
-
-#Get the absolute path of the current file's directory
-current_dir = os.path.dirname(os.path.abspath(__file__))
-#Set GammaRepo's path
-gamma_repo_path = os.path.abspath(os.path.join(current_dir, '..', '..'))
-#Change the working directory to GammaRepo
-os.chdir(gamma_repo_path)
-print(f"Working directory set to: {os.getcwd()}") #Debug
+current_dir = os.path.dirname(os.path.abspath(__file__)) #Get the absolute path of the current file's directory
+gamma_repo_path = os.path.abspath(os.path.join(current_dir, '..', '..')) #Set file path
+os.chdir(gamma_repo_path) #Change the working directory to GammaRepo
 sys.path.append(gamma_repo_path)
 
 import pygame
