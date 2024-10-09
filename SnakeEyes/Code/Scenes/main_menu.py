@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype
-from settings import Settings
 import pygame_gui
+from SnakeEyes.Code.settings import Settings
 
 class MainMenu:
     def __init__(self, scene_manager):
