@@ -1,15 +1,15 @@
 #For pytest, file must start with 'test_'
 #For pytest, function must start with 'test_'
-#To run manually, run 'python -m pytest SnakeEyes/Tests/test_game_setup.py --log-cli-level=INFO'
-#To run all tests, run 'python -m pytest SnakeEyes/Tests --log-cli-level=INFO'
+#To run manually, run 'python -m pytest SnakeEyes/Tests/test_game_setup.py'
+#To run all tests, run 'python -m pytest SnakeEyes/Tests'
 
 import pygame, pytest, pygame_gui
 import os, logging
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
 logging.basicConfig(level=logging.INFO) #Add logging for test feedback
 
-from SnakeEyes.Code.scene_manager import SceneManager
 from SnakeEyes.Code.Scenes.game_setup import GameSetup
+from SnakeEyes.Code.scene_manager import SceneManager
 from SnakeEyes.Code.preferences import Preferences
 from SnakeEyes.Code.settings import Settings
 
@@ -33,6 +33,7 @@ def setup_game(setup_scene_manager):
 def setup_game_setup(setup_scene_manager, setup_game):
     pygame.init()
     game_setup = GameSetup(setup_scene_manager, setup_game) #Instantiate GameSetup
+    game_setup.scene_manager.switch_scene('setup') #Set to current scene
     game_setup.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
     return game_setup
 
@@ -54,7 +55,7 @@ def simulate_gui_click(tested_class, ui_element):
 #################### TESTS ####################
 ###############################################
 def test_initial_preferences(setup_game_setup):
-    logging.info("Testing initial preferences.")
+    logging.info("Testing Initial Preferences")
     game_setup = setup_game_setup
 
     assert Preferences.RED_PLAYER_TYPE == game_setup.player_type_options[game_setup.red_player_index]
@@ -66,8 +67,9 @@ def test_initial_preferences(setup_game_setup):
     assert Preferences.GREEN_PLAYER_TYPE == game_setup.player_type_options[game_setup.green_player_index]
     assert Preferences.GREEN_CONTROLS == game_setup.control_type_options[game_setup.green_control_index]
 
+
 def test_player_selection(setup_game_setup):
-    logging.info("Testing player selection.")
+    logging.info("Testing Player Selection")
     game_setup = setup_game_setup
 
     # Red Player
@@ -106,8 +108,9 @@ def test_player_selection(setup_game_setup):
     simulate_gui_click(game_setup, game_setup.green_player_left)
     assert initial_index == game_setup.green_player_index  # Ensure index returned to initial
 
+
 def test_control_selection(setup_game_setup):
-    logging.info("Testing control selection.")
+    logging.info("Testing Control Selection")
     game_setup = setup_game_setup
 
     while Preferences.RED_PLAYER_TYPE != 'Player':
@@ -118,8 +121,9 @@ def test_control_selection(setup_game_setup):
     simulate_gui_click(game_setup, game_setup.red_control_left)
     assert initial_index == game_setup.red_control_index
 
+
 def test_score_selection(setup_game_setup):
-    logging.info("Testing finishline score selection.")
+    logging.info("Testing Finishline Score Selection")
     game_setup = setup_game_setup
 
     # Increase finish line score
@@ -140,3 +144,12 @@ def test_score_selection(setup_game_setup):
     # Restore the initial score
     while Preferences.FINISHLINE_SCORE < initial_score:
         simulate_gui_click(game_setup, game_setup.finish_score_inc)
+
+
+def test_game_start(setup_game_setup):
+    logging.info("Testing Start Button")
+    game_setup = setup_game_setup
+
+    assert(game_setup.scene_manager.get_scene() == 'setup')
+    simulate_gui_click(game_setup, game_setup.start_button)
+    assert(game_setup.scene_manager.get_scene() == 'game')
