@@ -6,6 +6,7 @@
 import pygame, pytest, pygame_gui
 import os, logging
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
+os.environ["SDL_AUDIODRIVER"] = "dummy" #Dummy audio driver for headless environment
 logging.basicConfig(level=logging.INFO) #Add logging for test feedback
 
 from SnakeEyes.Code.Scenes.options import OptionsMenu
