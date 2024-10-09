@@ -2,10 +2,9 @@ import pygame
 import pygame.locals
 import pygame.freetype  # Import the freetype module.
 import random
-from settings import Settings
 import math
-from preferences import Preferences
-
+from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.preferences import Preferences
 
 ### TO DO ###
 # Document Code
