@@ -250,7 +250,7 @@ class Game:
         self.screen.blit(self.loadingScreen, (0,0))
 
 
-
+    
         ##### DEBUG / STATUS #####
 
         #self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
