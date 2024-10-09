@@ -3,12 +3,8 @@ import pygame.locals
 import pygame.freetype  # Import the freetype module.
 import random
 import math
-try:
-    from settings import Settings
-    from preferences import Preferences
-except ImportError: #Use absolute file positions when testing
-    from SnakeEyes.Code.settings import Settings
-    from SnakeEyes.Code.preferences import Preferences
+from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.preferences import Preferences
 
 ### TO DO ###
 # Document Code

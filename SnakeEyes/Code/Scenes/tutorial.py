@@ -1,9 +1,6 @@
 import pygame
 import pygame_gui
-try:
-    from settings import Settings
-except ImportError: #Use absolute file positions when testing
-    from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.settings import Settings
 
 class Tutorial:
     def __init__(self, scene_manager):

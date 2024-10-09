@@ -1,10 +1,7 @@
 import pygame
 import pygame.freetype  # Import the freetype module.
 import pygame_gui # To install, run: 'python -m pip install pygame_gui==0.6.9'
-try:
-    from settings import Settings
-except ImportError: #Use absolute file positions when testing
-    from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code.settings import Settings
 
 ########## OPTIONS MENU ##########
 class OptionsMenu:
