@@ -191,8 +191,10 @@ class Game:
             self.p4.position = pygame.Vector2(1040,470)
 
     ### Handles control assignment from game setup ###
+    # STATUS:
+    # working
     # BUGS:
-    # controllerAssingment() is getting called twice but I don't know where?
+    # controllerAssingment() getting called twice but I don't know where/how?
     def controllerAssignment(self, player, controls):
         # DEBUG STATEMENT
         # print(
@@ -209,25 +211,31 @@ class Game:
             # Assign joystick controller
             pygame.event.pump()
             joystick_count = pygame.joystick.get_count()
-            print(self.joystick_id)
-            print(joystick_count)
+
+            # DEBUG STATEMENTS
+            # print(self.joystick_id)
+            # print(joystick_count)
+
             if self.joystick_id < joystick_count:
                 controller_type = "joystick"
                 controller_ID = self.joystick_id
                 controller_scheme = None  # Not needed for joystick
                 self.joystick_id += 1
             else:
-                print(f"No joystick available for Player {player.playerNum}, defaulting to keyboard")
+                # DEBUG STATEMENT OR WARNING STATEMENT
+                # print(f"No joystick available for Player {player.playerNum}, defaulting to keyboard")
+
                 controller_type = "keyboard"
                 controller_ID = None
+                # Default Controls
                 if player.playerNum == 1:
-                    controller_scheme = "WASD"  # Default to 'WASD'
+                    controller_scheme = "WASD"
                 elif player.playerNum == 2:
                     controller_scheme = "TFGH"
                 elif player.playerNum == 3:
-                    controller_scheme == "IJKL"
+                    controller_scheme = "IJKL"
                 else:
-                    controller_scheme == "Arrows"
+                    controller_scheme = "Arrows"
         else:
             # Assign keyboard controls
             controller_type = "keyboard"
@@ -247,18 +255,18 @@ class Game:
             player.up = player.controller.up
             player.down = player.controller.down
 
-            # DEBUG STATEMENT
-            print(
-            f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
-            )
-        else:
-            # DEBUG STATEMENT
-            print(f"Player {player.playerNum} is using a joystick (Controller)")
+        #     # DEBUG STATEMENT
+        #     print(
+        #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
+        #     )
+        # else:
+        #     # DEBUG STATEMENT
+        #     print(f"Player {player.playerNum} is using a joystick (Controller)")
 
-            # DEBUG STATEMENT
-            print(
-            f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
-            )
+        #     # DEBUG STATEMENT
+        #     print(
+        #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
+        #     )
 
     ##### Run Game Loop #####
     def run(self):
@@ -450,6 +458,76 @@ class Game:
                     if p.controller.is_action_pressed('ready'):
                         if p.status != -1:
                             p.status = 1  # Ready state
+                            
+                    if p.controller.is_action_pressed('space'):
+                        for s in self.Stores:
+                            if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                                s.scoreText = ''
+
+                    self.roundCheck()
+
+                    ### handles if police have been triggered
+                    if self.police:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
+                    ### handles if all alarms were set off
+                    elif self.allAlarms:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
+                    else: 
+                        if self.ready:
+
+                            for s in self.Stores:
+                                if len(s.players) != 0:
+
+                                    # police roll if a store is alarmed
+                                    if self.alarmedStores > 0 and self.roundSkipped:
+                                        if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
+                                            self.resetTempScores()
+                                            s.scoreText = "!POLICE!"
+                                            s.status = -1
+                                            self.police = True
+                                            self.snakeEyes()
+
+                                    if not self.police:
+                                        # roll for value/alarm
+                                        self.award = self.roll(1,9,s.risk,s.reward) 
+
+                                        if self.award == -1:
+                                            s.scoreText = "!ALARMED!"
+                                            self.alarmedStores = self.alarmedStores + 1
+                                            s.status=-1
+
+                                            for p in s.players:
+                                                p.status = 0
+                                                p.tmpScore = 0
+
+                                            s.players.clear()
+                                        else:
+                                            self.result = ""
+                                            for p in s.players:
+                                                if p.status == 1:
+                                                    p.tmpScore = p.tmpScore+self.award
+                                                    p.status = 0
+                                                    s.scoreText = "+"+str(self.award)
+                    # check for all alarms
+                    count = 0
+                    for s in self.Stores:
+                        if s.status == -1:
+                            count = count + 1
+
+                    self.alarmedStores = count
+
+                    if count == len(self.Stores):
+                        self.allAlarms = True
+
+                    # delays police roll from happening until the first alarmed round has finished
+                    if self.alarmedStores > 0 and not self.roundSkipped:
+                        self.roundSkipped = True
 
                     # if p.controller.is_action_pressed('cash_out'):
                     #     p.score += p.tmpScore
@@ -481,7 +559,9 @@ class Game:
                                     tempX -= self.moveSpeed
                                 if event.key==p.right:
                                     tempX += self.moveSpeed
-                                print(f"Player {p.playerNum} controls - Left: {p.left}, Right: {p.right}, Up: {p.up}, Down: {p.down}")
+
+                                # DEBUG STATEMENT
+                                # print(f"Player {p.playerNum} controls - Left: {p.left}, Right: {p.right}, Up: {p.up}, Down: {p.down}")
 
                                 if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
                                     if tempX != 0 and tempY != 0:
@@ -595,7 +675,6 @@ class Game:
                         '''
 
                 # Scene Selection
-
                 mods = pygame.key.get_mods()
                 shift_held = mods & pygame.KMOD_SHIFT
 
@@ -765,7 +844,7 @@ class Controller:
         if self.controller_type == "joystick":
             self.axis_horizontal = 0
             self.axis_vertical = 1
-            self.action_buttons = {"ready": 0}
+            self.action_buttons = {"ready": 0, "space": 1}
         elif self.controller_type == "keyboard":
             self.map_keyboard_controls()
 
@@ -784,7 +863,8 @@ class Controller:
                 "left": pygame.K_a,
                 "right": pygame.K_d,
                 "ready": pygame.K_1,
-                #"cash_out": pygame.K_2,
+                "space": pygame.K_SPACE,
+                # "cash_out": pygame.K_2,
             },
             "TFGH": {
                 "up": pygame.K_t,
@@ -792,7 +872,8 @@ class Controller:
                 "left": pygame.K_f,
                 "right": pygame.K_h,
                 "ready": pygame.K_3,
-                #"cash_out": pygame.K_4,
+                "space": pygame.K_SPACE,
+                # "cash_out": pygame.K_4,
             },
             "IJKL": {
                 "up": pygame.K_i,
@@ -800,7 +881,8 @@ class Controller:
                 "left": pygame.K_j,
                 "right": pygame.K_l,
                 "ready": pygame.K_5,
-                #"cash_out": pygame.K_6,
+                "space": pygame.K_SPACE,
+                # "cash_out": pygame.K_6,
             },
             "Arrows": {
                 "up": pygame.K_UP,
@@ -808,7 +890,8 @@ class Controller:
                 "left": pygame.K_LEFT,
                 "right": pygame.K_RIGHT,
                 "ready": pygame.K_7,
-                #"cash_out": pygame.K_8,
+                "space": pygame.K_SPACE,
+                # "cash_out": pygame.K_8,
             },
         }
 
@@ -821,6 +904,7 @@ class Controller:
             self.right = scheme["right"]
             self.action_buttons = {
                 "ready": scheme["ready"],
+                "space": scheme["space"]
                 #"cash_out": scheme["cash_out"],
             }
         else:
@@ -863,6 +947,7 @@ class Controller:
             return keys[self.action_buttons[action_name]]
         elif self.controller_type == "joystick":
             button_ID = self.action_buttons[action_name]
+            print(button_ID)
             return self.joystick.get_button(button_ID)
 
 ########## PLAYER ##########
