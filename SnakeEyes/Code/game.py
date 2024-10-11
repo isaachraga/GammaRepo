@@ -230,6 +230,12 @@ class Game:
             case "None":
                 print("Error: No Control Assigned")
 
+
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+
+
     ##### Run Game Loop #####
     def run(self):
         self.update() 
@@ -415,7 +421,7 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            self.scene_manager.switch_scene('status', "SnakeEyes/Assets/Audio/Music/shopLoop.wav")
+            self.scene_manager.switch_scene('status')
 
         dt = self.clock.tick(60) / 1000
 
@@ -824,7 +830,7 @@ class Game:
         self.playerLocReset()
         self.storeReset()
         self.roundSkipped = False
-        self.scene_manager.switch_scene('status', "SnakeEyes/Assets/Audio/Music/shopLoop.wav")
+        self.scene_manager.switch_scene('status')
 
     def resetGame(self):
         self.dt = 0

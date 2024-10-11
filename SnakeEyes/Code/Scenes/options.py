@@ -74,6 +74,9 @@ class OptionsMenu:
             manager=self.ui_manager
         )
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
     
     ##### Run #####
     def run(self):

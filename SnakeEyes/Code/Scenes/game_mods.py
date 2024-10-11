@@ -8,6 +8,10 @@ class GameMods:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
     
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
+    
     def run(self):
         self.update()
         self.render()
@@ -20,7 +24,7 @@ class GameMods:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.game.statusFlag = False
-                    self.scene_manager.switch_scene('game', "SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+                    self.scene_manager.switch_scene('game')
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('pause')

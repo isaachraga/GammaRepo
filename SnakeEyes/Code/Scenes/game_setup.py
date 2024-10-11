@@ -282,6 +282,9 @@ class GameSetup:
             manager=self.ui_manager
         )
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
         
     ##### Run #####
     def run(self):
@@ -308,7 +311,7 @@ class GameSetup:
                     if event.ui_element == self.start_button:
                         self.game.initialization()
                         self.game.delayedInit()
-                        self.scene_manager.switch_scene('game', "SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+                        self.scene_manager.switch_scene('game')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
                     #Player Type Select

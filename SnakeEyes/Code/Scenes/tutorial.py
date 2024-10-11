@@ -202,6 +202,10 @@ class Tutorial:
         self.alarm_text.hide()
         self.police_text.hide()
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
         self.update()

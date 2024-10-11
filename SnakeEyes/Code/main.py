@@ -12,6 +12,7 @@ from SnakeEyes.Code.scene_manager import SceneManager
 
 def main():
     pygame.init()
+    pygame.mixer.init()
     sceneManager = SceneManager()
     sceneManager.run()
 

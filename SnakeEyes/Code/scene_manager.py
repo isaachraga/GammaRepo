@@ -18,9 +18,8 @@ from SnakeEyes.Code.Scenes.game_setup import GameSetup
 
 class SceneManager:
     def __init__(self):
-        
-        #Scene setup
         self.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+        self.current_music = ""
         self.scenes = {
             'tutorial': Tutorial(self),
             'options':  OptionsMenu(self),
@@ -35,11 +34,7 @@ class SceneManager:
         self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
         self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
         
-        self.current_scene = 'menu'
-
-        #Music setup
-        pygame.mixer.init()
-        self.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        self.switch_scene('menu')
 
     ### GAME ENGINE ###
     def run(self):
@@ -54,10 +49,9 @@ class SceneManager:
 
 
     ### SCENE MANAGEMENT ###
-    def switch_scene(self, new_scene, new_music=""):
+    def switch_scene(self, new_scene):
         self.current_scene = new_scene
-        if new_music:
-            self.play_music(new_music)
+        self.scenes[self.current_scene].on_scene_enter()
 
     def get_scene(self):
         return self.current_scene    
@@ -72,10 +66,12 @@ class SceneManager:
     
     # Music #   
     def play_music(self, music_path):
-        pygame.mixer.music.stop() #Stop any previous music
-        pygame.mixer.music.load(music_path)
-        pygame.mixer.music.set_volume(Settings.VOLUME)
-        pygame.mixer.music.play(-1)  #-1 makes it loop
+        if self.current_music != music_path: #If the new song is different from the current one
+            pygame.mixer.music.stop() #Stop any previous music
+            pygame.mixer.music.load(music_path)
+            pygame.mixer.music.set_volume(Settings.VOLUME)
+            pygame.mixer.music.play(-1)  #-1 makes it loop
+            self.current_music = music_path
     
     def update_volume(self):
         pygame.mixer.music.set_volume(Settings.VOLUME)
@@ -88,3 +84,4 @@ class SceneManager:
 
     def stop_music(self):
         pygame.mixer.music.stop()
+        self.current_music = ""
