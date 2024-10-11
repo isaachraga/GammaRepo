@@ -20,7 +20,7 @@ class GameMods:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.game.statusFlag = False
-                    self.scene_manager.switch_scene('game')
+                    self.scene_manager.switch_scene('game', "SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('pause')

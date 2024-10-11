@@ -415,7 +415,7 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            self.scene_manager.switch_scene('status')
+            self.scene_manager.switch_scene('status', "SnakeEyes/Assets/Audio/Music/shopLoop.wav")
 
         dt = self.clock.tick(60) / 1000
 
@@ -824,7 +824,7 @@ class Game:
         self.playerLocReset()
         self.storeReset()
         self.roundSkipped = False
-        self.scene_manager.switch_scene('status')
+        self.scene_manager.switch_scene('status', "SnakeEyes/Assets/Audio/Music/shopLoop.wav")
 
     def resetGame(self):
         self.dt = 0

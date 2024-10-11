@@ -225,6 +225,7 @@ class Tutorial:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('menu')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     
                     #Page Change
                     if event.ui_element == self.page_left or event.ui_element == self.page_right:
@@ -253,6 +254,7 @@ class Tutorial:
                                 self.alarm_text.show()
                             case 6:
                                 self.police_text.show()
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                                 
 
 

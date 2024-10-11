@@ -100,6 +100,7 @@ class OptionsMenu:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('menu')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
                     #Fullscreen Option Select
                     if event.ui_element == self.fullscreen_left_arrow:
@@ -110,6 +111,7 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     elif event.ui_element == self.fullscreen_right_arrow:
                         self.fullscreen_option_index += 1
                         self.fullscreen_option_index %= len(self.fullscreen_options)  #Wrap list
@@ -118,6 +120,7 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
             
                 # Check if slider is being used
                 if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
@@ -125,6 +128,7 @@ class OptionsMenu:
                     if event.ui_element == self.volume_slider:
                         Settings.VOLUME = self.volume_slider.get_current_value()
                         print(f"Volume Slider Value: {Settings.VOLUME}")
+                        self.scene_manager.update_volume()
 
     ##### Render #####
     def render(self):

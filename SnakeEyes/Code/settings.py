@@ -3,4 +3,4 @@ class Settings:
     HEIGHT = 720
     FONT_SIZE = 24
     HEADER_FONT_SIZE = 30
-    VOLUME = 1.0
+    VOLUME = 0.25
