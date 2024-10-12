@@ -202,6 +202,10 @@ class Tutorial:
         self.alarm_text.hide()
         self.police_text.hide()
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
         self.update()
@@ -225,6 +229,7 @@ class Tutorial:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('menu')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     
                     #Page Change
                     if event.ui_element == self.page_left or event.ui_element == self.page_right:
@@ -253,6 +258,7 @@ class Tutorial:
                                 self.alarm_text.show()
                             case 6:
                                 self.police_text.show()
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                                 
 
 
