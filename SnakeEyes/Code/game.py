@@ -10,6 +10,9 @@ from SnakeEyes.Code.preferences import Preferences
 
 
 ### BUGS ###
+# in game status didnt update on last round information
+# p2 cashed out above the winning amount, shouldve went to game win screen
+# need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
 # store collision needs fixed
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
@@ -768,11 +771,11 @@ class Game:
         for p in self.Players:
             if p.status != -1:
                 p.score = 0
-            # p.status = -1
+                p.status = -1
         if not self.lastRound:
             self.result = "SNAKE EYES"
-        # else:
-        # self.gameOver()
+        else:
+            self.gameOver()
 
     def resetTempScores(self):
         for p in self.Players:
