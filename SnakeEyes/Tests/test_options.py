@@ -66,7 +66,8 @@ def test_initial_options(setup_options_menu):
     logging.info("Testing Initial Options")
     options_menu = setup_options_menu
 
-    assert Settings.VOLUME == options_menu.volume_slider.get_current_value()
+    assert Settings.BGM_VOLUME == options_menu.BGM_slider.get_current_value()
+    assert Settings.SFX_VOLUME == options_menu.SFX_slider.get_current_value()
     #assert(options_menu.screen.get_flags() & pygame.FULLSCREEN == 0) #Asserts the game starts with fullscreen disabled
 
 
@@ -92,28 +93,48 @@ def test_fullscreen(setup_options_menu):
 
 
 def test_volume(setup_options_menu):
-    logging.info("Testing Volume Slider")
+    logging.info("Testing Volume Sliders")
     options_menu = setup_options_menu
 
-    simulate_gui_slider(options_menu, options_menu.volume_slider, 0)
-    assert options_menu.volume_slider.get_current_value() == 0
-    assert options_menu.volume_slider.get_current_value() == Settings.VOLUME
+    simulate_gui_slider(options_menu, options_menu.BGM_slider, 0)
+    assert options_menu.BGM_slider.get_current_value() == 0
+    assert options_menu.BGM_slider.get_current_value() == Settings.BGM_VOLUME
 
-    simulate_gui_slider(options_menu, options_menu.volume_slider, 0.25)
-    assert options_menu.volume_slider.get_current_value() == 0.25
-    assert options_menu.volume_slider.get_current_value() == Settings.VOLUME
+    simulate_gui_slider(options_menu, options_menu.BGM_slider, 0.25)
+    assert options_menu.BGM_slider.get_current_value() == 0.25
+    assert options_menu.BGM_slider.get_current_value() == Settings.BGM_VOLUME
     
-    simulate_gui_slider(options_menu, options_menu.volume_slider, 0.5)
-    assert options_menu.volume_slider.get_current_value() == 0.5
-    assert options_menu.volume_slider.get_current_value() == Settings.VOLUME
+    simulate_gui_slider(options_menu, options_menu.BGM_slider, 0.5)
+    assert options_menu.BGM_slider.get_current_value() == 0.5
+    assert options_menu.BGM_slider.get_current_value() == Settings.BGM_VOLUME
     
-    simulate_gui_slider(options_menu, options_menu.volume_slider, 0.75)
-    assert options_menu.volume_slider.get_current_value() == 0.75
-    assert options_menu.volume_slider.get_current_value() == Settings.VOLUME
+    simulate_gui_slider(options_menu, options_menu.BGM_slider, 0.75)
+    assert options_menu.BGM_slider.get_current_value() == 0.75
+    assert options_menu.BGM_slider.get_current_value() == Settings.BGM_VOLUME
 
-    simulate_gui_slider(options_menu, options_menu.volume_slider, 1)
-    assert options_menu.volume_slider.get_current_value() == 1
-    assert options_menu.volume_slider.get_current_value() == Settings.VOLUME
+    simulate_gui_slider(options_menu, options_menu.BGM_slider, 1)
+    assert options_menu.BGM_slider.get_current_value() == 1
+    assert options_menu.BGM_slider.get_current_value() == Settings.BGM_VOLUME
+    
+    simulate_gui_slider(options_menu, options_menu.SFX_slider, 0)
+    assert options_menu.SFX_slider.get_current_value() == 0
+    assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
+
+    simulate_gui_slider(options_menu, options_menu.SFX_slider, 0.25)
+    assert options_menu.SFX_slider.get_current_value() == 0.25
+    assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
+    
+    simulate_gui_slider(options_menu, options_menu.SFX_slider, 0.5)
+    assert options_menu.SFX_slider.get_current_value() == 0.5
+    assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
+    
+    simulate_gui_slider(options_menu, options_menu.SFX_slider, 0.75)
+    assert options_menu.SFX_slider.get_current_value() == 0.75
+    assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
+
+    simulate_gui_slider(options_menu, options_menu.SFX_slider, 1)
+    assert options_menu.SFX_slider.get_current_value() == 1
+    assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
 
 
 def test_back(setup_options_menu):

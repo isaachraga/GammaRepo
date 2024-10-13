@@ -33,6 +33,11 @@ class SceneManager:
         self.scenes['mods']   = GameMods(self,   self.scenes.get('game'))
         self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
         self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
+
+        #Scenes that are "nested" in other scenes. Can be nested repeatedly
+        #Have the ability to go back to previous scene with switch_scene('back')
+        self.nested_scenes = ['tutorial', 'options', 'scene', 'pause', 'credits']
+        self.nested_stack = []
         
         self.switch_scene('menu')
 
@@ -50,7 +55,19 @@ class SceneManager:
 
     ### SCENE MANAGEMENT ###
     def switch_scene(self, new_scene):
-        self.current_scene = new_scene
+        #Returning from a nested scene
+        if new_scene == "back":
+            self.current_scene = self.nested_stack.pop()
+        else:
+            #Adding a new nested scene
+            if new_scene in self.nested_scenes:
+                self.nested_stack.append(self.current_scene)
+            #Clear nested scenes if switching to a non-nested scene
+            elif len(self.nested_stack) != 0:
+                self.nested_stack.clear()
+            #Switch Current Scene
+            self.current_scene = new_scene
+        #Invoke on-enter function
         self.scenes[self.current_scene].on_scene_enter()
 
     def get_scene(self):
@@ -61,7 +78,7 @@ class SceneManager:
     # Sound Effects #
     def play_sound(self, sound_path):
         sound_effect = pygame.mixer.Sound(sound_path)
-        sound_effect.set_volume(Settings.VOLUME)
+        sound_effect.set_volume(Settings.SFX_VOLUME)
         sound_effect.play()
     
     # Music #   
@@ -69,12 +86,12 @@ class SceneManager:
         if self.current_music != music_path: #If the new song is different from the current one
             pygame.mixer.music.stop() #Stop any previous music
             pygame.mixer.music.load(music_path)
-            pygame.mixer.music.set_volume(Settings.VOLUME)
+            pygame.mixer.music.set_volume(Settings.BGM_VOLUME)
             pygame.mixer.music.play(-1)  #-1 makes it loop
             self.current_music = music_path
     
     def update_volume(self):
-        pygame.mixer.music.set_volume(Settings.VOLUME)
+        pygame.mixer.music.set_volume(Settings.BGM_VOLUME)
 
     def pause_music(self):
         pygame.mixer.music.pause()
