@@ -26,7 +26,7 @@ class GameMods:
                     self.game.statusFlag = False
                     self.scene_manager.switch_scene('game')
                 # Scene Selection
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_ESCAPE:
                     self.scene_manager.switch_scene('pause')
 
     def render(self):

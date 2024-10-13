@@ -204,7 +204,8 @@ class Tutorial:
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        # self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        pass #Does nothing
 
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
@@ -228,7 +229,7 @@ class Tutorial:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Back Button
                     if event.ui_element == self.back_button:
-                        self.scene_manager.switch_scene('menu')
+                        self.scene_manager.switch_scene('back')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     
                     #Page Change

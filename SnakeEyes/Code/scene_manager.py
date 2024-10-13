@@ -33,6 +33,10 @@ class SceneManager:
         self.scenes['mods']   = GameMods(self,   self.scenes.get('game'))
         self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
         self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
+
+        #Scenes that are "nested" in other scenes
+        self.nested_scenes = ['tutorial', 'options', 'scene', 'pause']
+        self.nested_stack = []
         
         self.switch_scene('menu')
 
@@ -50,7 +54,19 @@ class SceneManager:
 
     ### SCENE MANAGEMENT ###
     def switch_scene(self, new_scene):
-        self.current_scene = new_scene
+        #Returning from a nested scene
+        if new_scene == "back":
+            self.current_scene = self.nested_stack.pop()
+        else:
+            #Adding a new nested scene
+            if new_scene in self.nested_scenes:
+                self.nested_stack.append(self.current_scene)
+            #Clear nested scenes if switching to a non-nested scene
+            elif len(self.nested_stack) != 0:
+                self.nested_stack.clear()
+            #Switch Current Scene
+            self.current_scene = new_scene
+        #Invoke on-enter function
         self.scenes[self.current_scene].on_scene_enter()
 
     def get_scene(self):

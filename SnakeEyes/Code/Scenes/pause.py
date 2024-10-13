@@ -10,7 +10,8 @@ class Pause:
     
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        # self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        pass #Does nothing
 
     def run(self):
         self.update()
@@ -33,10 +34,13 @@ class Pause:
                     self.scene_manager.switch_scene('game')
                 if event.key == pygame.K_5:
                     self.scene_manager.switch_scene('credits')
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.switch_scene("back")
                 
 
     def render(self):
         self.screen.fill((255, 255, 255))
+        self.GAME_FONT.render_to(self.screen, (10, 10), "PAUSE MENU", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 70), "Tap a number key to change the scene", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 100), "1. Tutorial", (0, 0, 0))
         self.GAME_FONT.render_to(self.screen, (10, 130), "2. Options", (0, 0, 0))

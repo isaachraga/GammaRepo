@@ -654,12 +654,12 @@ class Game:
                 mods = pygame.key.get_mods()
                 shift_held = mods & pygame.KMOD_SHIFT
 
-                if shift_held: 
-                    if event.key == pygame.K_s:
-                        if not self.testing:
-                            self.scene_manager.switch_scene("pause")
-                    if event.key == pygame.K_y:
-                        self.tests.run_tests(self)
+                if event.key == pygame.K_ESCAPE:
+                    if not self.testing:
+                        self.scene_manager.switch_scene("pause")
+                # if shift_held: 
+                #     if event.key == pygame.K_y:
+                #         self.tests.run_tests(self)
 
             # if event.type == pygame.JOYDEVICEADDED:
             #     controller = pygame.joystick.Joystick(event.device_index)
