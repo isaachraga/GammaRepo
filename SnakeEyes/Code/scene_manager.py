@@ -36,7 +36,7 @@ class SceneManager:
 
         #Scenes that are "nested" in other scenes. Can be nested repeatedly
         #Have the ability to go back to previous scene with switch_scene('back')
-        self.nested_scenes = ['tutorial', 'options', 'scene', 'pause']
+        self.nested_scenes = ['tutorial', 'options', 'scene', 'pause', 'credits']
         self.nested_stack = []
         
         self.switch_scene('menu')

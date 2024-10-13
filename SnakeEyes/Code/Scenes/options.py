@@ -98,7 +98,7 @@ class OptionsMenu:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event)
 
