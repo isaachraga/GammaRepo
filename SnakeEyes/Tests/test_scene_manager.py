@@ -51,3 +51,28 @@ def test_scene_switch(setup_scene_manager):
     assert(scene_manager.get_scene() == 'pause')
     scene_manager.switch_scene('win')
     assert(scene_manager.get_scene() == 'win')
+
+def test_nested_scenes(setup_scene_manager):
+    logging.info("Testing Scene Switching")
+    scene_manager = setup_scene_manager
+
+    scene_manager.switch_scene('menu')
+    assert(scene_manager.get_scene() == 'menu')
+    scene_manager.switch_scene('options')
+    assert(scene_manager.get_scene() == 'options')
+    scene_manager.switch_scene('pause')
+    assert(scene_manager.get_scene() == 'pause')
+    scene_manager.switch_scene('tutorial')
+    assert(scene_manager.get_scene() == 'tutorial')
+    scene_manager.switch_scene('credits')
+    assert(scene_manager.get_scene() == 'credits')
+    scene_manager.switch_scene('back')
+    assert(scene_manager.get_scene() == 'tutorial')
+    scene_manager.switch_scene('back')
+    assert(scene_manager.get_scene() == 'pause')
+    scene_manager.switch_scene('back')
+    assert(scene_manager.get_scene() == 'options')
+    scene_manager.switch_scene('back')
+    assert(scene_manager.get_scene() == 'menu')
+
+

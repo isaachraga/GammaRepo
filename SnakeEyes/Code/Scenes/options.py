@@ -140,12 +140,12 @@ class OptionsMenu:
                     #BGM Slider
                     if event.ui_element == self.BGM_slider:
                         Settings.BGM_VOLUME = self.BGM_slider.get_current_value()
-                        print(f"Volume Slider Value: {Settings.BGM_VOLUME}")
+                        print(f"BGM Slider Value: {Settings.BGM_VOLUME}")
                         self.scene_manager.update_volume()
                     #SFX Slider
                     if event.ui_element == self.SFX_slider:
                         Settings.SFX_VOLUME = self.SFX_slider.get_current_value()
-                        print(f"Volume Slider Value: {Settings.SFX_VOLUME}")
+                        print(f"SFX Slider Value: {Settings.SFX_VOLUME}")
                         self.scene_manager.update_volume()
 
     ##### Render #####
