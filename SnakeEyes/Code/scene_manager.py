@@ -34,7 +34,8 @@ class SceneManager:
         self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
         self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
 
-        #Scenes that are "nested" in other scenes
+        #Scenes that are "nested" in other scenes. Can be nested repeatedly
+        #Have the ability to go back to previous scene with switch_scene('back')
         self.nested_scenes = ['tutorial', 'options', 'scene', 'pause']
         self.nested_stack = []
         
@@ -77,7 +78,7 @@ class SceneManager:
     # Sound Effects #
     def play_sound(self, sound_path):
         sound_effect = pygame.mixer.Sound(sound_path)
-        sound_effect.set_volume(Settings.VOLUME)
+        sound_effect.set_volume(Settings.SFX_VOLUME)
         sound_effect.play()
     
     # Music #   
@@ -85,12 +86,12 @@ class SceneManager:
         if self.current_music != music_path: #If the new song is different from the current one
             pygame.mixer.music.stop() #Stop any previous music
             pygame.mixer.music.load(music_path)
-            pygame.mixer.music.set_volume(Settings.VOLUME)
+            pygame.mixer.music.set_volume(Settings.BGM_VOLUME)
             pygame.mixer.music.play(-1)  #-1 makes it loop
             self.current_music = music_path
     
     def update_volume(self):
-        pygame.mixer.music.set_volume(Settings.VOLUME)
+        pygame.mixer.music.set_volume(Settings.BGM_VOLUME)
 
     def pause_music(self):
         pygame.mixer.music.pause()
