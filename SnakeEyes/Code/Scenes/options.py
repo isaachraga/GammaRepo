@@ -35,11 +35,19 @@ class OptionsMenu:
         self.slider_width = 350
         self.slider_height = 20
 
-        self.volume_slider = pygame_gui.elements.UIHorizontalSlider(
+        self.BGM_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (400)), #Position
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (370)), #Position
                 (self.slider_width, self.slider_height)),  #Size
-            start_value=Settings.VOLUME,
+            start_value=Settings.BGM_VOLUME,
+            value_range=(0.0, 1.0),
+            manager=self.ui_manager
+        )
+        self.SFX_slider = pygame_gui.elements.UIHorizontalSlider(
+            relative_rect=pygame.Rect(
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (450)), #Position
+                (self.slider_width, self.slider_height)),  #Size
+            start_value=Settings.SFX_VOLUME,
             value_range=(0.0, 1.0),
             manager=self.ui_manager
         )
@@ -49,31 +57,36 @@ class OptionsMenu:
         self.option_select_height = 50
         self.option_label_width = 150
         self.option_label_heigth = 50
+        self.fullscreen_y = 250
 
         self.fullscreen_options = ["Disabled", "Enabled"]
         self.fullscreen_option_index = 0
         self.fullscreen_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.option_label_width / 2)), (300)), #Position
+                (((Settings.WIDTH / 2) - (self.option_label_width / 2)), (self.fullscreen_y)), #Position
                 (self.option_label_width, self.option_label_heigth)),  #Size
             text=self.fullscreen_options[self.fullscreen_option_index],  # Show current option
             manager=self.ui_manager
         )
         self.fullscreen_left_arrow = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.option_label_width / 2) - (self.option_select_width)), (300)), #Position
+                (((Settings.WIDTH / 2) - (self.option_label_width / 2) - (self.option_select_width)), (self.fullscreen_y)), #Position
                 (self.option_select_width, self.option_select_height)),  #Size
             text='<',
             manager=self.ui_manager
         )
         self.fullscreen_right_arrow = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) + (self.option_label_width / 2)), (300)), #Position
+                (((Settings.WIDTH / 2) + (self.option_label_width / 2)), (self.fullscreen_y)), #Position
                 (self.option_select_width, self.option_select_height)),  #Size
             text='>',
             manager=self.ui_manager
         )
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        # self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        pass #Does nothing
     
     ##### Run #####
     def run(self):
@@ -85,7 +98,7 @@ class OptionsMenu:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event)
 
@@ -99,7 +112,8 @@ class OptionsMenu:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Back Button
                     if event.ui_element == self.back_button:
-                        self.scene_manager.switch_scene('menu')
+                        self.scene_manager.switch_scene('back')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
                     #Fullscreen Option Select
                     if event.ui_element == self.fullscreen_left_arrow:
@@ -110,6 +124,7 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     elif event.ui_element == self.fullscreen_right_arrow:
                         self.fullscreen_option_index += 1
                         self.fullscreen_option_index %= len(self.fullscreen_options)  #Wrap list
@@ -118,13 +133,20 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
             
                 # Check if slider is being used
                 if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
-                    #Volume Slider
-                    if event.ui_element == self.volume_slider:
-                        Settings.VOLUME = self.volume_slider.get_current_value()
-                        print(f"Volume Slider Value: {Settings.VOLUME}")
+                    #BGM Slider
+                    if event.ui_element == self.BGM_slider:
+                        Settings.BGM_VOLUME = self.BGM_slider.get_current_value()
+                        print(f"BGM Slider Value: {Settings.BGM_VOLUME}")
+                        self.scene_manager.update_volume()
+                    #SFX Slider
+                    if event.ui_element == self.SFX_slider:
+                        Settings.SFX_VOLUME = self.SFX_slider.get_current_value()
+                        print(f"SFX Slider Value: {Settings.SFX_VOLUME}")
+                        self.scene_manager.update_volume()
 
     ##### Render #####
     def render(self):
@@ -143,17 +165,20 @@ class OptionsMenu:
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
         self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (0, 0, 0))
 
-        volume_slider_rect = self.volume_slider.get_relative_rect()
-        slider_text_rect = self.OPTIONS_FONT.get_rect("VOLUME")
+        volume_slider_rect = self.BGM_slider.get_relative_rect()
+        slider_text_rect = self.OPTIONS_FONT.get_rect("MUSIC VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "VOLUME", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "MUSIC VOLUME", (0, 0, 0))
+        
+        volume_slider_rect = self.SFX_slider.get_relative_rect()
+        slider_text_rect = self.OPTIONS_FONT.get_rect("SOUND VOLUME")
+        slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", (0, 0, 0))
 
         fullscreen_rect = self.fullscreen_label.get_relative_rect()
         fullscreen_text_rect = self.OPTIONS_FONT.get_rect("FULLSCREEN")
         fullscreen_text_rect.center = (fullscreen_rect.centerx, fullscreen_rect.top - Settings.FONT_SIZE)
         self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", (0, 0, 0))
-
-        self.OPTIONS_FONT.render_to(self.screen, (0, 0), "Press S for scene selection", (0, 0, 0))
 
 
         self.ui_manager.draw_ui(self.screen)
