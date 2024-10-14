@@ -51,7 +51,20 @@ class MainMenu:
             text='Credits',
             manager=self.ui_manager
         )
+        #Quit
+        self.quit_width = 100
+        self.quit_height = 75
+        self.quit_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(
+                ((Settings.WIDTH - self.quit_width), (Settings.HEIGHT - self.quit_height)), #Position
+                (self.quit_width, self.quit_height)), #Size
+            text='QUIT',
+            manager=self.ui_manager
+        )
 
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
     
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
@@ -81,15 +94,23 @@ class MainMenu:
                     #Play Game Button
                     if event.ui_element == self.play_button:
                         self.scene_manager.switch_scene('setup')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     #Tutorial Button
                     if event.ui_element == self.tutorial_button:
                         self.scene_manager.switch_scene('tutorial')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     #Options Button
                     if event.ui_element == self.options_button:
                         self.scene_manager.switch_scene('options')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     #Credits Button
                     if event.ui_element == self.credits_button:
                         self.scene_manager.switch_scene('credits')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                    #Quit Button
+                    if event.ui_element == self.quit_button:
+                        self.scene_manager.quit()
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
     def render(self):
         self.screen.fill((255, 255, 255))

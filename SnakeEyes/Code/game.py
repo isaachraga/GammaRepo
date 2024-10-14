@@ -233,6 +233,12 @@ class Game:
             case "None":
                 print("Error: No Control Assigned")
 
+
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+
+
     ##### Run Game Loop #####
     def run(self):
         self.update() 
@@ -651,12 +657,12 @@ class Game:
                 mods = pygame.key.get_mods()
                 shift_held = mods & pygame.KMOD_SHIFT
 
-                if shift_held: 
-                    if event.key == pygame.K_s:
-                        if not self.testing:
-                            self.scene_manager.switch_scene("pause")
-                    if event.key == pygame.K_y:
-                        self.tests.run_tests(self)
+                if event.key == pygame.K_ESCAPE:
+                    if not self.testing:
+                        self.scene_manager.switch_scene("pause")
+                # if shift_held: 
+                #     if event.key == pygame.K_y:
+                #         self.tests.run_tests(self)
 
             # if event.type == pygame.JOYDEVICEADDED:
             #     controller = pygame.joystick.Joystick(event.device_index)
