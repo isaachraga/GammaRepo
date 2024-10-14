@@ -42,7 +42,7 @@ class GameSetup:
         # Create a UIImage inside the red panel
         self.image_element = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(
-                (5, 5),  # Image position relative to the red panel
+                (10, 20),  # Image position relative to the red panel
                 (180, 180)),  # Image size (adjust to the size of your image)
             image_surface=self.image_surface,
             manager=self.ui_manager,
@@ -109,7 +109,7 @@ class GameSetup:
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(
-                (5, 5),  # Image position relative to the blue panel
+                (10, 20),  # Image position relative to the blue panel
                 (180, 180)),  # Image size (adjust to the size of your image)
             image_surface=self.image_surface,
             manager=self.ui_manager,
@@ -174,7 +174,7 @@ class GameSetup:
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(  
-                (5, 5),  # Image position relative to the blue panel
+                (10, 20),  # Image position relative to the blue panel
                 (180, 180)),  # Image size (adjust to the size of your image)
             image_surface=self.image_surface,
             manager=self.ui_manager,
@@ -239,7 +239,7 @@ class GameSetup:
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
             relative_rect=pygame.Rect(  
-                (5, 5),  # Image position relative to the blue panel
+                (10, 20),  # Image position relative to the blue panel
                 (180, 180)),  # Image size (adjust to the size of your image)
             image_surface=self.image_surface,
             manager=self.ui_manager,
