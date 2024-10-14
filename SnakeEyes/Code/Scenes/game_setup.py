@@ -37,7 +37,7 @@ class GameSetup:
             manager=self.ui_manager
         )
         # Load an image to be displayed inside the panel
-        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\Jeff Profile.png').convert_alpha()
+        self.image_surface = pygame.image.load('SnakeEyes/Assets/Characters/Profile/Jeff Profile.png').convert_alpha()
 
         # Create a UIImage inside the red panel
         self.image_element = pygame_gui.elements.UIImage(
@@ -104,7 +104,7 @@ class GameSetup:
             manager=self.ui_manager
         )
             # Load an image to be displayed inside the panel
-        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\mj-profile.png').convert_alpha()
+        self.image_surface = pygame.image.load('SnakeEyes/Assets/Characters/Profile/mj-profile.png').convert_alpha()
 
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
@@ -169,7 +169,7 @@ class GameSetup:
             object_id='#yellow_panel',
             manager=self.ui_manager
         )
-        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\mj-profileAlt.png').convert_alpha()
+        self.image_surface = pygame.image.load('SnakeEyes/Assets/Characters/Profile/mj-profileAlt.png').convert_alpha()
 
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
@@ -234,7 +234,7 @@ class GameSetup:
             object_id='#green_panel',
             manager=self.ui_manager
         )
-        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\Jeff Profile Alt1.png').convert_alpha()
+        self.image_surface = pygame.image.load('SnakeEyes/Assets/Characters/Profile/Jeff Profile Alt1.png').convert_alpha()
 
         # Create a UIImage inside the blue panel
         self.image_element = pygame_gui.elements.UIImage(
