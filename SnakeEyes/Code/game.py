@@ -11,12 +11,12 @@ from SnakeEyes.Code.preferences import Preferences
 
 ### BUGS ###
 # in game status didnt update on last round information
-# p2 cashed out above the winning amount, shouldve went to game win screen
+# last round and police are interfering
 # need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
 # store collision needs fixed
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
-# players can walk on buildings
+
 
 
 
@@ -241,7 +241,7 @@ class Game:
     ##### Update Game #####
     def update(self):
         self.inputManager()
-        self.lastRoundCheck()
+        #self.lastRoundCheck()
         self.readyCheck()
 
     ##### Render Game #####
@@ -741,6 +741,7 @@ class Game:
         
     ### looks through players to see if the round is over and how to handle it ###
     def roundCheck(self):
+        self.lastRoundCheck()
 
         count = 0
         for p in self.Players:
