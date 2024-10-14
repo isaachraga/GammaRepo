@@ -10,10 +10,11 @@ from SnakeEyes.Code.preferences import Preferences
 
 
 ### BUGS ###
+# need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
 # store collision needs fixed
 # dont set off police on first alarm
 # last round hanling with police call/all alarms going straight to win screen
-# players can walk on buildings
+
 
 
 
@@ -41,7 +42,7 @@ class Game:
     def initialization(self):
         ### Flags and General Game Vars ###
         self.dt = 0
-        self.result = ""
+        self.result = "init"
         self.winScore = Preferences.FINISHLINE_SCORE
         self.lastRound = False
         self.gameOverFlag = False
@@ -244,7 +245,7 @@ class Game:
     ##### Update Game #####
     def update(self):
         self.inputManager()
-        self.lastRoundCheck()
+        #self.lastRoundCheck()
         self.readyCheck()
 
     ##### Render Game #####
@@ -293,8 +294,8 @@ class Game:
         #self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
         
         #self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
-        if self.lastRound:
-            self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
+        #if self.lastRound:
+        self.GAME_FONT.render_to(self.screen, (1100, 690), self.result, (255,255,255))
 
 
 
@@ -595,7 +596,7 @@ class Game:
 
                                             s.players.clear()
                                         else:
-                                            self.result = ""
+                                            self.result = "Roll Default"
                                             for p in s.players:
                                                 if p.status == 1:
                                                     p.tmpScore = p.tmpScore+self.award
@@ -744,6 +745,7 @@ class Game:
         
     ### looks through players to see if the round is over and how to handle it ###
     def roundCheck(self):
+        self.lastRoundCheck()
 
         count = 0
         for p in self.Players:
@@ -774,11 +776,11 @@ class Game:
         for p in self.Players:
             if p.status != -1:
                 p.score = 0
-            # p.status = -1
+                p.status = -1
         if not self.lastRound:
             self.result = "SNAKE EYES"
-        # else:
-        # self.gameOver()
+        #else:
+            #self.gameOver()
 
     def resetTempScores(self):
         for p in self.Players:
@@ -821,7 +823,7 @@ class Game:
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
-        self.result = ""
+        self.result = "RoundReset"
         self.allAlarms = False
         self.police = False
         self.alarmedStores = 0
@@ -836,7 +838,7 @@ class Game:
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
-        self.result = ""
+        self.result = "GameReset"
         self.lastRound = False
         self.allAlarms = False
         self.police = False
