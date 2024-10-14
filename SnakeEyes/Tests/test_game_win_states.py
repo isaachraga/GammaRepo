@@ -78,6 +78,11 @@ def test_game_win_all_cash_out_first_player(setup_game):
     game.Players[3].status = -1
     game.run()
     game.roundCheck()
+
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+
     assert(game.gameOverFlag is True)
     assert(game.result == "GAME OVER: Player 1 Wins!\nPress Space To Restart")
 
@@ -99,6 +104,11 @@ def test_game_win_all_cash_out_second_player(setup_game):
     game.Players[3].status = -1
     game.run()
     game.roundCheck()
+
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+
     assert(game.gameOverFlag is True)
     assert(game.result == "GAME OVER: Player 2 Wins!\nPress Space To Restart")
 
@@ -121,6 +131,11 @@ def test_game_win_all_cash_out_last_player(setup_game):
     game.Players[3].status = -1
     game.run()
     game.roundCheck()
+
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+
     assert(game.gameOverFlag is True)
     assert(game.result == "GAME OVER: Player 4 Wins!\nPress Space To Restart")
 
@@ -142,11 +157,17 @@ def test_game_win_police(setup_game):
     game.Players[3].status = 1
     game.run()
     game.roundCheck()
+
     game.resetTempScores()
     game.police = True
     for s in game.Stores:
         s.status = -1
     game.snakeEyes()
+
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+
     assert(game.gameOverFlag is True)
     assert(game.result == "GAME OVER: Player 1 Wins!\nPress Space To Restart")
 
@@ -176,7 +197,11 @@ def test_game_all_alarms_lower_vault(setup_game):
         s.status = -1
     game.alarmedStores = 4
     game.allAlarms = True
-    game.gameOver()
+
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+    
     
     assert(game.gameOverFlag is True)
     assert(game.result == "GAME OVER: Player 2 Wins!\nPress Space To Restart")
