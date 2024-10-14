@@ -1,5 +1,5 @@
 import pygame
-from settings import Settings
+from SnakeEyes.Code.settings import Settings
 
 class GameStatus:
     def __init__(self, scene_manager, game):
@@ -7,6 +7,10 @@ class GameStatus:
         self.game = game
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
+    
+    ### Runs once when this scene is switched to ###
+    def on_scene_enter(self):
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
     
     def run(self):
         self.update()
@@ -21,7 +25,7 @@ class GameStatus:
                 if event.key == pygame.K_SPACE:
                     self.scene_manager.switch_scene('mods')
                 # Scene Selection
-                if event.key == pygame.K_s:
+                if event.key == pygame.K_ESCAPE:
                     self.scene_manager.switch_scene('pause')
 
     def render(self):
