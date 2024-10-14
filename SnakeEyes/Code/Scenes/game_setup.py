@@ -36,6 +36,18 @@ class GameSetup:
             object_id='#red_panel',
             manager=self.ui_manager
         )
+        # Load an image to be displayed inside the panel
+        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\Jeff Profile.png').convert_alpha()
+
+        # Create a UIImage inside the red panel
+        self.image_element = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(
+                (5, 5),  # Image position relative to the red panel
+                (180, 180)),  # Image size (adjust to the size of your image)
+            image_surface=self.image_surface,
+            manager=self.ui_manager,
+            container=self.red_panel  # Set the red panel as the container
+        )
 
         self.red_player_index = self.player_type_options.index(Preferences.RED_PLAYER_TYPE)
         self.red_player_label = pygame_gui.elements.UILabel(
@@ -91,7 +103,18 @@ class GameSetup:
             object_id='#blue_panel',
             manager=self.ui_manager
         )
+            # Load an image to be displayed inside the panel
+        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\mj-profile.png').convert_alpha()
 
+        # Create a UIImage inside the blue panel
+        self.image_element = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(
+                (5, 5),  # Image position relative to the blue panel
+                (180, 180)),  # Image size (adjust to the size of your image)
+            image_surface=self.image_surface,
+            manager=self.ui_manager,
+            container=self.blue_panel  # Set the blue panel as the container
+        )
         self.blue_player_index = self.player_type_options.index(Preferences.BLUE_PLAYER_TYPE)
         self.blue_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
@@ -146,7 +169,17 @@ class GameSetup:
             object_id='#yellow_panel',
             manager=self.ui_manager
         )
+        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\mj-profileAlt.png').convert_alpha()
 
+        # Create a UIImage inside the blue panel
+        self.image_element = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(  
+                (5, 5),  # Image position relative to the blue panel
+                (180, 180)),  # Image size (adjust to the size of your image)
+            image_surface=self.image_surface,
+            manager=self.ui_manager,
+            container=self.yellow_panel  # Set the blue panel as the container
+        )
         self.yellow_player_index = self.player_type_options.index(Preferences.YELLOW_PLAYER_TYPE)
         self.yellow_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
@@ -201,7 +234,17 @@ class GameSetup:
             object_id='#green_panel',
             manager=self.ui_manager
         )
+        self.image_surface = pygame.image.load('SnakeEyes\\Assets\\Characters\\Profile\\Jeff Profile Alt1.png').convert_alpha()
 
+        # Create a UIImage inside the blue panel
+        self.image_element = pygame_gui.elements.UIImage(
+            relative_rect=pygame.Rect(  
+                (5, 5),  # Image position relative to the blue panel
+                (180, 180)),  # Image size (adjust to the size of your image)
+            image_surface=self.image_surface,
+            manager=self.ui_manager,
+            container=self.green_panel  # Set the blue panel as the container
+        )
         self.green_player_index = self.player_type_options.index(Preferences.GREEN_PLAYER_TYPE)
         self.green_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
