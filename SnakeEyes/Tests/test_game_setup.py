@@ -130,17 +130,17 @@ def test_score_selection(setup_game_setup):
     # Increase finish line score
     initial_score = Preferences.FINISHLINE_SCORE
     simulate_gui_click(game_setup, game_setup.finish_score_inc)
-    assert Preferences.FINISHLINE_SCORE == initial_score + 10
+    assert Preferences.FINISHLINE_SCORE == initial_score + game_setup.score_increments
 
     # Decrease finish line score
     simulate_gui_click(game_setup, game_setup.finish_score_dec)
     assert Preferences.FINISHLINE_SCORE == initial_score
 
     # Check score can't go to 0
-    while Preferences.FINISHLINE_SCORE > 10:
+    while Preferences.FINISHLINE_SCORE > game_setup.score_increments:
         simulate_gui_click(game_setup, game_setup.finish_score_dec)
     simulate_gui_click(game_setup, game_setup.finish_score_dec)
-    assert Preferences.FINISHLINE_SCORE == 10
+    assert Preferences.FINISHLINE_SCORE == game_setup.score_increments
 
     # Restore the initial score
     while Preferences.FINISHLINE_SCORE < initial_score:

@@ -410,13 +410,14 @@ class GameSetup:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
                     #Finishline Score
+                    self.score_increments = 50
                     if event.ui_element == self.finish_score_dec:
-                        if (Preferences.FINISHLINE_SCORE > 10):
-                            Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - 10
+                        if (Preferences.FINISHLINE_SCORE > self.score_increments):
+                            Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - self.score_increments
                             self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
                             self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
                     if event.ui_element == self.finish_score_inc:
-                        Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + 10
+                        Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
                         self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
 
