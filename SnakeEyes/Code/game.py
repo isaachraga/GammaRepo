@@ -351,6 +351,11 @@ class Game:
         for p in self.Players:
             if p.status != -1:
                 pygame.draw.circle(self.screen, p.color , p.position, 20)
+                pygame.draw.rect(self.screen, (255,255,0), p.XCol)
+                pygame.draw.rect(self.screen, (0,0,255), p.YCol)
+        
+        ### Collider Visualization ###
+
 
 
 
@@ -687,24 +692,33 @@ class Game:
         
 
         #stores & cars
-        tempCol = pygame.Rect(0,0,100,100)
+        
 
         if(tempX != 0):
-            tempCol.center = pygame.Vector2(player.position.x+tempX/100, player.position.y)
+            player.XCol.center = pygame.Vector2(player.position.x+tempX/11, player.position.y)
             #print("New Location X: "+str(tempCol.center))
         if(tempY != 0):
-            tempCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/100)
+            player.YCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/11)
             #print("New Location Y: "+str(tempCol.center))
 
-        collide = self.storeCollider.colliderect(tempCol)
+        collideX = self.storeCollider.colliderect(player.XCol)
+        collideY = self.storeCollider.colliderect(player.YCol)
 
-        if collide:
+        if collideX or collideY:
             #print("Collision")
-            return False
+            
+            valid = False
+        #else:
+        
+        player.XCol.center = player.position
+        player.YCol.center = player.position
         
             
         
         return valid
+    
+    
+        
             
     
 
@@ -943,6 +957,11 @@ class Player:
         self.position = pygame.Vector2(0, 0)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
+        self.XCol = pygame.Rect(0,0,10,10)
+        self.XCol.center = self.position
+        self.YCol = pygame.Rect(0,0,10,10)
+        self.YCol.center = self.position
+        
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
