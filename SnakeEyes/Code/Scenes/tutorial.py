@@ -230,7 +230,7 @@ class Tutorial:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     
                     #Page Change
                     if event.ui_element == self.page_left or event.ui_element == self.page_right:
@@ -238,7 +238,7 @@ class Tutorial:
                             self.page_index -= 1
                         if event.ui_element == self.page_right:
                             self.page_index += 1
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                         self.update_UI()
 
     def update_UI(self):

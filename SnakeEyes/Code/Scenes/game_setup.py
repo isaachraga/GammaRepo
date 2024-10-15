@@ -355,59 +355,59 @@ class GameSetup:
                         self.game.initialization()
                         self.game.delayedInit()
                         self.scene_manager.switch_scene('game')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     #Player Type Select
                     if event.ui_element == self.red_player_left:
                         self.playerTypeSelect('red', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.red_player_right:
                         self.playerTypeSelect('red', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.blue_player_left:
                         self.playerTypeSelect('blue', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.blue_player_right:
                         self.playerTypeSelect('blue', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.yellow_player_left:
                         self.playerTypeSelect('yellow', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.yellow_player_right:
                         self.playerTypeSelect('yellow', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.green_player_left:
                         self.playerTypeSelect('green', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.green_player_right:
                         self.playerTypeSelect('green', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     #Player Control Select
                     if event.ui_element == self.red_control_left:
                         self.controlSchemeSelect('red', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.red_control_right:
                         self.controlSchemeSelect('red', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.blue_control_left:
                         self.controlSchemeSelect('blue', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.blue_control_right:
                         self.controlSchemeSelect('blue', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.yellow_control_left:
                         self.controlSchemeSelect('yellow', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.yellow_control_right:
                         self.controlSchemeSelect('yellow', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.green_control_left:
                         self.controlSchemeSelect('green', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.green_control_right:
                         self.controlSchemeSelect('green', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     #Finishline Score
                     self.score_increments = 50
@@ -415,11 +415,11 @@ class GameSetup:
                         if (Preferences.FINISHLINE_SCORE > self.score_increments):
                             Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - self.score_increments
                             self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
-                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.finish_score_inc:
                         Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
                         self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
 
 
