@@ -15,3 +15,9 @@ class Preferences:
     BLUE_CONTROLS = "TFGH"
     YELLOW_CONTROLS = "None"
     GREEN_CONTROLS = "None"
+
+    #Player character
+    RED_CHARACTER = "jeff"
+    BLUE_CHARACTER = "mj"
+    YELLOW_CHARACTER = "mj_alt"
+    GREEN_CHARACTER = "jeff_alt"

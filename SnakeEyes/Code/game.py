@@ -3,6 +3,7 @@ import pygame.locals
 import pygame.freetype  # Import the freetype module.
 import random
 import math
+from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 
@@ -31,8 +32,8 @@ class Game:
         self.screen = scene_manager.screen
 
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
+        
         self.clock = pygame.time.Clock()
-
         
         self.initialization()
 
@@ -66,6 +67,54 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+
+        self.initializePlayerSprites()
+    
+
+    ### Character Sprites ###
+    #Helper function to cut up sprite sheets
+    def getSpriteFrames(self, sprite_sheet, frame_width, frame_height):
+        frames = []
+        sheet_width, sheet_height = sprite_sheet.get_size()
+        for y in range(0, sheet_height, frame_height):
+            for x in range(0, sheet_width, frame_width):
+                frame = sprite_sheet.subsurface((x, y, frame_width, frame_height))
+                frames.append(frame)
+        return frames
+    #Helper function to convert spritesheet to working sprite
+    def makeCharacterSprite(self, path, width, height, fr, flipped=False):
+        CharacterState = namedtuple('CharacterState', ['sprite_list', 'frame_rate', 'current_frame', 'current_sprite'])
+        current_frame = 0 #current frame of animation
+        frame_rate = fr #num of frames sprites are held on
+        sprite_sheet = pygame.image.load(path).convert_alpha() #sprite sheet
+        if flipped:
+            sprite_sheet = pygame.transform.flip(sprite_sheet, True, False)
+        sprite_list = self.getSpriteFrames(sprite_sheet, width, height) #cut up sprite sheet
+        if flipped:
+            sprite_list.reverse()
+        current_sprite = sprite_list[current_frame // frame_rate]
+        return CharacterState(sprite_list    = sprite_list, 
+                              frame_rate     = frame_rate, 
+                              current_frame  = current_frame, 
+                              current_sprite = current_sprite)
+    
+    def initializePlayerSprites(self):        
+        self.character_sprites = {}
+        #Jeff
+        self.character_sprites["jeff"] = {}
+        self.character_sprites["jeff"]["last_action"] = ""
+        self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
+                                                                             60, 75, 2)
+        self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
+                                                                          55, 75, 2)
+        self.character_sprites["jeff"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                           65, 70, 2)
+        self.character_sprites["jeff"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                          65, 70, 2, True)
+
+
+
+
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
@@ -108,6 +157,7 @@ class Game:
             self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
             self.p1.color = (255,0,0)
+            self.p1.character = Preferences.RED_CHARACTER
             self.p1.gr = pygame.Vector2(25,60)
             self.p1.yl = pygame.Vector2(25,80)
             self.p1.rd = pygame.Vector2(25,100)
@@ -118,6 +168,7 @@ class Game:
             self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
             self.p2.color = (0,0,255)
+            self.p2.character = Preferences.BLUE_CHARACTER
             self.p2.gr = pygame.Vector2(1210,60)
             self.p2.yl = pygame.Vector2(1210,80)
             self.p2.rd = pygame.Vector2(1210,100)
@@ -128,6 +179,7 @@ class Game:
             self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
             self.p3.color = (204,204,0)
+            self.p3.character = Preferences.YELLOW_CHARACTER
             self.p3.gr = pygame.Vector2(25,260)
             self.p3.yl = pygame.Vector2(25,280)
             self.p3.rd = pygame.Vector2(25,300)
@@ -138,6 +190,7 @@ class Game:
             self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
             self.p4.color = (0,255,0)
+            self.p4.character = Preferences.GREEN_CHARACTER
             self.p4.gr = pygame.Vector2(1210,260)
             self.p4.yl = pygame.Vector2(1210,280)
             self.p4.rd = pygame.Vector2(1210,300)
@@ -248,6 +301,7 @@ class Game:
         #self.lastRoundCheck()
         self.readyCheck()
 
+
     ##### Render Game #####
     def render(self):
         ### Fill Background ###
@@ -352,15 +406,30 @@ class Game:
             if p.status != -1:
                 pygame.draw.circle(self.screen, p.color , p.position, 20)
 
+        #Render sprites
+        for action_name, sprite in self.character_sprites["jeff"].items():
+            if action_name == self.character_sprites["jeff"]["last_action"]:
+                # Only blit the last updated sprite
+                self.screen.blit(sprite.current_sprite, (300, 100))
 
 
         # runs the status updates for all dynamic objects
 
         self.status()
 
-        
 
         pygame.display.flip()
+
+    # Updates character sprites
+    def updateCharacterSprite(self, character_sprites, character, action):
+        sprite = character_sprites[character][action]
+        new_current_frame = sprite.current_frame + 1
+        if new_current_frame >= len(sprite.sprite_list) * sprite.frame_rate:
+            new_current_frame = 0
+        new_current_sprite = sprite.sprite_list[new_current_frame // sprite.frame_rate]
+        updated_state = sprite._replace(current_frame=new_current_frame, current_sprite=new_current_sprite)
+        character_sprites[character][action] = updated_state #Save updated state
+        character_sprites[character]["last_action"] = action
 
     ### checks ready status for all players
     def readyCheck(self):
@@ -445,12 +514,16 @@ class Game:
                     tempY=0
                     if keys[p.up]:
                         tempY -= self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "back")
                     if keys[p.down]:
                         tempY += self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "forward")
                     if keys[p.left]:
                         tempX -= self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "left")
                     if keys[p.right]:
                         tempX += self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
                     ### current boundary locations, is bugged and needs 
                     if tempX != 0 or tempY != 0:
@@ -943,6 +1016,7 @@ class Player:
         self.position = pygame.Vector2(0, 0)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
+        self.character = ""
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
