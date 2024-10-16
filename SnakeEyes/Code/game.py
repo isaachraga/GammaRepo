@@ -3,6 +3,7 @@ import pygame.locals
 import pygame.freetype  # Import the freetype module.
 import random
 import math
+from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 
@@ -29,6 +30,7 @@ class Game:
         self.screen = scene_manager.screen
 
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
+        
         self.clock = pygame.time.Clock()
 
         self.initialization()
@@ -62,6 +64,91 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+
+        self.initializePlayerSprites()
+    
+
+    ### Character Sprites ###
+    #Helper function to cut up sprite sheets
+    def getSpriteFrames(self, sprite_sheet, frame_width, frame_height):
+        frames = []
+        sheet_width, sheet_height = sprite_sheet.get_size()
+        for y in range(0, sheet_height, frame_height):
+            for x in range(0, sheet_width, frame_width):
+                frame = sprite_sheet.subsurface((x, y, frame_width, frame_height))
+                frames.append(frame)
+        return frames
+    #Helper function to convert spritesheet to working sprite
+    def makeCharacterSprite(self, path, width, height, fr, flipped=False):
+        CharacterState = namedtuple('CharacterState', ['sprite_list', 'frame_rate', 'current_frame', 'current_sprite'])
+        current_frame = 0 #current frame of animation
+        frame_rate = fr #num of frames sprites are held on
+        sprite_sheet = pygame.image.load(path).convert_alpha() #sprite sheet
+        if flipped:
+            sprite_sheet = pygame.transform.flip(sprite_sheet, True, False)
+        sprite_list = self.getSpriteFrames(sprite_sheet, width, height) #cut up sprite sheet
+        if flipped:
+            sprite_list.reverse()
+        current_sprite = sprite_list[current_frame // frame_rate]
+        return CharacterState(sprite_list    = sprite_list, 
+                              frame_rate     = frame_rate, 
+                              current_frame  = current_frame, 
+                              current_sprite = current_sprite)
+    
+    def initializePlayerSprites(self):        
+        self.character_sprites = {}
+        
+        #Only initialize the characters being used
+        for p in self.Players:
+            #Jeff
+            if p.character == "jeff":
+                self.character_sprites["jeff"] = {}
+                self.character_sprites["jeff"]["last_action"] = "forward"
+                self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
+                                                                                    60, 75, 2)
+                self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
+                                                                                55, 75, 2)
+                self.character_sprites["jeff"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                                65, 70, 2)
+                self.character_sprites["jeff"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                                65, 70, 2, True)
+            if p.character == "jeff_alt":
+                self.character_sprites["jeff_alt"] = {}
+                self.character_sprites["jeff_alt"]["last_action"] = "forward"
+                self.character_sprites["jeff_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-ForwardAlt1.png",
+                                                                                         60, 75, 2)
+                self.character_sprites["jeff_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffBackAlt1.png",
+                                                                                      55, 75, 2)
+                self.character_sprites["jeff_alt"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffWalkRight Alt1.png",
+                                                                                       65, 70, 2)
+                self.character_sprites["jeff_alt"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffWalkRight Alt1.png",
+                                                                                      65, 70, 2, True)
+            if p.character == "mj":
+                self.character_sprites["mj"] = {}
+                self.character_sprites["mj"]["last_action"] = "forward"
+                self.character_sprites["mj"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForward.png",
+                                                                                   60, 75, 2)
+                self.character_sprites["mj"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBack.png",
+                                                                                55, 75, 2)
+                self.character_sprites["mj"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MJRightWalk.png",
+                                                                                 65, 70, 2)
+                self.character_sprites["mj"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MJRightWalk.png",
+                                                                                65, 70, 2, True)
+            if p.character == "mj_alt":
+                self.character_sprites["mj_alt"] = {}
+                self.character_sprites["mj_alt"]["last_action"] = "forward"
+                self.character_sprites["mj_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForwardAlt1.png",
+                                                                                       60, 75, 2)
+                self.character_sprites["mj_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBackAlt.png",
+                                                                                    55, 75, 2)
+                self.character_sprites["mj_alt"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjRightWalkAlt1.png",
+                                                                                     65, 70, 2)
+                self.character_sprites["mj_alt"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjRightWalkAlt1.png",
+                                                                                    65, 70, 2, True)
+
+
+
+
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
@@ -105,6 +192,7 @@ class Game:
             # self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
             self.p1.color = (255,0,0)
+            self.p1.character = Preferences.RED_CHARACTER
             self.p1.gr = pygame.Vector2(25,60)
             self.p1.yl = pygame.Vector2(25,80)
             self.p1.rd = pygame.Vector2(25,100)
@@ -115,6 +203,7 @@ class Game:
             # self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
             self.p2.color = (0,0,255)
+            self.p2.character = Preferences.BLUE_CHARACTER
             self.p2.gr = pygame.Vector2(1210,60)
             self.p2.yl = pygame.Vector2(1210,80)
             self.p2.rd = pygame.Vector2(1210,100)
@@ -125,6 +214,7 @@ class Game:
             # self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
             self.p3.color = (204,204,0)
+            self.p3.character = Preferences.YELLOW_CHARACTER
             self.p3.gr = pygame.Vector2(25,260)
             self.p3.yl = pygame.Vector2(25,280)
             self.p3.rd = pygame.Vector2(25,300)
@@ -135,6 +225,7 @@ class Game:
             # self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
             self.p4.color = (0,255,0)
+            self.p4.character = Preferences.GREEN_CHARACTER
             self.p4.gr = pygame.Vector2(1210,260)
             self.p4.yl = pygame.Vector2(1210,280)
             self.p4.rd = pygame.Vector2(1210,300)
@@ -402,6 +493,7 @@ class Game:
         # self.lastRoundCheck()
         self.readyCheck()
 
+
     ##### Render Game #####
     def render(self):
         ### Fill Background ###
@@ -506,13 +598,32 @@ class Game:
         ##### PLAYERS #####
         for p in self.Players:
             if p.status != -1:
-                pygame.draw.circle(self.screen, p.color , p.position, 20)
+                #pygame.draw.circle(self.screen, p.color , p.position, 20)
+                
+                #Render sprite
+                for action_name, sprite in self.character_sprites[p.character].items():
+                    #Check if this action is the last updated action for this character
+                    if action_name == self.character_sprites[p.character]["last_action"]:
+                        #Render the last updated sprite
+                        adjusted_position = p.position - pygame.Vector2(30, 50)
+                        self.screen.blit(sprite.current_sprite, adjusted_position)
 
         # runs the status updates for all dynamic objects
 
         self.status()
 
         pygame.display.flip()
+
+    # Updates character sprites
+    def updateCharacterSprite(self, character_sprites, character, action):
+        sprite = character_sprites[character][action]
+        new_current_frame = sprite.current_frame + 1
+        if new_current_frame >= len(sprite.sprite_list) * sprite.frame_rate:
+            new_current_frame = 0
+        new_current_sprite = sprite.sprite_list[new_current_frame // sprite.frame_rate]
+        updated_state = sprite._replace(current_frame=new_current_frame, current_sprite=new_current_sprite)
+        character_sprites[character][action] = updated_state #Save updated state
+        character_sprites[character]["last_action"] = action
 
     ### checks ready status for all players
     def readyCheck(self):
@@ -551,8 +662,8 @@ class Game:
 
                 self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-38), "P"+str(p.playerNum), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
 
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
@@ -564,6 +675,260 @@ class Game:
                 pygame.draw.circle(self.screen, "yellow" , p.yl, 10)
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
+
+    ##### Game Functions #####
+
+
+    ### handles all inputs for the game ###
+    def inputManager(self):
+        if self.statusFlag:
+            self.scene_manager.switch_scene('status')
+
+        dt = self.clock.tick(60) / 1000
+
+        keys = pygame.key.get_pressed()
+
+
+        # pygame.joystick.init()  #Initialize joystick module
+
+        ## need boundaries set up more precisely 
+
+
+  
+
+        ##### Player Controls #####
+
+        if not self.police:
+            for p in self.Players:
+                if p.status != -1:
+                    tempX=0
+                    tempY=0
+                    if keys[p.up]:
+                        tempY -= self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "back")
+                    if keys[p.down]:
+                        tempY += self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "forward")
+                    if keys[p.left]:
+                        tempX -= self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "left")
+                    if keys[p.right]:
+                        tempX += self.moveSpeed
+                        self.updateCharacterSprite(self.character_sprites, p.character, "right")
+
+                    ### current boundary locations, is bugged and needs 
+                    if tempX != 0 or tempY != 0:
+                                    # if both, check for both
+                                    if tempX != 0 and tempY != 0:
+                                        #print("both")
+                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = tempX*(math.sqrt(2)/2)
+                                        else:
+                                            tempX = 0
+                                        
+                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = tempY*(math.sqrt(2)/2)
+                                        else:
+                                            tempY = 0
+                                        #print("vars: "+tempX+" "+tempY)
+                                           
+                                        
+                                    # if h check      
+                                    elif tempX != 0 and tempY == 0:
+                                        #print("X")
+                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = 0
+                                    # if y check 
+                                    elif tempX == 0 and tempY != 0:
+                                        #print("Y")
+                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = 0 
+
+                                    p.position.x += tempX * dt
+                                    p.position.y += tempY * dt
+                                    p.collider.center = p.position
+
+        for event in pygame.event.get():
+
+            ### handles application exit ###
+
+            if event.type == pygame.QUIT:   
+                self.scene_manager.quit()
+                self.running = False
+
+
+            if event.type == pygame.KEYDOWN:
+
+                #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
+                if self.testing:
+                    if not self.police:
+                        for p in self.Players:
+                            if p.status != -1:
+                                tempX=0
+                                tempY=0
+                                if event.key==p.up:
+                                    tempY -= self.moveSpeed
+                                if event.key==p.down:
+                                    tempY += self.moveSpeed
+                                if event.key==p.left:
+                                    tempX -= self.moveSpeed
+                                if event.key==p.right:
+                                    tempX += self.moveSpeed
+
+                                #if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                                if tempX != 0 or tempY != 0:
+                                    # if both, check for both
+                                    if tempX != 0 and tempY != 0:
+                                        #print("both")
+                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = tempX*(math.sqrt(2)/2)
+                                        else:
+                                            tempX = 0
+                                        
+                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = tempY*(math.sqrt(2)/2)
+                                        else:
+                                            tempY = 0
+                                        #print("vars: "+tempX+" "+tempY)
+                                           
+                                        
+                                    # if h check      
+                                    elif tempX != 0 and tempY == 0:
+                                        #print("X")
+                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                            tempX = 0
+                                    # if y check 
+                                    elif tempX == 0 and tempY != 0:
+                                        #print("Y")
+                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                            tempY = 0 
+
+                                    p.position.x += tempX * dt
+                                    p.position.y += tempY * dt
+                                    p.collider.center = p.position
+
+                # dice roller
+                if event.key == pygame.K_SPACE:
+
+                    #clear all store text
+                    for s in self.Stores:
+                        if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                            s.scoreText = ''
+
+                    self.roundCheck()
+
+                    
+                    ### handles if police have been triggered
+                    if self.police:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
+                    ### handles if all alarms were set off
+                    elif self.allAlarms:
+                        if self.lastRound:
+                            self.gameOver()
+                        else:
+                            self.resetRound()
+                    else: 
+                        if self.ready:
+
+                            for s in self.Stores:
+                                if len(s.players) != 0:
+
+                                    #police roll if a store is alarmed
+                                    if self.alarmedStores > 0 and self.roundSkipped:
+                                        if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
+                                            self.resetTempScores()
+                                            s.scoreText = "!POLICE!"
+                                            s.status = -1
+                                            self.police = True
+                                            self.snakeEyes()
+
+                                    if not self.police:
+                                        # roll for value/alarm
+                                        self.award = self.roll(1,9,s.risk,s.reward) 
+
+                                        if self.award == -1:
+                                            s.scoreText = "!ALARMED!"
+                                            self.alarmedStores = self.alarmedStores + 1
+                                            s.status=-1
+
+                                            for p in s.players:
+                                                p.status = 0
+                                                p.tmpScore = 0
+
+                                            s.players.clear()
+                                        else:
+                                            self.result = "Roll Default"
+                                            for p in s.players:
+                                                if p.status == 1:
+                                                    p.tmpScore = p.tmpScore+self.award
+                                                    p.status = 0
+                                                    s.scoreText = "+"+str(self.award)
+                    # check for all alarms
+                    count = 0
+                    for s in self.Stores:
+                        if s.status == -1:
+                            count = count + 1
+
+                    self.alarmedStores = count
+
+                    if count == len(self.Stores):
+                        self.allAlarms = True
+
+
+                    # delays police roll from happening until the first alarmed round has finished
+                    if self.alarmedStores > 0 and not self.roundSkipped:
+                        self.roundSkipped = True
+
+                                    
+
+                #Player Ready
+                for p in self.Players:
+                    if event.key == p.ready:
+                        for c in self.Cars:
+                            ##### if at car cash out
+                            if c.ready and c.playerNum == p.playerNum:
+                                p.score = p.score + p.tmpScore
+                                p.tmpScore = 0
+                                p.status = -1
+                                self.roundCheck()
+                            else:
+                        #### if at store, set to ready
+                                for s in self.Stores:
+                                    if p in s.players:
+                                        if p.status != -1:
+                                            p.status = 1
+
+                # Player Cash Out
+                '''
+                for p in self.Players:
+                    if event.key == p.cashOut:
+                        p.score = p.score + p.tmpScore
+                        p.tmpScore = 0
+                        p.status = -1
+                        for s in self.Stores:
+                            if p in s.players:
+                                s.players.remove(p)
+                        self.roundCheck()
+                        '''
+
+                # Scene Selection
+
+                mods = pygame.key.get_mods()
+                shift_held = mods & pygame.KMOD_SHIFT
+
+                if event.key == pygame.K_ESCAPE:
+                    if not self.testing:
+                        self.scene_manager.switch_scene("pause")
+                # if shift_held: 
+                #     if event.key == pygame.K_y:
+                #         self.tests.run_tests(self)
+
+            # if event.type == pygame.JOYDEVICEADDED:
+            #     controller = pygame.joystick.Joystick(event.device_index)
+            #     self.controllers.append(controller)
 
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         # print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
@@ -881,6 +1246,7 @@ class Player:
         self.position = pygame.Vector2(0, 0)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
+        self.character = ""
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
