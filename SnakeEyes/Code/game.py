@@ -62,7 +62,7 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((170, 0, 940, 250)) ### bugged, needs fixed
+        self.storeCollider = pygame.Rect((140, 0, 990, 260)) ### bugged, needs fixed
 
         self.playerReset()
         self.playerLocReset()
@@ -430,7 +430,7 @@ class Game:
                             
                 
         ##### STORES #####
-        #pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
+        #pygame.draw.rect(self.screen, (255,255,255), (160, 0, 950, 290))
 
         for s in self.Stores:
             #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
