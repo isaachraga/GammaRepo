@@ -8,7 +8,6 @@ class Tutorial:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.HEADER_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.HEADER_FONT_SIZE)
-        self.controlSchemeNum = 0
 
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json") #pygame_gui manager
         self.clock = pygame.time.Clock() #Needed for pygame_gui
@@ -205,7 +204,8 @@ class Tutorial:
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         # self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
-        pass #Does nothing
+        self.page_index = 0
+        self.update_UI()
 
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
@@ -230,7 +230,7 @@ class Tutorial:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     
                     #Page Change
                     if event.ui_element == self.page_left or event.ui_element == self.page_right:
@@ -238,28 +238,30 @@ class Tutorial:
                             self.page_index -= 1
                         if event.ui_element == self.page_right:
                             self.page_index += 1
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                        self.update_UI()
 
-                        self.page_index %= len(self.tutorial_page_num)  #Wrap list
-                        self.page_num_label.set_text(self.tutorial_page_num[self.page_index])
-                        self.page_name_label.set_text(self.tutorial_page_name[self.page_index])
-
-                        self.hide_GUI()
-                        match self.page_index:
-                            case 0:
-                                self.default_text.show()
-                            case 1:
-                                self.control_schemes.show()
-                            case 2:
-                                self.goal_text.show()
-                            case 3:
-                                self.gameplay_text.show()
-                            case 4:
-                                self.money_text.show()
-                            case 5:
-                                self.alarm_text.show()
-                            case 6:
-                                self.police_text.show()
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+    def update_UI(self):
+        self.page_index %= len(self.tutorial_page_num)  #Wrap list
+        self.page_num_label.set_text(self.tutorial_page_num[self.page_index])
+        self.page_name_label.set_text(self.tutorial_page_name[self.page_index])
+        
+        self.hide_GUI()
+        match self.page_index:
+            case 0:
+                self.default_text.show()
+            case 1:
+                self.control_schemes.show()
+            case 2:
+                self.goal_text.show()
+            case 3:
+                self.gameplay_text.show()
+            case 4:
+                self.money_text.show()
+            case 5:
+                self.alarm_text.show()
+            case 6:
+                self.police_text.show()
                                 
 
 

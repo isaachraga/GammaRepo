@@ -49,7 +49,7 @@ class Credits:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
         self.ui_manager.update(self.time_delta)

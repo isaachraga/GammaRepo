@@ -1,6 +1,6 @@
 #For pytest, file must start with 'test_'
 #For pytest, function must start with 'test_'
-#To run manually, run 'python -m pytest SnakeEyes/Tests/test_tutorial.py'
+#To run manually, run 'python -m pytest SnakeEyes/Tests/test_inputs.py'
 #To run all tests, run 'python -m pytest SnakeEyes/Tests'
 
 import pygame, pytest, pygame_gui
@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.INFO) #Add logging for test feedback
 
 from SnakeEyes.Code.game import Game
 from SnakeEyes.Code.scene_manager import SceneManager
-from SnakeEyes.Code.settings import Settings
+
 
 
 ###############################################
