@@ -3,7 +3,7 @@
 #To run manually, run 'python -m pytest SnakeEyes/Tests/test_inputs.py'
 #To run all tests, run 'python -m pytest SnakeEyes/Tests'
 
-import pygame, pytest, pygame_gui
+import pygame, pytest
 import os, logging
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
 os.environ["SDL_AUDIODRIVER"] = "dummy" #Dummy audio driver for headless environment
