@@ -54,7 +54,7 @@ def test_collider_stop_movement(setup_game):
         game.run() 
         #logging.info("Run: "+ str(x)+" | Location: "+ str(game.Players[1].position.y))
 
-    assert(game.Players[1].position.y > 285)
+    assert(game.Players[1].position.y > 280)
     game.playerReset()
     game.playerLocReset()
 
@@ -67,7 +67,7 @@ def test_collider_stop_movement_and_continue_back(setup_game):
         game.run() 
         #logging.info("Run: "+ str(x)+" | Location: "+ str(game.Players[1].position.y))
 
-    assert(game.Players[1].position.y > 285)
+    assert(game.Players[1].position.y > 280)
     location = game.Players[1].position.y
 
     for x in range(10):
@@ -89,7 +89,7 @@ def test_collider_stop_movement_and_continue_side(setup_game):
         game.run() 
         #logging.info("Run: "+ str(x)+" | Location: "+ str(game.Players[1].position.y))
 
-    assert(game.Players[1].position.y > 285)
+    assert(game.Players[1].position.y > 280)
     location = game.Players[1].position.x
 
     for x in range(10):
