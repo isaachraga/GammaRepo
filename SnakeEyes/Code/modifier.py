@@ -4,7 +4,7 @@ class Modifier:
         self.description = description
         self.cost = cost
         self.apply_modifier = apply_modifier
-        self.active = False  # Track if  modifier is currently active
+        self.active = False  # Track if modifier is currently active
         self.duration = 0  # Tracks how many turns modifier is active
 
     def activate(self, duration=0):
@@ -36,7 +36,6 @@ def lucky_streak_modifier(player, dice_rolls, game):
     if player.tmpScore >= 20:  # Example threshold
         player.tmpScore = int(player.tmpScore * 1.5)
         game.result = f'Lucky Streak activated for Player {player.playerNum}!'
-
 
 def hot_dice_modifier(player, dice_rolls, game):
     if dice_rolls == (5, 5):

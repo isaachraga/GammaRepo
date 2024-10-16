@@ -6,6 +6,7 @@ import math
 from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+from SnakeEyes.Code.modifier import Modifier, lucky_streak_modifier, store_boost_modifier, hot_dice_modifier
 
 ### TO DO ###
 
@@ -19,6 +20,33 @@ from SnakeEyes.Code.preferences import Preferences
 
 
 
+
+# Modifier store function added
+def modifier_store(self, player):
+    available_modifiers = [
+        Modifier("Lucky Streak", "Boost score if conditions met", 12, lucky_streak_modifier),
+        Modifier("Hot Dice", "Get a dice buff for two turns", 12, hot_dice_modifier),
+    ]
+
+    # Logic to display and select modifiers (integrate with game UI)
+    for mod in available_modifiers:
+        if player.score >= mod.cost:
+            player.purchase_modifier(mod)
+
+# Turn logic to include modifier purchasing
+def play_turn(self):
+    for player in self.Players:
+        dice_roll = player.roll_dice()
+        player.tmpScore += sum(dice_roll)
+
+        # Apply active modifiers
+        for mod in player.active_modifiers:
+            mod.apply(player, dice_roll, self)
+
+        # Offer player to purchase modifier if score is enough
+        if player.score >= 12:  # Threshold for purchasing
+            self.modifier_store(player)
+        
 ### FEATURE CHANGES ###
 # attach vault score to vehicle
 
