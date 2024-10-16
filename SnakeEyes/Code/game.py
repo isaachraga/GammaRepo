@@ -100,17 +100,54 @@ class Game:
     
     def initializePlayerSprites(self):        
         self.character_sprites = {}
-        #Jeff
-        self.character_sprites["jeff"] = {}
-        self.character_sprites["jeff"]["last_action"] = ""
-        self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
-                                                                             60, 75, 2)
-        self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
-                                                                          55, 75, 2)
-        self.character_sprites["jeff"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
-                                                                           65, 70, 2)
-        self.character_sprites["jeff"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
-                                                                          65, 70, 2, True)
+        
+        #Only initialize the characters being used
+        for p in self.Players:
+            #Jeff
+            if p.character == "jeff":
+                self.character_sprites["jeff"] = {}
+                self.character_sprites["jeff"]["last_action"] = "forward"
+                self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
+                                                                                    60, 75, 2)
+                self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
+                                                                                55, 75, 2)
+                self.character_sprites["jeff"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                                65, 70, 2)
+                self.character_sprites["jeff"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-RightWalk.png",
+                                                                                65, 70, 2, True)
+            if p.character == "jeff_alt":
+                self.character_sprites["jeff_alt"] = {}
+                self.character_sprites["jeff_alt"]["last_action"] = "forward"
+                self.character_sprites["jeff_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-ForwardAlt1.png",
+                                                                                         60, 75, 2)
+                self.character_sprites["jeff_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffBackAlt1.png",
+                                                                                      55, 75, 2)
+                self.character_sprites["jeff_alt"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffWalkRight Alt1.png",
+                                                                                       65, 70, 2)
+                self.character_sprites["jeff_alt"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffWalkRight Alt1.png",
+                                                                                      65, 70, 2, True)
+            if p.character == "mj":
+                self.character_sprites["mj"] = {}
+                self.character_sprites["mj"]["last_action"] = "forward"
+                self.character_sprites["mj"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForward.png",
+                                                                                   60, 75, 2)
+                self.character_sprites["mj"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBack.png",
+                                                                                55, 75, 2)
+                self.character_sprites["mj"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MJRightWalk.png",
+                                                                                 65, 70, 2)
+                self.character_sprites["mj"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MJRightWalk.png",
+                                                                                65, 70, 2, True)
+            if p.character == "mj_alt":
+                self.character_sprites["mj_alt"] = {}
+                self.character_sprites["mj_alt"]["last_action"] = "forward"
+                self.character_sprites["mj_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForwardAlt1.png",
+                                                                                       60, 75, 2)
+                self.character_sprites["mj_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBackAlt.png",
+                                                                                    55, 75, 2)
+                self.character_sprites["mj_alt"]["right"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjRightWalkAlt1.png",
+                                                                                     65, 70, 2)
+                self.character_sprites["mj_alt"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjRightWalkAlt1.png",
+                                                                                    65, 70, 2, True)
 
 
 
@@ -404,13 +441,15 @@ class Game:
         ##### PLAYERS #####
         for p in self.Players:
             if p.status != -1:
-                pygame.draw.circle(self.screen, p.color , p.position, 20)
+                #pygame.draw.circle(self.screen, p.color , p.position, 20)
 
-        #Render sprites
-        for action_name, sprite in self.character_sprites["jeff"].items():
-            if action_name == self.character_sprites["jeff"]["last_action"]:
-                # Only blit the last updated sprite
-                self.screen.blit(sprite.current_sprite, (300, 100))
+                #Render sprite
+                for action_name, sprite in self.character_sprites[p.character].items():
+                    #Check if this action is the last updated action for this character
+                    if action_name == self.character_sprites[p.character]["last_action"]:
+                        #Render the last updated sprite
+                        adjusted_position = p.position - pygame.Vector2(30, 50)
+                        self.screen.blit(sprite.current_sprite, adjusted_position)
 
 
         # runs the status updates for all dynamic objects
@@ -468,8 +507,8 @@ class Game:
                 
                 self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-38), "P"+str(p.playerNum), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-40), "P"+str(p.playerNum), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
 
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
