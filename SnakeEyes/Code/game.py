@@ -263,62 +263,6 @@ class Game:
         #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
         #     )
 
-    # def inputManager(self):
-    #     if self.statusFlag:
-    #         self.scene_manager.switch_scene('status')
-
-    #     dt = self.clock.tick(60) / 1000
-
-    #     ##### Player Controls #####
-    #     if not self.police:
-    #         all_players_ready = True
-
-    #         for p in self.Players:
-    #             if p.status != -1:
-    #                 # Movement
-    #                 move_x, move_y = p.controller.get_movement()
-    #                 tempX = move_x * self.moveSpeed
-    #                 tempY = move_y * self.moveSpeed
-
-    #                 # Boundary checks
-    #                 if p.position.x + tempX * dt < 1510 and p.position.x + tempX * dt > -250 and p.position.y + tempY * dt < 950 and p.position.y + tempY * dt > -250:
-    #                     p.position.x += tempX * dt
-    #                     p.position.y += tempY * dt
-    #                     p.collider.center = p.position
-
-    #                 # Check if player pressed the 'ready' button
-    #                 if p.controller.is_action_pressed('ready'):
-    #                     if p.status != -1:  # Only mark active players
-    #                         p.status = 1  # Set player to 'ready'
-
-    #                 # If any player is not ready, mark the entire group as not ready
-    #                 if p.status != 1:
-    #                     all_players_ready = False
-
-    #         # Proceed to dice roll only if all players are ready
-    #         if all_players_ready:
-    #             for p in self.Players:
-    #                 if p.controller.is_action_pressed('space'):
-    #                     # Perform the dice roll action if space is pressed
-    #                     self.handle_dice_roll()
-
-    #     for event in pygame.event.get():
-    #         ### handles application exit ###
-    #         if event.type == pygame.QUIT:
-    #             self.scene_manager.quit()
-    #             self.running = False
-
-    #         if event.type == pygame.KEYDOWN:
-    #             #### Handle keyboard 'ready' press ####
-    #             for p in self.Players:
-    #                 if event.key == p.ready:
-    #                     if p.status != -1:
-    #                         p.status = 1  # Set player to 'ready'
-
-    #             #### Handle dice roll with spacebar ####
-    #             all_players_ready = all(p.status == 1 for p in self.Players if p.status != -1)
-    #             if event.key == pygame.K_SPACE and all_players_ready:
-    #                 self.handle_dice_roll()
     def inputManager(self):
         if self.statusFlag:
             self.scene_manager.switch_scene('status')
