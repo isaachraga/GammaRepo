@@ -441,9 +441,9 @@ class Game:
         ##### PLAYERS #####
         for p in self.Players:
             if p.status != -1:
-                pygame.draw.circle(self.screen, p.color , p.position, 20)
-                pygame.draw.rect(self.screen, (255,255,0), p.XCol)
-                pygame.draw.rect(self.screen, (0,0,255), p.YCol)
+                #pygame.draw.circle(self.screen, p.color , p.position, 20)
+                #pygame.draw.rect(self.screen, (255,255,0), p.XCol)
+                #pygame.draw.rect(self.screen, (0,0,255), p.YCol)
         
         ### Collider Visualization ###
 
@@ -1069,6 +1069,10 @@ class Player:
         self.position = pygame.Vector2(0, 0)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
+        self.XCol = pygame.Rect(0,0,10,10)
+        self.XCol.center = self.position
+        self.YCol = pygame.Rect(0,0,10,10)
+        self.YCol.center = self.position
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
