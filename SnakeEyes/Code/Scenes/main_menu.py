@@ -12,11 +12,52 @@ class MainMenu:
         self.TITLE_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", 72)
 
         self.clock = pygame.time.Clock() #Needed for pygame_gui
-
+        self.load_title_animation("SnakeEyes/Assets/Icons/Title animated.png", 800,300, 30) # Load animated sprite
         self.button_width = 375
         self.button_height = 75
 
         self.make_GUI()
+    ### Load the animated sprite (title animation) ###
+    def load_title_animation(self, path, frame_width, frame_height, frame_rate):
+        """Loads the animated sprite from a sprite sheet."""
+        try:
+            self.sprite_sheet = pygame.image.load(path).convert_alpha()
+        except pygame.error as e:
+            print(f"Error loading sprite sheet: {e}")
+            return
+
+        self.frame_width = frame_width
+        self.frame_height = frame_height
+        self.frame_rate = frame_rate
+        self.frames = self.extract_frames(self.sprite_sheet, frame_width, frame_height)
+        self.current_frame_index = 0
+        self.frame_counter = 0
+        self.total_frames = len(self.frames)
+
+    ### Extract frames from the sprite sheet ###
+    def extract_frames(self, sprite_sheet, frame_width, frame_height):
+        """Extract frames from the sprite sheet."""
+        frames = []
+        sheet_width, sheet_height = sprite_sheet.get_size()
+        for y in range(0, sheet_height, frame_height):
+            for x in range(0, sheet_width, frame_width):
+                frame = sprite_sheet.subsurface(pygame.Rect(x, y, frame_width, frame_height))
+                frames.append(frame)
+        return frames
+
+    ### Update the frame of the animation ###
+    def update_title_animation(self):
+        """Update the frame of the title animation."""
+        self.frame_counter += 1
+        if self.frame_counter >= self.frame_rate:
+            self.frame_counter = 0
+            self.current_frame_index = (self.current_frame_index + 1) % self.total_frames
+
+    ### Draw the current frame of the animation ###
+    def draw_title_animation(self):
+        """Draw the current frame of the title animation at (100, 100)."""
+        current_frame = self.frames[self.current_frame_index]
+        self.screen.blit(current_frame, (225, 10))
 
     def make_GUI(self):
         #Play Game
@@ -115,12 +156,8 @@ class MainMenu:
     def render(self):
         self.screen.fill((255, 255, 255))
 
-        title_sticky = self.TITLE_FONT.get_rect("Sticky")
-        title_sticky.center = ((Settings.WIDTH / 2), 100)
-        self.TITLE_FONT.render_to(self.screen, title_sticky, "Sticky", (0, 0, 0))
-        title_fingers = self.TITLE_FONT.get_rect("Fingers")
-        title_fingers.center = ((Settings.WIDTH / 2), 180)
-        self.TITLE_FONT.render_to(self.screen, title_fingers, "Fingers", (0, 0, 0))
+        self.update_title_animation()  # Update the animated sprite
+        self.draw_title_animation()    # Draw the animated sprit
         
         self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", (0, 0, 0))
 
