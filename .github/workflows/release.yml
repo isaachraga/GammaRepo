@@ -1,0 +1,56 @@
+name: Package and Release Sticky Fingers
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  package_and_release:
+    runs-on: ${{ matrix.os }}  #Package for Windows, macOS, and Linux
+    strategy:
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]  
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.x 
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r SnakeEyes/requirements.txt
+        pip install pyinstaller
+        pip install Pillow        #For icon conversion on Mac
+
+    - name: Package executable
+      run: |
+        bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
+          python -m PyInstaller --onefile --windowed --name="StickyFingers_Windows" --icon="SnakeEyes/Assets/Characters/Profile/Jeff Profile.png" --add-data="Fonts;Fonts" --add-data="SnakeEyes;SnakeEyes" sticky_fingers.py
+        elif [ "${{ runner.os }}" == "macOS" ]; then
+          python -m PyInstaller --onefile --windowed --name="StickyFingers_macOS" --icon="SnakeEyes/Assets/Characters/Profile/Jeff Profile.png" --add-data="Fonts:Fonts" --add-data="SnakeEyes:SnakeEyes" sticky_fingers.py
+        else
+          python -m PyInstaller --onefile --windowed --name="StickyFingers_Linux" --icon="SnakeEyes/Assets/Characters/Profile/Jeff Profile.png" --add-data="Fonts:Fonts" --add-data="SnakeEyes:SnakeEyes" sticky_fingers.py
+        fi'
+      
+      
+      
+
+       
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: latest  #Overwrites previous release
+        files: |
+          dist/StickyFingers_Windows.exe
+          dist/StickyFingers_macOS
+          dist/StickyFingers_Linux
+        draft: false  #Publish immediately
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  #GitHub provides this token automatically??
