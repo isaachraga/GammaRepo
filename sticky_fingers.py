@@ -1,6 +1,6 @@
 #Entry point for packaging project
 #To package manually, run:
-#    'python -m PyInstaller --onefile --windowed --add-data="Fonts;Fonts" --add-data="SnakeEyes;SnakeEyes" .\sticky_fingers.py'
+#   'python -m PyInstaller --onefile --windowed --add-data="Fonts;Fonts" --add-data="SnakeEyes;SnakeEyes" .\sticky_fingers.py'
 
 import sys
 import os
