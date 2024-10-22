@@ -62,9 +62,9 @@ class GameStatus:
                     self.scene_manager.switch_scene('pause')
             
             if event.type == pygame.USEREVENT:
-                # Check if a button was clicked
+                #Check if a button was clicked
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    #Back Button
+                    #Continue Button
                     if event.ui_element == self.continue_button:
                         self.scene_manager.switch_scene('mods')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")

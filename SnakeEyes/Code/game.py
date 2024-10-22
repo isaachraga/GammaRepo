@@ -107,6 +107,7 @@ class Game:
             if p.character == "jeff":
                 self.character_sprites["jeff"] = {}
                 self.character_sprites["jeff"]["last_action"] = "forward"
+                self.character_sprites["jeff"]["profile"] = "SnakeEyes/Assets/Characters/Profile/Jeff Profile.png"
                 self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
                                                                                     60, 75, 2)
                 self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
@@ -118,6 +119,7 @@ class Game:
             if p.character == "jeff_alt":
                 self.character_sprites["jeff_alt"] = {}
                 self.character_sprites["jeff_alt"]["last_action"] = "forward"
+                self.character_sprites["jeff_alt"]["profile"] = "SnakeEyes/Assets/Characters/Profile/Jeff Profile Alt1.png"
                 self.character_sprites["jeff_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-ForwardAlt1.png",
                                                                                          60, 75, 2)
                 self.character_sprites["jeff_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffBackAlt1.png",
@@ -129,6 +131,7 @@ class Game:
             if p.character == "mj":
                 self.character_sprites["mj"] = {}
                 self.character_sprites["mj"]["last_action"] = "forward"
+                self.character_sprites["mj"]["profile"] = "SnakeEyes/Assets/Characters/Profile/mj-profile.png"
                 self.character_sprites["mj"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForward.png",
                                                                                    60, 75, 2)
                 self.character_sprites["mj"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBack.png",
@@ -140,6 +143,7 @@ class Game:
             if p.character == "mj_alt":
                 self.character_sprites["mj_alt"] = {}
                 self.character_sprites["mj_alt"]["last_action"] = "forward"
+                self.character_sprites["mj_alt"]["profile"] = "SnakeEyes/Assets/Characters/Profile/mj-profileAlt.png"
                 self.character_sprites["mj_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForwardAlt1.png",
                                                                                        60, 75, 2)
                 self.character_sprites["mj_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBackAlt.png",
@@ -935,14 +939,14 @@ class Game:
     def gameOver(self):
         if not self.gameOverFlag:
             self.gameOverFlag = True
-            TopPlayer = Player()
-            HighScore = 0
+            self.TopPlayer = Player()
+            self.HighScore = 0
             for p in self.Players:
-                if p.score > HighScore:
-                    TopPlayer = p
-                    HighScore = p.score
+                if p.score > self.HighScore:
+                    self.TopPlayer = p
+                    self.HighScore = p.score
 
-            self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
+            self.result = "GAME OVER: Player " + str(self.TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
             self.scene_manager.switch_scene('win')
 
     def resetRound(self):
