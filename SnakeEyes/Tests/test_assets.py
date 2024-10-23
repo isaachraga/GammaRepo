@@ -71,3 +71,11 @@ def test_hot_dice():
 def test_lucky_streak():
     logging.info("Tesing lucky streak icon")
     assert os.path.exists("SnakeEyes/Assets/Icons/luckyStreakModifier.png")
+
+def shield_modifier():
+    logging.info("Testing shield modifier icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/shield modifier.png")
+
+def shield_modifier():
+    logging.info("Testing boost modifier icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/boost modifier.png")
