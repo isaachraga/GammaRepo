@@ -30,7 +30,7 @@ class GameWin:
     
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
 
         self.sorted_players = sorted(self.game.Players, key=lambda Player: Player.score, reverse=True)
 
