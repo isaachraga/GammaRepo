@@ -2,7 +2,6 @@ import pygame
 import pygame_gui
 import pygame.freetype
 from SnakeEyes.Code.settings import Settings
-from SnakeEyes.Code.preferences import Preferences
 
 class GameWin:
     def __init__(self, scene_manager, game):
@@ -148,7 +147,7 @@ class GameWin:
             second_wanted_text_rect.midtop = (second_rect.centerx, second_rect.top + (currentFontSize*textPadding))
             currentFont.render_to(self.screen, second_wanted_text_rect, second_text, (0, 0, 0))
 
-            second_text = f"ROBBER: P{self.sorted_players[1].playerNum}"
+            second_text = f"BURGLAR: P{self.sorted_players[1].playerNum}"
             currentFontSize = titleTextSize*secondScale
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             second_title_text_rect = currentFont.get_rect(second_text)
@@ -190,7 +189,7 @@ class GameWin:
             third_wanted_text_rect.midtop = (third_rect.centerx, third_rect.top + (currentFontSize*textPadding))
             currentFont.render_to(self.screen, third_wanted_text_rect, third_text, (0, 0, 0))
 
-            third_text = f"BURGLAR: P{self.sorted_players[2].playerNum}"
+            third_text = f"THIEF: P{self.sorted_players[2].playerNum}"
             currentFontSize = titleTextSize*thirdScale
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             third_title_text_rect = currentFont.get_rect(third_text)
