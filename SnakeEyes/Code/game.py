@@ -59,7 +59,7 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((170, 0, 940, 250)) ### bugged, needs fixed
+        self.storeCollider = pygame.Rect((140, 0, 990, 260)) ### bugged, needs fixed
 
         self.playerReset()
         self.playerLocReset()
@@ -587,7 +587,11 @@ class Game:
                         c.ready = False
 
         ##### STORES #####
+
+        #pygame.draw.rect(self.screen, (255,255,255), (160, 0, 950, 290))
+
         # pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
+
 
         for s in self.Stores:
             # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
@@ -599,7 +603,12 @@ class Game:
         for p in self.Players:
             if p.status != -1:
                 #pygame.draw.circle(self.screen, p.color , p.position, 20)
-                
+                #pygame.draw.rect(self.screen, (255,255,0), p.XCol)
+                #pygame.draw.rect(self.screen, (0,0,255), p.YCol)
+        
+        ### Collider Visualization ###
+
+
                 #Render sprite
                 for action_name, sprite in self.character_sprites[p.character].items():
                     #Check if this action is the last updated action for this character
@@ -949,23 +958,35 @@ class Game:
                 # print("Border Hit")
                 return False
 
-        # stores & cars
-        tempCol = pygame.Rect(0,0,100,100)
+
+        #stores & cars
+        
 
         if(tempX != 0):
-            tempCol.center = pygame.Vector2(player.position.x+tempX/100, player.position.y)
-            # print("New Location X: "+str(tempCol.center))
+            player.XCol.center = pygame.Vector2(player.position.x+tempX/11, player.position.y)
+            #print("New Location X: "+str(tempCol.center))
         if(tempY != 0):
-            tempCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/100)
-            # print("New Location Y: "+str(tempCol.center))
+            player.YCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/11)
+            #print("New Location Y: "+str(tempCol.center))
 
-        collide = self.storeCollider.colliderect(tempCol)
 
-        if collide:
-            # print("Collision")
-            return False
+        collideX = self.storeCollider.colliderect(player.XCol)
+        collideY = self.storeCollider.colliderect(player.YCol)
 
+
+        if collideX or collideY:
+            #print("Collision")
+            
+            valid = False
+        #else:
+        
+        player.XCol.center = player.position
+        player.YCol.center = player.position
+        
+            
+        
         return valid
+    
 
     ### handles rolls, num 1 is the lowest number, num2 is highest number, risk is the level of risk mod applied, reward is the level of reward mod applied
     def roll(self, num1, num2, riskMod, rewardMod):
@@ -1246,7 +1267,10 @@ class Player:
         self.position = pygame.Vector2(0, 0)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
-        self.character = ""
+        self.XCol = pygame.Rect(0,0,10,10)
+        self.XCol.center = self.position
+        self.YCol = pygame.Rect(0,0,10,10)
+        self.YCol.center = self.position
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)

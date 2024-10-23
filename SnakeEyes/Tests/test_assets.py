@@ -59,7 +59,16 @@ def test_icon_assets():
     logging.info("Testing Icon Assets")
     assert os.path.exists("SnakeEyes/Assets/Icons/policeBadge.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/WadofCash.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/Title animated.png")
 
 def test_GUI_theme():
     logging.info("Testing GUI Theme")
     assert os.path.exists("SnakeEyes/Assets/theme.json")
+
+def test_hot_dice():
+    logging.info("Tesing hot dice icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/hotDiceModifier.png")
+
+def test_lucky_streak():
+    logging.info("Tesing lucky streak icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/luckyStreakModifier.png")
