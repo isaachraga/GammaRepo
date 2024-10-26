@@ -50,6 +50,7 @@ def test_character_profile_assets():
 def test_environment_background_assets():
     logging.info("Testing Environment Background Assets")
     assert os.path.exists("SnakeEyes/Assets/Environment/Background/Background.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Background/MainMenuBackground.png")
 
 def test_environment_object_assets():
     logging.info("Testing Environment Object Assets")
