@@ -65,7 +65,8 @@ class Game:
         self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
 
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
-
+        self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
+        self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
@@ -449,9 +450,9 @@ class Game:
         for s in self.Stores:
             #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
             #needs to clear each round
-
-            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
-
+            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
+            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
+            
         ##### PLAYERS #####
         for p in self.Players:
             if p.status != -1:
@@ -508,14 +509,17 @@ class Game:
             if s.status == -1:
                 s.color = (255,0,0)
             else:
-                risk = ''
+                offset = 0
                 for x in range(s.risk):
-                    risk = risk + '* '
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-260), "Risk: "+risk, (255, 255, 255))
-                reward = ''
-                for x in range(s.reward):
-                    reward = reward + '$'
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: "+reward, (255, 255, 255))
+                    self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
+                    offset = offset+20
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
+
+                offset = 0
+                for x in range(s.risk):
+                    self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
+                    offset = offset+20
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
 
         for p in self.Players:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (0, 0, 0))
@@ -679,8 +683,9 @@ class Game:
 
                     #clear all store text
                     for s in self.Stores:
-                        if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                        if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
                             s.scoreText = ''
+                            s.scoreTextColor = (255,255,255)
 
                     self.roundCheck()
 
@@ -707,7 +712,8 @@ class Game:
                                     if self.alarmedStores > 0 and self.roundSkipped:
                                         if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
                                             self.resetTempScores()
-                                            s.scoreText = "!POLICE!"
+                                            s.scoreText = "POLICE"
+                                            s.scoreTextColor = (255,0,0)
                                             s.status = -1
                                             self.police = True
                                             self.snakeEyes()
@@ -717,7 +723,8 @@ class Game:
                                         self.award = self.roll(1,9,s.risk,s.reward) 
 
                                         if self.award == -1:
-                                            s.scoreText = "!ALARMED!"
+                                            s.scoreText = "ALARMED"
+                                            s.scoreTextColor = (255,0,0)
                                             self.alarmedStores = self.alarmedStores + 1
                                             s.status=-1
 
@@ -733,6 +740,7 @@ class Game:
                                                     p.tmpScore = p.tmpScore+self.award
                                                     p.status = 0
                                                     s.scoreText = "+"+str(self.award)
+                                                    s.scoreTextColor = (0,255,0)
                     # check for all alarms
                     count = 0
                     for s in self.Stores:
@@ -1126,6 +1134,7 @@ class Store:
         self.num2 = 0
         self.storeNum = 0
         self.scoreText = ""
+        self.scoreTextColor = (255,255,255)
         self.status = 0 #0 - ready | -1 alarmed
         self.color = (0,0,255)
         self.position = pygame.Vector2(0, 0)
