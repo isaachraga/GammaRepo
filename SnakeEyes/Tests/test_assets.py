@@ -55,6 +55,10 @@ def test_environment_background_assets():
 def test_environment_object_assets():
     logging.info("Testing Environment Object Assets")
     assert os.path.exists("SnakeEyes/Assets/Environment/Objects/policeCar.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP1.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP2.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP3.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP4.png")
 
 def test_icon_assets():
     logging.info("Testing Icon Assets")

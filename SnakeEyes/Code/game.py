@@ -62,7 +62,9 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((140, 0, 990, 260)) ### bugged, needs fixed
+        self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
+
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
 
         self.playerReset()
         self.playerLocReset()
@@ -163,6 +165,7 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
 
     ### Resets all stores to starting state ###
     def storeReset(self):
@@ -238,7 +241,6 @@ class Game:
             self.Players.append(self.p4)
 
         self.numPlayers = len(self.Players)
-        self.CarReset()
 
 
     ### Resets all carts to starting state ###
@@ -249,28 +251,33 @@ class Game:
             self.c1 = Car()
             self.c1.playerNum = self.p1.playerNum
             self.c1.position = pygame.Vector2(110, 520)
+            self.c1.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
             self.Cars.append(self.c1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
             self.c2 = Car()
             self.c2.playerNum = self.p2.playerNum
             self.c2.position = pygame.Vector2(310, 520)
+            self.c2.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP2.png')
             self.Cars.append(self.c2)
         
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
             self.c3 = Car()
             self.c3.playerNum = self.p3.playerNum
             self.c3.position = pygame.Vector2(715, 520)
+            self.c3.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP3.png')
             self.Cars.append(self.c3)
         
         if Preferences.GREEN_PLAYER_TYPE == "Player":
             self.c4 = Car()
             self.c4.playerNum = self.p4.playerNum
             self.c4.position = pygame.Vector2(1020, 520)
+            self.c4.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP4.png')
             self.Cars.append(self.c4)
 
         for c in self.Cars:
-            c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
+            c.collider = pygame.Rect(c.position.x-20, c.position.y-20, 100,190)
+            c.rb = pygame.Rect(c.position.x, c.position.y, 60,150)
 
 
     def playerStatusReset(self):
@@ -348,7 +355,7 @@ class Game:
         ### Fill Background ###
         self.screen.fill((255,255,255))
         ### Set Background Image ###
-        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
+        
         self.screen.blit(self.loadingScreen, (0,0))
 
 
@@ -419,6 +426,9 @@ class Game:
         ##### CAR COLLIDERS #####
         ### check for specified player's colision, sets option for cash out if collision is true
         for c in self.Cars:
+            #pygame.draw.rect(self.screen, (255,255,255), c.collider)
+            #pygame.draw.rect(self.screen, (255,0,0), c.rb)
+            self.screen.blit(c.carSprite, c.position)
             for p in self.Players:
                 if c.playerNum == p.playerNum:
                     collide = c.collider.colliderect(p.collider)
@@ -573,7 +583,7 @@ class Game:
                         tempX += self.moveSpeed
                         self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
-                    ### current boundary locations, is bugged and needs 
+                    
                     if tempX != 0 or tempY != 0:
                                     # if both, check for both
                                     if tempX != 0 and tempY != 0:
@@ -750,6 +760,7 @@ class Game:
                                 p.score = p.score + p.tmpScore
                                 p.tmpScore = 0
                                 p.status = -1
+                                self.Cars.remove
                                 self.roundCheck()
                             else:
                         #### if at store, set to ready
@@ -805,11 +816,10 @@ class Game:
             else:
                 #print("Border Hit")
                 return False
+            
         
-
-        #stores & cars
         
-
+        #premptive collision check
         if(tempX != 0):
             player.XCol.center = pygame.Vector2(player.position.x+tempX/11, player.position.y)
             #print("New Location X: "+str(tempCol.center))
@@ -820,12 +830,19 @@ class Game:
         collideX = self.storeCollider.colliderect(player.XCol)
         collideY = self.storeCollider.colliderect(player.YCol)
 
+
         if collideX or collideY:
-            #print("Collision")
-            
             valid = False
-        #else:
         
+        for c in self.Cars:
+            collideX = c.rb.colliderect(player.XCol)
+            collideY = c.rb.colliderect(player.YCol)
+
+            if collideX or collideY:
+                valid = False
+                
+
+
         player.XCol.center = player.position
         player.YCol.center = player.position
         
@@ -891,6 +908,7 @@ class Game:
                     self.alarmedStores = 0
                     self.storeReset()
                     self.playerLocReset()
+                    self.CarReset()
             else:
                 count = 0
                 self.gameOver()
@@ -1096,7 +1114,9 @@ class Car:
     def __init__(self):
         self.playerNum = 0
         self.position = pygame.Vector2(0, 0)
-        self.collider = pygame.Rect(self.position.x, self.position.y, 60,150)
+        self.collider = pygame.Rect(self.position.x, self.position.y, 0,150)
+        self.rb = pygame.Rect(self.position.x, self.position.y, 60,150)
+        self.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
         self.ready = False
 
 ########## STORE ##########
