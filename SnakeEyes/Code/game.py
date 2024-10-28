@@ -560,6 +560,8 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
+            print("Scene1")
+            self.resetRound()
             self.scene_manager.switch_scene('status')
 
         dt = self.clock.tick(60) / 1000
@@ -579,6 +581,11 @@ class Game:
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
+                    #player shows back up after entering a building and trying to move
+                    if(keys[p.up] or keys[p.down] or keys[p.left] or keys[p.right]) and p.status == 1:
+                        #print("Reset")
+                        p.status = 0
+
                     tempX=0
                     tempY=0
                     if keys[p.up]:
@@ -708,6 +715,10 @@ class Game:
                         if self.lastRound:
                             self.gameOver()
                         else:
+                            #print("allAlarms: "+str(self.allAlarms))
+                            #for s in self.Stores:
+                                #print("Store Num: " + str(s.storeNum))
+                                #print("Store Status: "+str(s.status))
                             self.resetRound()
                     else: 
                         if self.ready:
@@ -896,6 +907,8 @@ class Game:
 
     def assignStoreStats(self, store):
 
+        store.status = 0
+
         store.risk = random.randint(1,5)
         store.reward = (store.risk + random.randint(1,4) - 2)
 
@@ -986,7 +999,8 @@ class Game:
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
-        self.result = "RoundReset"
+        if not self.lastRound:
+            self.result = "RoundReset"
         self.allAlarms = False
         self.police = False
         self.alarmedStores = 0
@@ -994,8 +1008,10 @@ class Game:
         self.resetTempScores()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
+        #print("Scene2")
 
     def resetGame(self):
         self.dt = 0
@@ -1009,6 +1025,7 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
