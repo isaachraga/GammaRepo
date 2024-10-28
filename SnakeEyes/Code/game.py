@@ -398,7 +398,7 @@ class Game:
         
         #self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
         #if self.lastRound:
-        self.GAME_FONT.render_to(self.screen, (1100, 690), self.result, (255,255,255))
+        #self.GAME_FONT.render_to(self.screen, (1100, 690), self.result, (255,255,255))
 
 
 
@@ -464,12 +464,13 @@ class Game:
 
 
                 #Render sprite
-                for action_name, sprite in self.character_sprites[p.character].items():
-                    #Check if this action is the last updated action for this character
-                    if action_name == self.character_sprites[p.character]["last_action"]:
-                        #Render the last updated sprite
-                        adjusted_position = p.position - pygame.Vector2(30, 50)
-                        self.screen.blit(sprite.current_sprite, adjusted_position)
+                if p.status == 0:
+                    for action_name, sprite in self.character_sprites[p.character].items():
+                        #Check if this action is the last updated action for this character
+                        if action_name == self.character_sprites[p.character]["last_action"]:
+                            #Render the last updated sprite
+                            adjusted_position = p.position - pygame.Vector2(30, 50)
+                            self.screen.blit(sprite.current_sprite, adjusted_position)
 
 
         # runs the status updates for all dynamic objects
@@ -522,17 +523,23 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
 
         for p in self.Players:
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.rd.x-20, p.rd.y+20), "P"+str(p.playerNum), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(p.score), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
-            if p.status != -1:
+            if p.status == 0:
                 
                 self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+38), "$"+str(p.tmpScore+p.score), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(p.tmpScore+p.score), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
 
+            #stoplight status
+            '''
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
             pygame.draw.circle(self.screen, "black" , p.rd, 10)
@@ -543,7 +550,7 @@ class Game:
                 pygame.draw.circle(self.screen, "yellow" , p.yl, 10)
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
-
+            '''
 
 
 
@@ -768,7 +775,7 @@ class Game:
                                 p.score = p.score + p.tmpScore
                                 p.tmpScore = 0
                                 p.status = -1
-                                self.Cars.remove
+                                self.Cars.remove(c)
                                 self.roundCheck()
                             else:
                         #### if at store, set to ready
