@@ -38,13 +38,13 @@ class SceneSelection:
                 
 
     def render(self):
-        self.screen.fill((255, 255, 255))
-        self.GAME_FONT.render_to(self.screen, (10, 10), "DEBUG SCENE SELECTOR", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 70), "Use keyboard to select an option", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 100), "1. Start New Game", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 130), "2. Tutorial", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 160), "3. Options", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Credits", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 220), "5. Title Screen", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 250), "ESC. Back", (0, 0, 0))
+        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.GAME_FONT.render_to(self.screen, (10, 10), "DEBUG SCENE SELECTOR", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 70), "Use keyboard to select an option", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 100), "1. Start New Game", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 130), "2. Tutorial", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 160), "3. Options", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 190), "4. Credits", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 220), "5. Title Screen", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 250), "ESC. Back", Settings.COLOR_TEXT)
         pygame.display.flip()

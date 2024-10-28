@@ -106,18 +106,18 @@ class Pause:
 
     def render(self):
         self.ui_manager.update(self.time_delta)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_PRIMARY)
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, rect)
         rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (205, 205, 205), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_SECONDARY, rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("PAUSED")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "PAUSED", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "PAUSED", Settings.COLOR_TEXT)
         
         self.ui_manager.draw_ui(self.screen)
 

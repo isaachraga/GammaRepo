@@ -64,11 +64,11 @@ class GameWin:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_PRIMARY)
 
         over_text_rect = self.HEADER_FONT.get_rect("GAME OVER")
         over_text_rect.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
-        self.HEADER_FONT.render_to(self.screen, over_text_rect, "GAME OVER", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, over_text_rect, "GAME OVER", Settings.COLOR_TEXT)
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)
