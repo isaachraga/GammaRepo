@@ -59,8 +59,11 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((140, 0, 990, 260)) ### bugged, needs fixed
+        self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
 
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
+        self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
+        self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
@@ -104,6 +107,7 @@ class Game:
             if p.character == "jeff":
                 self.character_sprites["jeff"] = {}
                 self.character_sprites["jeff"]["last_action"] = "forward"
+                self.character_sprites["jeff"]["profile"] = "SnakeEyes/Assets/Characters/Profile/Jeff Profile.png"
                 self.character_sprites["jeff"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Foward.png",
                                                                                     60, 75, 2)
                 self.character_sprites["jeff"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-Back.png",
@@ -115,6 +119,7 @@ class Game:
             if p.character == "jeff_alt":
                 self.character_sprites["jeff_alt"] = {}
                 self.character_sprites["jeff_alt"]["last_action"] = "forward"
+                self.character_sprites["jeff_alt"]["profile"] = "SnakeEyes/Assets/Characters/Profile/Jeff Profile Alt1.png"
                 self.character_sprites["jeff_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/Jeff-ForwardAlt1.png",
                                                                                          60, 75, 2)
                 self.character_sprites["jeff_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/JeffBackAlt1.png",
@@ -126,6 +131,7 @@ class Game:
             if p.character == "mj":
                 self.character_sprites["mj"] = {}
                 self.character_sprites["mj"]["last_action"] = "forward"
+                self.character_sprites["mj"]["profile"] = "SnakeEyes/Assets/Characters/Profile/mj-profile.png"
                 self.character_sprites["mj"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForward.png",
                                                                                    60, 75, 2)
                 self.character_sprites["mj"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBack.png",
@@ -137,6 +143,7 @@ class Game:
             if p.character == "mj_alt":
                 self.character_sprites["mj_alt"] = {}
                 self.character_sprites["mj_alt"]["last_action"] = "forward"
+                self.character_sprites["mj_alt"]["profile"] = "SnakeEyes/Assets/Characters/Profile/mj-profileAlt.png"
                 self.character_sprites["mj_alt"]["forward"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjForwardAlt1.png",
                                                                                        60, 75, 2)
                 self.character_sprites["mj_alt"]["back"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjBackAlt.png",
@@ -156,6 +163,7 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
 
     ### Resets all stores to starting state ###
     def storeReset(self):
@@ -232,7 +240,6 @@ class Game:
             self.Players.append(self.p4)
 
         self.numPlayers = len(self.Players)
-        self.CarReset()
 
     ### Resets all carts to starting state ###
     def CarReset(self):
@@ -242,28 +249,33 @@ class Game:
             self.c1 = Car()
             self.c1.playerNum = self.p1.playerNum
             self.c1.position = pygame.Vector2(110, 520)
+            self.c1.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
             self.Cars.append(self.c1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
             self.c2 = Car()
             self.c2.playerNum = self.p2.playerNum
             self.c2.position = pygame.Vector2(310, 520)
+            self.c2.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP2.png')
             self.Cars.append(self.c2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
             self.c3 = Car()
             self.c3.playerNum = self.p3.playerNum
             self.c3.position = pygame.Vector2(715, 520)
+            self.c3.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP3.png')
             self.Cars.append(self.c3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
             self.c4 = Car()
             self.c4.playerNum = self.p4.playerNum
             self.c4.position = pygame.Vector2(1020, 520)
+            self.c4.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP4.png')
             self.Cars.append(self.c4)
 
         for c in self.Cars:
-            c.collider = pygame.Rect(c.position.x, c.position.y, 40,150)
+            c.collider = pygame.Rect(c.position.x-20, c.position.y-20, 100,190)
+            c.rb = pygame.Rect(c.position.x, c.position.y, 60,150)
 
     def playerStatusReset(self):
         for p in self.Players:
@@ -499,7 +511,7 @@ class Game:
         ### Fill Background ###
         self.screen.fill((255,255,255))
         ### Set Background Image ###
-        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
+        
         self.screen.blit(self.loadingScreen, (0,0))
 
         ##### DEBUG / STATUS #####
@@ -537,18 +549,6 @@ class Game:
         # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
 
         # self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
-        # if self.lastRound:
-        self.GAME_FONT.render_to(self.screen, (1100, 690), self.result, (255,255,255))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 480), "Round:", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore)+"   P2: "+str(self.p2.tmpScore)+"   P3: "+str(self.p3.tmpScore)+"   P4: "+str(self.p4.tmpScore), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 500), "P1: "+str(self.p1.tmpScore), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 520), "Score:", (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 540), "P1: "+str(self.p1.score)+"   P2: "+str(self.p2.score)+"   P3: "+str(self.p3.score)+"   P4: "+str(self.p4.score), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
@@ -575,6 +575,9 @@ class Game:
         ##### CAR COLLIDERS #####
         ### check for specified player's colision, sets option for cash out if collision is true
         for c in self.Cars:
+            #pygame.draw.rect(self.screen, (255,255,255), c.collider)
+            #pygame.draw.rect(self.screen, (255,0,0), c.rb)
+            self.screen.blit(c.carSprite, c.position)
             for p in self.Players:
                 if c.playerNum == p.playerNum:
                     collide = c.collider.colliderect(p.collider)
@@ -594,10 +597,10 @@ class Game:
 
 
         for s in self.Stores:
-            # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            # needs to clear each round
-
-            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-290), s.scoreText, (255, 255, 255))
+            #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
+            #needs to clear each round
+            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
+            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
 
         ##### PLAYERS #####
         for p in self.Players:
@@ -610,12 +613,13 @@ class Game:
 
 
                 #Render sprite
-                for action_name, sprite in self.character_sprites[p.character].items():
-                    #Check if this action is the last updated action for this character
-                    if action_name == self.character_sprites[p.character]["last_action"]:
-                        #Render the last updated sprite
-                        adjusted_position = p.position - pygame.Vector2(30, 50)
-                        self.screen.blit(sprite.current_sprite, adjusted_position)
+                if p.status == 0:
+                    for action_name, sprite in self.character_sprites[p.character].items():
+                        #Check if this action is the last updated action for this character
+                        if action_name == self.character_sprites[p.character]["last_action"]:
+                            #Render the last updated sprite
+                            adjusted_position = p.position - pygame.Vector2(30, 50)
+                            self.screen.blit(sprite.current_sprite, adjusted_position)
 
         # runs the status updates for all dynamic objects
 
@@ -653,27 +657,37 @@ class Game:
             if s.status == -1:
                 s.color = (255,0,0)
             else:
-                risk = ''
+                offset = 0
                 for x in range(s.risk):
-                    risk = risk + '* '
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-260), "Risk: "+risk, (255, 255, 255))
-                reward = ''
-                for x in range(s.reward):
-                    reward = reward + '$'
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: "+reward, (255, 255, 255))
+                    self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
+                    offset = offset+20
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
+
+                offset = 0
+                for x in range(s.risk):
+                    self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
+                    offset = offset+20
+                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
 
         for p in self.Players:
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.rd.x-20, p.rd.y+20), "P"+str(p.playerNum), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(p.score), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
-            if p.status != -1:
+
+            if p.status == 0:
 
                 self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+38), "$"+str(p.tmpScore+p.score), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(p.tmpScore+p.score), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
 
+            #stoplight status
+            '''
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
             pygame.draw.circle(self.screen, "black" , p.rd, 10)
@@ -684,6 +698,8 @@ class Game:
                 pygame.draw.circle(self.screen, "yellow" , p.yl, 10)
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
+            '''
+
 
     ##### Game Functions #####
 
@@ -691,6 +707,8 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
+            print("Scene1")
+            self.resetRound()
             self.scene_manager.switch_scene('status')
 
         dt = self.clock.tick(60) / 1000
@@ -710,6 +728,11 @@ class Game:
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
+                    #player shows back up after entering a building and trying to move
+                    if(keys[p.up] or keys[p.down] or keys[p.left] or keys[p.right]) and p.status == 1:
+                        #print("Reset")
+                        p.status = 0
+
                     tempX=0
                     tempY=0
                     if keys[p.up]:
@@ -725,7 +748,7 @@ class Game:
                         tempX += self.moveSpeed
                         self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
-                    ### current boundary locations, is bugged and needs 
+                    
                     if tempX != 0 or tempY != 0:
                                     # if both, check for both
                                     if tempX != 0 and tempY != 0:
@@ -821,8 +844,9 @@ class Game:
 
                     #clear all store text
                     for s in self.Stores:
-                        if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
+                        if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
                             s.scoreText = ''
+                            s.scoreTextColor = (255,255,255)
 
                     self.roundCheck()
 
@@ -838,6 +862,10 @@ class Game:
                         if self.lastRound:
                             self.gameOver()
                         else:
+                            #print("allAlarms: "+str(self.allAlarms))
+                            #for s in self.Stores:
+                                #print("Store Num: " + str(s.storeNum))
+                                #print("Store Status: "+str(s.status))
                             self.resetRound()
                     else: 
                         if self.ready:
@@ -849,7 +877,8 @@ class Game:
                                     if self.alarmedStores > 0 and self.roundSkipped:
                                         if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
                                             self.resetTempScores()
-                                            s.scoreText = "!POLICE!"
+                                            s.scoreText = "POLICE"
+                                            s.scoreTextColor = (255,0,0)
                                             s.status = -1
                                             self.police = True
                                             self.snakeEyes()
@@ -859,7 +888,8 @@ class Game:
                                         self.award = self.roll(1,9,s.risk,s.reward) 
 
                                         if self.award == -1:
-                                            s.scoreText = "!ALARMED!"
+                                            s.scoreText = "ALARMED"
+                                            s.scoreTextColor = (255,0,0)
                                             self.alarmedStores = self.alarmedStores + 1
                                             s.status=-1
 
@@ -875,6 +905,7 @@ class Game:
                                                     p.tmpScore = p.tmpScore+self.award
                                                     p.status = 0
                                                     s.scoreText = "+"+str(self.award)
+                                                    s.scoreTextColor = (0,255,0)
                     # check for all alarms
                     count = 0
                     for s in self.Stores:
@@ -902,6 +933,7 @@ class Game:
                                 p.score = p.score + p.tmpScore
                                 p.tmpScore = 0
                                 p.status = -1
+                                self.Cars.remove(c)
                                 self.roundCheck()
                             else:
                         #### if at store, set to ready
@@ -957,11 +989,8 @@ class Game:
             else:
                 # print("Border Hit")
                 return False
-
-
-        #stores & cars
         
-
+        #premptive collision check
         if(tempX != 0):
             player.XCol.center = pygame.Vector2(player.position.x+tempX/11, player.position.y)
             #print("New Location X: "+str(tempCol.center))
@@ -975,11 +1004,17 @@ class Game:
 
 
         if collideX or collideY:
-            #print("Collision")
-            
             valid = False
-        #else:
         
+        for c in self.Cars:
+            collideX = c.rb.colliderect(player.XCol)
+            collideY = c.rb.colliderect(player.YCol)
+
+            if collideX or collideY:
+                valid = False
+                
+
+
         player.XCol.center = player.position
         player.YCol.center = player.position
         
@@ -1013,6 +1048,8 @@ class Game:
 
     def assignStoreStats(self, store):
 
+        store.status = 0
+
         store.risk = random.randint(1,5)
         store.reward = (store.risk + random.randint(1,4) - 2)
 
@@ -1039,6 +1076,7 @@ class Game:
                     self.alarmedStores = 0
                     self.storeReset()
                     self.playerLocReset()
+                    self.CarReset()
             else:
                 count = 0
                 self.gameOver()
@@ -1082,21 +1120,22 @@ class Game:
     def gameOver(self):
         if not self.gameOverFlag:
             self.gameOverFlag = True
-            TopPlayer = Player()
-            HighScore = 0
+            self.TopPlayer = Player()
+            self.HighScore = 0
             for p in self.Players:
-                if p.score > HighScore:
-                    TopPlayer = p
-                    HighScore = p.score
+                if p.score > self.HighScore:
+                    self.TopPlayer = p
+                    self.HighScore = p.score
 
-            self.result = "GAME OVER: Player " + str(TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
+            self.result = "GAME OVER: Player " + str(self.TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
             self.scene_manager.switch_scene('win')
 
     def resetRound(self):
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
-        self.result = "RoundReset"
+        if not self.lastRound:
+            self.result = "RoundReset"
         self.allAlarms = False
         self.police = False
         self.alarmedStores = 0
@@ -1104,8 +1143,10 @@ class Game:
         self.resetTempScores()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
+        #print("Scene2")
 
     def resetGame(self):
         self.dt = 0
@@ -1119,6 +1160,7 @@ class Game:
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
+        self.CarReset()
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
@@ -1291,7 +1333,9 @@ class Car:
     def __init__(self):
         self.playerNum = 0
         self.position = pygame.Vector2(0, 0)
-        self.collider = pygame.Rect(self.position.x, self.position.y, 60,150)
+        self.collider = pygame.Rect(self.position.x, self.position.y, 0,150)
+        self.rb = pygame.Rect(self.position.x, self.position.y, 60,150)
+        self.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
         self.ready = False
 
 ########## STORE ##########
@@ -1301,6 +1345,7 @@ class Store:
         self.num2 = 0
         self.storeNum = 0
         self.scoreText = ""
+        self.scoreTextColor = (255,255,255)
         self.status = 0 #0 - ready | -1 alarmed
         self.color = (0,0,255)
         self.position = pygame.Vector2(0, 0)

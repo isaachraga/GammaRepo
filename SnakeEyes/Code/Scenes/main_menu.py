@@ -55,9 +55,8 @@ class MainMenu:
 
     ### Draw the current frame of the animation ###
     def draw_title_animation(self):
-        """Draw the current frame of the title animation at (100, 100)."""
         current_frame = self.frames[self.current_frame_index]
-        self.screen.blit(current_frame, (225, 10))
+        self.screen.blit(current_frame, (250, 10))
 
     def make_GUI(self):
         #Play Game
@@ -154,12 +153,13 @@ class MainMenu:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
-        self.screen.fill((255, 255, 255))
-
+        self.screen.fill((0,0,0))
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/MainMenuBackground.png')
+        self.screen.blit(self.loadingScreen, (-20,45))
         self.update_title_animation()  # Update the animated sprite
         self.draw_title_animation()    # Draw the animated sprit
         
-        self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", (255, 255,255))
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)

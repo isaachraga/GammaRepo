@@ -126,6 +126,13 @@
              "dark_bg":"#7FFF7F"
          }
     },
+    "#back_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#dbdbdb"
+         }
+    },
 
     "text_box":
     {

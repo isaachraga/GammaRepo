@@ -50,10 +50,15 @@ def test_character_profile_assets():
 def test_environment_background_assets():
     logging.info("Testing Environment Background Assets")
     assert os.path.exists("SnakeEyes/Assets/Environment/Background/Background.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Background/MainMenuBackground.png")
 
 def test_environment_object_assets():
     logging.info("Testing Environment Object Assets")
     assert os.path.exists("SnakeEyes/Assets/Environment/Objects/policeCar.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP1.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP2.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP3.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP4.png")
 
 def test_icon_assets():
     logging.info("Testing Icon Assets")
@@ -72,3 +77,11 @@ def test_hot_dice():
 def test_lucky_streak():
     logging.info("Tesing lucky streak icon")
     assert os.path.exists("SnakeEyes/Assets/Icons/luckyStreakModifier.png")
+
+def shield_modifier():
+    logging.info("Testing shield modifier icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/shield modifier.png")
+
+def shield_modifier():
+    logging.info("Testing boost modifier icon")
+    assert os.path.exists("SnakeEyes/Assets/Icons/boost modifier.png")
