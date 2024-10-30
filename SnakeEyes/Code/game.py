@@ -30,7 +30,7 @@ class Game:
         self.screen = scene_manager.screen
 
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
-        
+
         self.clock = pygame.time.Clock()
 
         self.initialization()
@@ -69,10 +69,9 @@ class Game:
         self.storeReset()
 
         self.initializePlayerSprites()
-    
 
     ### Character Sprites ###
-    #Helper function to cut up sprite sheets
+    # Helper function to cut up sprite sheets
     def getSpriteFrames(self, sprite_sheet, frame_width, frame_height):
         frames = []
         sheet_width, sheet_height = sprite_sheet.get_size()
@@ -81,7 +80,7 @@ class Game:
                 frame = sprite_sheet.subsurface((x, y, frame_width, frame_height))
                 frames.append(frame)
         return frames
-    #Helper function to convert spritesheet to working sprite
+    # Helper function to convert spritesheet to working sprite
     def makeCharacterSprite(self, path, width, height, fr, flipped=False):
         CharacterState = namedtuple('CharacterState', ['sprite_list', 'frame_rate', 'current_frame', 'current_sprite'])
         current_frame = 0 #current frame of animation
@@ -97,13 +96,13 @@ class Game:
                               frame_rate     = frame_rate, 
                               current_frame  = current_frame, 
                               current_sprite = current_sprite)
-    
+
     def initializePlayerSprites(self):        
         self.character_sprites = {}
-        
-        #Only initialize the characters being used
+
+        # Only initialize the characters being used
         for p in self.Players:
-            #Jeff
+            # Jeff
             if p.character == "jeff":
                 self.character_sprites["jeff"] = {}
                 self.character_sprites["jeff"]["last_action"] = "forward"
@@ -153,10 +152,6 @@ class Game:
                 self.character_sprites["mj_alt"]["left"] = self.makeCharacterSprite("SnakeEyes/Assets/Characters/Movement/MjRightWalkAlt1.png",
                                                                                     65, 70, 2, True)
 
-
-
-
-
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
         self.winScore = Preferences.FINISHLINE_SCORE
@@ -196,8 +191,8 @@ class Game:
         self.Players = []
         self.joystick_id = 0
         if Preferences.RED_PLAYER_TYPE == "Player":
-            self.p1 = Player(1)
-            # self.p1.playerNum = 1
+            self.p1 = Player()
+            self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
             self.p1.color = (255,0,0)
             self.p1.character = Preferences.RED_CHARACTER
@@ -207,8 +202,8 @@ class Game:
             self.Players.append(self.p1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
-            self.p2 = Player(2)
-            # self.p2.playerNum = 2
+            self.p2 = Player()
+            self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
             self.p2.color = (0,0,255)
             self.p2.character = Preferences.BLUE_CHARACTER
@@ -218,8 +213,8 @@ class Game:
             self.Players.append(self.p2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
-            self.p3 = Player(3)
-            # self.p3.playerNum = 3
+            self.p3 = Player()
+            self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
             self.p3.color = (204,204,0)
             self.p3.character = Preferences.YELLOW_CHARACTER
@@ -229,8 +224,8 @@ class Game:
             self.Players.append(self.p3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
-            self.p4 = Player(4)
-            # self.p4.playerNum = 4
+            self.p4 = Player()
+            self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
             self.p4.color = (0,255,0)
             self.p4.character = Preferences.GREEN_CHARACTER
@@ -353,7 +348,7 @@ class Game:
             player.up = player.controller.up
             player.down = player.controller.down
 
-        #     # DEBUG STATEMENT
+            #     # DEBUG STATEMENT
         #     print(
         #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
         #     )
@@ -365,130 +360,6 @@ class Game:
         #     print(
         #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
         #     )
-
-    def inputManager(self):
-        if self.statusFlag:
-            self.scene_manager.switch_scene('status')
-
-        dt = self.clock.tick(60) / 1000
-
-        ##### Player Controls #####
-        if not self.police:
-            all_players_ready = True
-
-            for p in self.Players:
-                if p.status != -1:
-                    # Movement
-                    move_x, move_y = p.controller.get_movement()
-                    tempX = move_x * self.moveSpeed
-                    tempY = move_y * self.moveSpeed
-
-                    # Boundary checks
-                    if p.position.x + tempX * dt < 1510 and p.position.x + tempX * dt > -250 and p.position.y + tempY * dt < 950 and p.position.y + tempY * dt > -250:
-                        p.position.x += tempX * dt
-                        p.position.y += tempY * dt
-                        p.collider.center = p.position
-
-                    # Check if player pressed their specific 'ready' button
-                    if p.controller.is_action_pressed('ready'):
-                        if p.status != -1:  # Only mark active players
-                            p.status = 1  # Set player to 'ready'
-
-                    # If any player is not ready, mark the entire group as not ready
-                    if p.status != 1:
-                        all_players_ready = False
-
-            # Proceed to dice roll only if all players are ready
-            if all_players_ready:
-                for p in self.Players:
-                    if p.controller.is_action_pressed('space'):
-                        # Perform the dice roll action if space is pressed
-                        self.handle_dice_roll()
-
-        for event in pygame.event.get():
-            ### handles application exit ###
-            if event.type == pygame.QUIT:
-                self.scene_manager.quit()
-                self.running = False
-
-            if event.type == pygame.KEYDOWN:
-                #### Handle keyboard 'ready' press ####
-                for p in self.Players:
-                    if p.controller.controller_type == "keyboard":
-                        # Only check the player whose ready key was pressed
-                        if event.key == p.controller.action_buttons["ready"]:
-                            if p.status != -1:  # Player is active
-                                p.status = 1  # Set player to 'ready'
-
-                #### Handle dice roll with spacebar ####
-                all_players_ready = all(p.status == 1 for p in self.Players if p.status != -1)
-                if event.key == pygame.K_SPACE and all_players_ready:
-                    self.handle_dice_roll()
-                if event.key == pygame.K_ESCAPE:
-                    if not self.testing:
-                        self.scene_manager.switch_scene("pause")
-
-    def handle_dice_roll(self):
-        # clear all store text
-        for s in self.Stores:
-            if s.scoreText != "!ALARMED!" and s.scoreText != "!POLICE!":
-                s.scoreText = ''
-
-        self.roundCheck()
-
-        ### handles if police have been triggered
-        if self.police:
-            if self.lastRound:
-                self.gameOver()
-            else:
-                self.resetRound()
-        ### handles if all alarms were set off
-        elif self.allAlarms:
-            if self.lastRound:
-                self.gameOver()
-            else:
-                self.resetRound()
-        else: 
-            if self.ready:
-                for s in self.Stores:
-                    if len(s.players) != 0:
-                        # police roll if a store is alarmed
-                        if self.alarmedStores > 0 and self.roundSkipped:
-                            if self.roll(1, (len(self.Stores) + 11 - self.alarmedStores), 1, 1) == -1:
-                                self.resetTempScores()
-                                s.scoreText = "!POLICE!"
-                                s.status = -1
-                                self.police = True
-                                self.snakeEyes()
-
-                        if not self.police:
-                            # roll for value/alarm
-                            self.award = self.roll(1, 9, s.risk, s.reward)
-                            if self.award == -1:
-                                s.scoreText = "!ALARMED!"
-                                self.alarmedStores += 1
-                                s.status = -1
-                                for p in s.players:
-                                    p.status = 0
-                                    p.tmpScore = 0
-                                s.players.clear()
-                            else:
-                                for p in s.players:
-                                    if p.status == 1:
-                                        p.tmpScore += self.award
-                                        p.status = 0
-                                        s.scoreText = "+" + str(self.award)
-
-        # Check for all alarms
-        count = sum(1 for s in self.Stores if s.status == -1)
-        self.alarmedStores = count
-
-        if count == len(self.Stores):
-            self.allAlarms = True
-
-        # Delay police roll until first alarmed round ends
-        if self.alarmedStores > 0 and not self.roundSkipped:
-            self.roundSkipped = True
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
@@ -505,13 +376,12 @@ class Game:
         # self.lastRoundCheck()
         self.readyCheck()
 
-
     ##### Render Game #####
     def render(self):
         ### Fill Background ###
         self.screen.fill((255,255,255))
         ### Set Background Image ###
-        
+
         self.screen.blit(self.loadingScreen, (0,0))
 
         ##### DEBUG / STATUS #####
@@ -575,8 +445,8 @@ class Game:
         ##### CAR COLLIDERS #####
         ### check for specified player's colision, sets option for cash out if collision is true
         for c in self.Cars:
-            #pygame.draw.rect(self.screen, (255,255,255), c.collider)
-            #pygame.draw.rect(self.screen, (255,0,0), c.rb)
+            # pygame.draw.rect(self.screen, (255,255,255), c.collider)
+            # pygame.draw.rect(self.screen, (255,0,0), c.rb)
             self.screen.blit(c.carSprite, c.position)
             for p in self.Players:
                 if c.playerNum == p.playerNum:
@@ -591,33 +461,31 @@ class Game:
 
         ##### STORES #####
 
-        #pygame.draw.rect(self.screen, (255,255,255), (160, 0, 950, 290))
+        # pygame.draw.rect(self.screen, (255,255,255), (160, 0, 950, 290))
 
         # pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
 
-
         for s in self.Stores:
-            #pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
-            #needs to clear each round
+            # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
+            # needs to clear each round
             self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
             self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
 
         ##### PLAYERS #####
         for p in self.Players:
             if p.status != -1:
-                #pygame.draw.circle(self.screen, p.color , p.position, 20)
-                #pygame.draw.rect(self.screen, (255,255,0), p.XCol)
-                #pygame.draw.rect(self.screen, (0,0,255), p.YCol)
-        
-        ### Collider Visualization ###
+                # pygame.draw.circle(self.screen, p.color , p.position, 20)
+                # pygame.draw.rect(self.screen, (255,255,0), p.XCol)
+                # pygame.draw.rect(self.screen, (0,0,255), p.YCol)
 
+                ### Collider Visualization ###
 
-                #Render sprite
+                # Render sprite
                 if p.status == 0:
                     for action_name, sprite in self.character_sprites[p.character].items():
-                        #Check if this action is the last updated action for this character
+                        # Check if this action is the last updated action for this character
                         if action_name == self.character_sprites[p.character]["last_action"]:
-                            #Render the last updated sprite
+                            # Render the last updated sprite
                             adjusted_position = p.position - pygame.Vector2(30, 50)
                             self.screen.blit(sprite.current_sprite, adjusted_position)
 
@@ -674,8 +542,7 @@ class Game:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
-            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
-
+            # self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             if p.status == 0:
 
@@ -686,7 +553,7 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
 
-            #stoplight status
+            # stoplight status
             '''
             pygame.draw.circle(self.screen, "black" , p.gr, 10)
             pygame.draw.circle(self.screen, "black" , p.yl, 10)
@@ -700,9 +567,7 @@ class Game:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
             '''
 
-
     ##### Game Functions #####
-
 
     ### handles all inputs for the game ###
     def inputManager(self):
@@ -713,72 +578,59 @@ class Game:
 
         dt = self.clock.tick(60) / 1000
 
-        keys = pygame.key.get_pressed()
-
-
-        # pygame.joystick.init()  #Initialize joystick module
-
-        ## need boundaries set up more precisely 
-
-
-  
+        ## need boundaries set up more precisely
 
         ##### Player Controls #####
 
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
-                    #player shows back up after entering a building and trying to move
-                    if(keys[p.up] or keys[p.down] or keys[p.left] or keys[p.right]) and p.status == 1:
-                        #print("Reset")
+                    # player shows back up after entering a building and trying to move
+                    if p.controller.get_movement() != (0, 0) and p.status == 1:
                         p.status = 0
 
-                    tempX=0
-                    tempY=0
-                    if keys[p.up]:
-                        tempY -= self.moveSpeed
+                    move_x, move_y = p.controller.get_movement()
+                    tempX = move_x * self.moveSpeed
+                    tempY = move_y * self.moveSpeed
+
+                    if move_y < 0:  # Moving up
                         self.updateCharacterSprite(self.character_sprites, p.character, "back")
-                    if keys[p.down]:
-                        tempY += self.moveSpeed
+                    elif move_y > 0:  # Moving down
                         self.updateCharacterSprite(self.character_sprites, p.character, "forward")
-                    if keys[p.left]:
-                        tempX -= self.moveSpeed
+                    if move_x < 0:  # Moving left
                         self.updateCharacterSprite(self.character_sprites, p.character, "left")
-                    if keys[p.right]:
-                        tempX += self.moveSpeed
+                    elif move_x > 0:  # Moving right
                         self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
-                    
                     if tempX != 0 or tempY != 0:
-                                    # if both, check for both
-                                    if tempX != 0 and tempY != 0:
-                                        #print("both")
-                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = tempX*(math.sqrt(2)/2)
-                                        else:
-                                            tempX = 0
-                                        
-                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = tempY*(math.sqrt(2)/2)
-                                        else:
-                                            tempY = 0
-                                        #print("vars: "+tempX+" "+tempY)
-                                           
-                                        
-                                    # if h check      
-                                    elif tempX != 0 and tempY == 0:
-                                        #print("X")
-                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = 0
-                                    # if y check 
-                                    elif tempX == 0 and tempY != 0:
-                                        #print("Y")
-                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = 0 
+                        # if both, check for both
+                        if tempX != 0 and tempY != 0:
+                            # print("both")
+                            if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = tempX*(math.sqrt(2)/2)
+                            else:
+                                tempX = 0
 
-                                    p.position.x += tempX * dt
-                                    p.position.y += tempY * dt
-                                    p.collider.center = p.position
+                            if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = tempY*(math.sqrt(2)/2)
+                            else:
+                                tempY = 0
+                            # print("vars: "+tempX+" "+tempY)
+
+                        # if h check
+                        elif tempX != 0 and tempY == 0:
+                            # print("X")
+                            if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = 0
+                        # if y check
+                        elif tempX == 0 and tempY != 0:
+                            # print("Y")
+                            if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = 0 
+
+                        p.position.x += tempX * dt
+                        p.position.y += tempY * dt
+                        p.collider.center = p.position
 
         for event in pygame.event.get():
 
@@ -787,160 +639,76 @@ class Game:
             if event.type == pygame.QUIT:   
                 self.scene_manager.quit()
                 self.running = False
-
+            for p in self.Players:
+                # Check if the player is pressing the 'ready' action
+                if p.controller.is_action_pressed("ready"):
+                    # Handle the ready action, e.g., set player status to ready
+                    for c in self.Cars:
+                        if c.ready and c.playerNum == p.playerNum:
+                            p.score += p.tmpScore
+                            p.tmpScore = 0
+                            p.status = -1
+                            self.Cars.remove(c)
+                            self.roundCheck()
+                        else:
+                            # If player is at a store, set to ready
+                            for s in self.Stores:
+                                if p in s.players:
+                                    if p.status != -1:
+                                        p.status = 1
+                # Check if the player is pressing the 'space' action to roll dice
+                if any(p.controller.is_action_pressed("space") for p in self.Players):
+                    # Code to handle dice rolling
+                    self.handle_dice_roll()
 
             if event.type == pygame.KEYDOWN:
 
-                #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
-                if self.testing:
-                    if not self.police:
-                        for p in self.Players:
-                            if p.status != -1:
-                                tempX=0
-                                tempY=0
-                                if event.key==p.up:
-                                    tempY -= self.moveSpeed
-                                if event.key==p.down:
-                                    tempY += self.moveSpeed
-                                if event.key==p.left:
-                                    tempX -= self.moveSpeed
-                                if event.key==p.right:
-                                    tempX += self.moveSpeed
+                #     #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
+                # if self.testing:
+                #     if not self.police:
+                #         for p in self.Players:
+                #             if p.status != -1:
+                #                 tempX=0
+                #                 tempY=0
+                #                 if event.key==p.up:
+                #                     tempY -= self.moveSpeed
+                #                 if event.key==p.down:
+                #                     tempY += self.moveSpeed
+                #                 if event.key==p.left:
+                #                     tempX -= self.moveSpeed
+                #                 if event.key==p.right:
+                #                     tempX += self.moveSpeed
 
-                                #if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
-                                if tempX != 0 or tempY != 0:
-                                    # if both, check for both
-                                    if tempX != 0 and tempY != 0:
-                                        #print("both")
-                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = tempX*(math.sqrt(2)/2)
-                                        else:
-                                            tempX = 0
-                                        
-                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = tempY*(math.sqrt(2)/2)
-                                        else:
-                                            tempY = 0
-                                        #print("vars: "+tempX+" "+tempY)
-                                           
-                                        
-                                    # if h check      
-                                    elif tempX != 0 and tempY == 0:
-                                        #print("X")
-                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = 0
-                                    # if y check 
-                                    elif tempX == 0 and tempY != 0:
-                                        #print("Y")
-                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = 0 
+                #                 # if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                #                 if tempX != 0 or tempY != 0:
+                #                     # if both, check for both
+                #                     if tempX != 0 and tempY != 0:
+                #                         # print("both")
+                #                         if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                #                             tempX = tempX*(math.sqrt(2)/2)
+                #                         else:
+                #                             tempX = 0
 
-                                    p.position.x += tempX * dt
-                                    p.position.y += tempY * dt
-                                    p.collider.center = p.position
+                #                         if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                #                             tempY = tempY*(math.sqrt(2)/2)
+                #                         else:
+                #                             tempY = 0
+                #                         # print("vars: "+tempX+" "+tempY)
 
-                # dice roller
-                if event.key == pygame.K_SPACE:
+                #                     # if h check
+                #                     elif tempX != 0 and tempY == 0:
+                #                         # print("X")
+                #                         if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                #                             tempX = 0
+                #                     # if y check
+                #                     elif tempX == 0 and tempY != 0:
+                #                         # print("Y")
+                #                         if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                #                             tempY = 0
 
-                    #clear all store text
-                    for s in self.Stores:
-                        if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
-                            s.scoreText = ''
-                            s.scoreTextColor = (255,255,255)
-
-                    self.roundCheck()
-
-                    
-                    ### handles if police have been triggered
-                    if self.police:
-                        if self.lastRound:
-                            self.gameOver()
-                        else:
-                            self.resetRound()
-                    ### handles if all alarms were set off
-                    elif self.allAlarms:
-                        if self.lastRound:
-                            self.gameOver()
-                        else:
-                            #print("allAlarms: "+str(self.allAlarms))
-                            #for s in self.Stores:
-                                #print("Store Num: " + str(s.storeNum))
-                                #print("Store Status: "+str(s.status))
-                            self.resetRound()
-                    else: 
-                        if self.ready:
-
-                            for s in self.Stores:
-                                if len(s.players) != 0:
-
-                                    #police roll if a store is alarmed
-                                    if self.alarmedStores > 0 and self.roundSkipped:
-                                        if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
-                                            self.resetTempScores()
-                                            s.scoreText = "POLICE"
-                                            s.scoreTextColor = (255,0,0)
-                                            s.status = -1
-                                            self.police = True
-                                            self.snakeEyes()
-
-                                    if not self.police:
-                                        # roll for value/alarm
-                                        self.award = self.roll(1,9,s.risk,s.reward) 
-
-                                        if self.award == -1:
-                                            s.scoreText = "ALARMED"
-                                            s.scoreTextColor = (255,0,0)
-                                            self.alarmedStores = self.alarmedStores + 1
-                                            s.status=-1
-
-                                            for p in s.players:
-                                                p.status = 0
-                                                p.tmpScore = 0
-
-                                            s.players.clear()
-                                        else:
-                                            self.result = "Roll Default"
-                                            for p in s.players:
-                                                if p.status == 1:
-                                                    p.tmpScore = p.tmpScore+self.award
-                                                    p.status = 0
-                                                    s.scoreText = "+"+str(self.award)
-                                                    s.scoreTextColor = (0,255,0)
-                    # check for all alarms
-                    count = 0
-                    for s in self.Stores:
-                        if s.status == -1:
-                            count = count + 1
-
-                    self.alarmedStores = count
-
-                    if count == len(self.Stores):
-                        self.allAlarms = True
-
-
-                    # delays police roll from happening until the first alarmed round has finished
-                    if self.alarmedStores > 0 and not self.roundSkipped:
-                        self.roundSkipped = True
-
-                                    
-
-                #Player Ready
-                for p in self.Players:
-                    if event.key == p.ready:
-                        for c in self.Cars:
-                            ##### if at car cash out
-                            if c.ready and c.playerNum == p.playerNum:
-                                p.score = p.score + p.tmpScore
-                                p.tmpScore = 0
-                                p.status = -1
-                                self.Cars.remove(c)
-                                self.roundCheck()
-                            else:
-                        #### if at store, set to ready
-                                for s in self.Stores:
-                                    if p in s.players:
-                                        if p.status != -1:
-                                            p.status = 1
+                #                     p.position.x += tempX * dt
+                #                     p.position.y += tempY * dt
+                #                     p.collider.center = p.position
 
                 # Player Cash Out
                 '''
@@ -963,7 +731,7 @@ class Game:
                 if event.key == pygame.K_ESCAPE:
                     if not self.testing:
                         self.scene_manager.switch_scene("pause")
-                # if shift_held: 
+                # if shift_held:
                 #     if event.key == pygame.K_y:
                 #         self.tests.run_tests(self)
 
@@ -989,39 +757,32 @@ class Game:
             else:
                 # print("Border Hit")
                 return False
-        
-        #premptive collision check
+
+        # premptive collision check
         if(tempX != 0):
             player.XCol.center = pygame.Vector2(player.position.x+tempX/11, player.position.y)
-            #print("New Location X: "+str(tempCol.center))
+            # print("New Location X: "+str(tempCol.center))
         if(tempY != 0):
             player.YCol.center = pygame.Vector2(player.position.x, player.position.y+tempY/11)
-            #print("New Location Y: "+str(tempCol.center))
-
+            # print("New Location Y: "+str(tempCol.center))
 
         collideX = self.storeCollider.colliderect(player.XCol)
         collideY = self.storeCollider.colliderect(player.YCol)
 
-
         if collideX or collideY:
             valid = False
-        
+
         for c in self.Cars:
             collideX = c.rb.colliderect(player.XCol)
             collideY = c.rb.colliderect(player.YCol)
 
             if collideX or collideY:
                 valid = False
-                
-
 
         player.XCol.center = player.position
         player.YCol.center = player.position
-        
-            
-        
+
         return valid
-    
 
     ### handles rolls, num 1 is the lowest number, num2 is highest number, risk is the level of risk mod applied, reward is the level of reward mod applied
     def roll(self, num1, num2, riskMod, rewardMod):
@@ -1146,7 +907,7 @@ class Game:
         self.CarReset()
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
-        #print("Scene2")
+        # print("Scene2")
 
     def resetGame(self):
         self.dt = 0
@@ -1170,6 +931,94 @@ class Game:
         for p in self.Players:
             if p.playerNum == playerNum:
                 return str(p.score)
+
+    def handle_dice_roll(self):
+        # clear all store text
+        for s in self.Stores:
+            if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
+                s.scoreText = ""
+                s.scoreTextColor = (255, 255, 255)
+
+        self.roundCheck()
+
+        ### handles if police have been triggered
+        if self.police:
+            if self.lastRound:
+                self.gameOver()
+            else:
+                self.resetRound()
+        ### handles if all alarms were set off
+        elif self.allAlarms:
+            if self.lastRound:
+                self.gameOver()
+            else:
+                # print("allAlarms: "+str(self.allAlarms))
+                # for s in self.Stores:
+                # print("Store Num: " + str(s.storeNum))
+                # print("Store Status: "+str(s.status))
+                self.resetRound()
+        else:
+            if self.ready:
+
+                for s in self.Stores:
+                    if len(s.players) != 0:
+
+                        # police roll if a store is alarmed
+                        if self.alarmedStores > 0 and self.roundSkipped:
+                            if (
+                                self.roll(
+                                    1,
+                                    (len(self.Stores) + 11 - self.alarmedStores),
+                                    1,
+                                    1,
+                                )
+                                == -1
+                            ):
+                                self.resetTempScores()
+                                s.scoreText = "POLICE"
+                                s.scoreTextColor = (255, 0, 0)
+                                s.status = -1
+                                self.police = True
+                                self.snakeEyes()
+
+                        if not self.police:
+                            # roll for value/alarm
+                            self.award = self.roll(1, 9, s.risk, s.reward)
+
+                            if self.award == -1:
+                                s.scoreText = "ALARMED"
+                                s.scoreTextColor = (255, 0, 0)
+                                self.alarmedStores = self.alarmedStores + 1
+                                s.status = -1
+
+                                for p in s.players:
+                                    p.status = 0
+                                    p.tmpScore = 0
+
+                                s.players.clear()
+                            else:
+                                self.result = "Roll Default"
+                                for p in s.players:
+                                    if p.status == 1:
+                                        p.tmpScore = p.tmpScore + self.award
+                                        p.status = 0
+                                        s.scoreText = "+" + str(self.award)
+                                        s.scoreTextColor = (0, 255, 0)
+        # check for all alarms
+        count = 0
+        for s in self.Stores:
+            if s.status == -1:
+                count = count + 1
+
+        self.alarmedStores = count
+
+        if count == len(self.Stores):
+            self.allAlarms = True
+
+        # delays police roll from happening until the first alarmed round has finished
+        if self.alarmedStores > 0 and not self.roundSkipped:
+            self.roundSkipped = True
+
 
 ########## CONTROLLER ##########
 class Controller:
@@ -1299,11 +1148,11 @@ class Controller:
 
 ########## PLAYER ##########
 class Player:
-    def __init__(self, playerNum):
+    def __init__(self):
         self.tmpScore = 0
         self.score = 0
         self.status = 0 #-1 - cashed out | 0 - waiting | 1 ready
-        self.playerNum = playerNum
+        self.playerNum = 0
         self.controller = None
         self.color = (255, 0, 0)
         self.position = pygame.Vector2(0, 0)
