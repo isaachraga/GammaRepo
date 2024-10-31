@@ -152,14 +152,14 @@ class OptionsMenu:
     def render(self):
         self.ui_manager.update(self.time_delta)
 
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
         pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, rect)
         rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, Settings.COLOR_SECONDARY, rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("OPTIONS")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)

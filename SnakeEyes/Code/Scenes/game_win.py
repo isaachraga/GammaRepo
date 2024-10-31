@@ -64,7 +64,7 @@ class GameWin:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         over_text_rect = self.HEADER_FONT.get_rect("GAME OVER")
         over_text_rect.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)

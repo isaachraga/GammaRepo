@@ -537,14 +537,14 @@ class GameSetup:
 
     ##### Render #####
     def render(self):
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, 360, 720)
-        pygame.draw.rect(self.screen, Settings.COLOR_SECONDARY, rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (360, 0), (360, 720), 3)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (0, 360), (360, 360), 3)
         rect = pygame.Rect(920, 0, 360, 720)
-        pygame.draw.rect(self.screen, Settings.COLOR_SECONDARY, rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 0), (920, 720), 3)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 360), (1280, 360), 3)
         

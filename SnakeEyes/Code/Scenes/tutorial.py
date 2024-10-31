@@ -267,7 +267,7 @@ class Tutorial:
 
 
     def render(self):
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
         tutorial_header = self.HEADER_FONT.get_rect("TUTORIAL")
         tutorial_header.center = ((Settings.WIDTH / 2), (Settings.HEADER_FONT_SIZE/2) + 10)
         self.HEADER_FONT.render_to(self.screen, tutorial_header, "TUTORIAL", Settings.COLOR_TEXT)

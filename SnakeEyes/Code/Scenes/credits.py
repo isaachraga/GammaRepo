@@ -53,7 +53,7 @@ class Credits:
 
     def render(self):
         self.ui_manager.update(self.time_delta)
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         self.GAME_FONT.render_to(self.screen, (10, 130), "Credits", Settings.COLOR_TEXT)
         self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", Settings.COLOR_TEXT)

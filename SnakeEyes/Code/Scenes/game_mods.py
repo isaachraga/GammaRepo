@@ -30,7 +30,7 @@ class GameMods:
                     self.scene_manager.switch_scene('pause')
 
     def render(self):
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
         self.GAME_FONT.render_to(self.screen, (10, 130), "Game Mods", Settings.COLOR_TEXT)
         
         self.GAME_FONT.render_to(self.screen, (350, 680), "Press SPACE to continue...", Settings.COLOR_TEXT)

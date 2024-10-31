@@ -38,7 +38,7 @@ class SceneSelection:
                 
 
     def render(self):
-        self.screen.fill(Settings.COLOR_PRIMARY)
+        self.screen.fill(Settings.COLOR_BACKGROUND)
         self.GAME_FONT.render_to(self.screen, (10, 10), "DEBUG SCENE SELECTOR", Settings.COLOR_TEXT)
         self.GAME_FONT.render_to(self.screen, (10, 70), "Use keyboard to select an option", Settings.COLOR_TEXT)
         self.GAME_FONT.render_to(self.screen, (10, 100), "1. Start New Game", Settings.COLOR_TEXT)
