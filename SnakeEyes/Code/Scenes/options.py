@@ -152,33 +152,33 @@ class OptionsMenu:
     def render(self):
         self.ui_manager.update(self.time_delta)
 
-        self.screen.fill((255,255,255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, rect)
         rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (205, 205, 205), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("OPTIONS")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", Settings.COLOR_TEXT)
 
         volume_slider_rect = self.BGM_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("MUSIC VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "MUSIC VOLUME", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "MUSIC VOLUME", Settings.COLOR_TEXT)
         
         volume_slider_rect = self.SFX_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("SOUND VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", Settings.COLOR_TEXT)
 
         fullscreen_rect = self.fullscreen_label.get_relative_rect()
         fullscreen_text_rect = self.OPTIONS_FONT.get_rect("FULLSCREEN")
         fullscreen_text_rect.center = (fullscreen_rect.centerx, fullscreen_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", Settings.COLOR_TEXT)
 
 
         self.ui_manager.draw_ui(self.screen)

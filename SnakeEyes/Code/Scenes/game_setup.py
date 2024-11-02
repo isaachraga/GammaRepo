@@ -20,10 +20,10 @@ class GameSetup:
         self.makeGUI()
 
     def makeGUI(self):
-        option_select_width = 32
-        option_select_height = 32
+        option_select_width = 38
+        option_select_height = 38
         option_label_width = 112
-        option_label_heigth = 32
+        option_label_heigth = 38
 
         self.player_type_options = ["Player", "CPU", "None"]
         self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
@@ -537,25 +537,25 @@ class GameSetup:
 
     ##### Render #####
     def render(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, 360, 720)
-        pygame.draw.rect(self.screen, (225, 225, 225), rect)
-        pygame.draw.line(self.screen, (0, 0, 0), (360, 0), (360, 720), 3)
-        pygame.draw.line(self.screen, (0, 0, 0), (0, 360), (360, 360), 3)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
+        pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (360, 0), (360, 720), 3)
+        pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (0, 360), (360, 360), 3)
         rect = pygame.Rect(920, 0, 360, 720)
-        pygame.draw.rect(self.screen, (225, 225, 225), rect)
-        pygame.draw.line(self.screen, (0, 0, 0), (920, 0), (920, 720), 3)
-        pygame.draw.line(self.screen, (0, 0, 0), (920, 360), (1280, 360), 3)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
+        pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 0), (920, 720), 3)
+        pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 360), (1280, 360), 3)
         
         game_preferences_text = self.HEADER_FONT.get_rect("GAME PREFERENCES")
         game_preferences_text.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
-        self.HEADER_FONT.render_to(self.screen, game_preferences_text, "GAME PREFERENCES", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, game_preferences_text, "GAME PREFERENCES", Settings.COLOR_TEXT)
 
         finish_score_rect = self.finish_score_label.get_relative_rect()
         finish_text_rect = self.GAME_FONT.get_rect("FINISHLINE SCORE")
         finish_text_rect.center = (finish_score_rect.centerx, finish_score_rect.top - Settings.FONT_SIZE)
-        self.GAME_FONT.render_to(self.screen, finish_text_rect, "FINISHLINE SCORE", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, finish_text_rect, "FINISHLINE SCORE", Settings.COLOR_TEXT)
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)
