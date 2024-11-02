@@ -581,57 +581,58 @@ class Game:
         if not self.police:
             for p in self.Players:
                 if p.status != -1:
-                    #player shows back up after entering a building and trying to move
-                    if(keys[p.up] or keys[p.down] or keys[p.left] or keys[p.right]) and p.status == 1:
-                        #print("Reset")
-                        p.status = 0
+                    if self.scene_manager.current_scene == "game":
+                        #player shows back up after entering a building and trying to move
+                        if(keys[p.up] or keys[p.down] or keys[p.left] or keys[p.right]) and p.status == 1:
+                            #print("Reset")
+                            p.status = 0
 
-                    tempX=0
-                    tempY=0
-                    if keys[p.up]:
-                        tempY -= self.moveSpeed
-                        self.updateCharacterSprite(self.character_sprites, p.character, "back")
-                    if keys[p.down]:
-                        tempY += self.moveSpeed
-                        self.updateCharacterSprite(self.character_sprites, p.character, "forward")
-                    if keys[p.left]:
-                        tempX -= self.moveSpeed
-                        self.updateCharacterSprite(self.character_sprites, p.character, "left")
-                    if keys[p.right]:
-                        tempX += self.moveSpeed
-                        self.updateCharacterSprite(self.character_sprites, p.character, "right")
+                        tempX=0
+                        tempY=0
+                        if keys[p.up]:
+                            tempY -= self.moveSpeed
+                            self.updateCharacterSprite(self.character_sprites, p.character, "back")
+                        if keys[p.down]:
+                            tempY += self.moveSpeed
+                            self.updateCharacterSprite(self.character_sprites, p.character, "forward")
+                        if keys[p.left]:
+                            tempX -= self.moveSpeed
+                            self.updateCharacterSprite(self.character_sprites, p.character, "left")
+                        if keys[p.right]:
+                            tempX += self.moveSpeed
+                            self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
-                    
-                    if tempX != 0 or tempY != 0:
-                                    # if both, check for both
-                                    if tempX != 0 and tempY != 0:
-                                        #print("both")
-                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = tempX*(math.sqrt(2)/2)
-                                        else:
-                                            tempX = 0
-                                        
-                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = tempY*(math.sqrt(2)/2)
-                                        else:
-                                            tempY = 0
-                                        #print("vars: "+tempX+" "+tempY)
-                                           
-                                        
-                                    # if h check      
-                                    elif tempX != 0 and tempY == 0:
-                                        #print("X")
-                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = 0
-                                    # if y check 
-                                    elif tempX == 0 and tempY != 0:
-                                        #print("Y")
-                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = 0 
+                        
+                        if tempX != 0 or tempY != 0:
+                                        # if both, check for both
+                                        if tempX != 0 and tempY != 0:
+                                            #print("both")
+                                            if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                                tempX = tempX*(math.sqrt(2)/2)
+                                            else:
+                                                tempX = 0
+                                            
+                                            if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                                tempY = tempY*(math.sqrt(2)/2)
+                                            else:
+                                                tempY = 0
+                                            #print("vars: "+tempX+" "+tempY)
+                                            
+                                            
+                                        # if h check      
+                                        elif tempX != 0 and tempY == 0:
+                                            #print("X")
+                                            if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                                tempX = 0
+                                        # if y check 
+                                        elif tempX == 0 and tempY != 0:
+                                            #print("Y")
+                                            if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                                tempY = 0 
 
-                                    p.position.x += tempX * dt
-                                    p.position.y += tempY * dt
-                                    p.collider.center = p.position
+                                        p.position.x += tempX * dt
+                                        p.position.y += tempY * dt
+                                        p.collider.center = p.position
 
         for event in pygame.event.get():
 
@@ -649,48 +650,49 @@ class Game:
                     if not self.police:
                         for p in self.Players:
                             if p.status != -1:
-                                tempX=0
-                                tempY=0
-                                if event.key==p.up:
-                                    tempY -= self.moveSpeed
-                                if event.key==p.down:
-                                    tempY += self.moveSpeed
-                                if event.key==p.left:
-                                    tempX -= self.moveSpeed
-                                if event.key==p.right:
-                                    tempX += self.moveSpeed
+                                if self.scene_manager.current_scene == "game":
+                                    tempX=0
+                                    tempY=0
+                                    if event.key==p.up:
+                                        tempY -= self.moveSpeed
+                                    if event.key==p.down:
+                                        tempY += self.moveSpeed
+                                    if event.key==p.left:
+                                        tempX -= self.moveSpeed
+                                    if event.key==p.right:
+                                        tempX += self.moveSpeed
 
-                                #if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
-                                if tempX != 0 or tempY != 0:
-                                    # if both, check for both
-                                    if tempX != 0 and tempY != 0:
-                                        #print("both")
-                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = tempX*(math.sqrt(2)/2)
-                                        else:
-                                            tempX = 0
-                                        
-                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = tempY*(math.sqrt(2)/2)
-                                        else:
-                                            tempY = 0
-                                        #print("vars: "+tempX+" "+tempY)
-                                           
-                                        
-                                    # if h check      
-                                    elif tempX != 0 and tempY == 0:
-                                        #print("X")
-                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = 0
-                                    # if y check 
-                                    elif tempX == 0 and tempY != 0:
-                                        #print("Y")
-                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = 0 
+                                    #if p.position.x + tempX < 1510 and p.position.x + tempX > -250 and p.position.y + tempY < 950 and p.position.y + tempY > -250:
+                                    if tempX != 0 or tempY != 0:
+                                        # if both, check for both
+                                        if tempX != 0 and tempY != 0:
+                                            #print("both")
+                                            if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                                tempX = tempX*(math.sqrt(2)/2)
+                                            else:
+                                                tempX = 0
+                                            
+                                            if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                                tempY = tempY*(math.sqrt(2)/2)
+                                            else:
+                                                tempY = 0
+                                            #print("vars: "+tempX+" "+tempY)
+                                            
+                                            
+                                        # if h check      
+                                        elif tempX != 0 and tempY == 0:
+                                            #print("X")
+                                            if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                                tempX = 0
+                                        # if y check 
+                                        elif tempX == 0 and tempY != 0:
+                                            #print("Y")
+                                            if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                                tempY = 0 
 
-                                    p.position.x += tempX * dt
-                                    p.position.y += tempY * dt
-                                    p.collider.center = p.position
+                                        p.position.x += tempX * dt
+                                        p.position.y += tempY * dt
+                                        p.collider.center = p.position
 
                 # dice roller
                 if event.key == pygame.K_SPACE:
