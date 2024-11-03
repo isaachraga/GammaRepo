@@ -289,10 +289,6 @@ class Game:
 
     ### Handles control assignment from game setup ###
     def controllerAssignment(self, player, controls):
-        # DEBUG STATEMENT
-        # print(
-        #     f"Assigning controller to Player {player.playerNum} with controls '{controls}'"
-        # )
 
         if not pygame.joystick.get_init():
             pygame.joystick.init()
@@ -305,21 +301,18 @@ class Game:
             pygame.event.pump()
             joystick_count = pygame.joystick.get_count()
 
-            # DEBUG STATEMENTS
-            # print(self.joystick_id)
-            # print(joystick_count)
-
             if self.joystick_id < joystick_count:
                 controller_type = "joystick"
                 controller_ID = self.joystick_id
                 controller_scheme = None  # Not needed for joystick
                 self.joystick_id += 1
             else:
-                # DEBUG STATEMENT OR WARNING STATEMENT
+                # DEBUG STATEMENT
                 # print(f"No joystick available for Player {player.playerNum}, defaulting to keyboard")
 
                 controller_type = "keyboard"
                 controller_ID = None
+
                 # Default Controls
                 if player.playerNum == 1:
                     controller_scheme = "WASD"
@@ -327,7 +320,7 @@ class Game:
                     controller_scheme = "TFGH"
                 elif player.playerNum == 3:
                     controller_scheme = "IJKL"
-                else:
+                elif player.playerNum == 4:
                     controller_scheme = "Arrows"
         else:
             # Assign keyboard controls
@@ -335,6 +328,8 @@ class Game:
             controller_ID = None
             controller_scheme = controls  # Ensuring this is a valid scheme
 
+        # DEBUG STATEMENT
+        print(f"player {player.playerNum} assigned {controller_scheme}")
         # Create a Controller object and assign it to the player
         player.controller = Controller(
             controller_type=controller_type,
@@ -347,19 +342,6 @@ class Game:
             player.right = player.controller.right
             player.up = player.controller.up
             player.down = player.controller.down
-
-            #     # DEBUG STATEMENT
-        #     print(
-        #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
-        #     )
-        # else:
-        #     # DEBUG STATEMENT
-        #     print(f"Player {player.playerNum} is using a joystick (Controller)")
-
-        #     # DEBUG STATEMENT
-        #     print(
-        #     f"Player {player.playerNum} control scheme: {player.controller.controller_scheme}"
-        #     )
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
@@ -643,6 +625,7 @@ class Game:
             for p in self.Players:
                 # Check if the player is pressing the 'ready' action
                 if p.controller.is_action_pressed("ready"):
+                    print("ready pressed...")
                     # Handle the ready action, e.g., set player status to ready
                     for c in self.Cars:
                         if c.ready and c.playerNum == p.playerNum:
@@ -660,6 +643,7 @@ class Game:
                 # Check if the player is pressing the 'space' action to roll dice
                 if any(p.controller.is_action_pressed("space") for p in self.Players):
                     # Code to handle dice rolling
+                    print("space pressed...")
                     self.handle_dice_roll()
 
             if event.type == pygame.KEYDOWN:
@@ -711,9 +695,9 @@ class Game:
                                         p.position.y += tempY * dt
                                         p.collider.center = p.position
 
-                if event.key == pygame.K_SPACE:
-                    self.handle_dice_roll()
-                
+                # if event.key == pygame.K_SPACE:
+                #     self.handle_dice_roll()
+
                 # Player Cash Out
                 '''
                 for p in self.Players:
@@ -738,10 +722,6 @@ class Game:
                 # if shift_held:
                 #     if event.key == pygame.K_y:
                 #         self.tests.run_tests(self)
-
-            # if event.type == pygame.JOYDEVICEADDED:
-            #     controller = pygame.joystick.Joystick(event.device_index)
-            #     self.controllers.append(controller)
 
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         # print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
@@ -937,6 +917,7 @@ class Game:
                 return str(p.score)
 
     def handle_dice_roll(self):
+        print("handle_dice_roll() called...")
         # clear all store text
         for s in self.Stores:
             if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
