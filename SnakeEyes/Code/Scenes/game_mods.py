@@ -1,6 +1,6 @@
 import pygame
 from SnakeEyes.Code.settings import Settings
-from SnakeEyes.Code.modifier import Modifier
+from SnakeEyes.Code import modifier
 #import textwrap
 
 class GameMods:
@@ -9,7 +9,7 @@ class GameMods:
         self.game = game
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
-        self.available_mods = Modifier.available_modifiers
+        self.available_mods = modifier.available_modifiers
     
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
