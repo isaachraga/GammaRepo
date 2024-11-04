@@ -1,9 +1,10 @@
 class Modifier:
-    def __init__(self, name, description, cost, apply_modifier):
+    #def __init__(self, name, description, cost, apply_modifier):
+    def __init__(self, name, description, cost):
         self.name = name
         self.description = description
         self.cost = cost
-        self.apply_modifier = apply_modifier
+        #self.apply_modifier = apply_modifier
         self.active = False  # Track if  modifier is currently active
         self.duration = 0  # Tracks how many turns modifier is active
 
@@ -46,6 +47,9 @@ def lucky_streak_modifier(score, streak):
     print("Streak: "+str(streak))
     print("Modified: "+str(temp))
     return temp
+    
+    
+
 
 '''
 def hot_dice_modifier(player, dice_rolls, game):
@@ -109,8 +113,15 @@ def roll_rewind_modifier(player, dice_rolls, game):
 lucky_streak = Modifier(
     name="Lucky Streak",
     description="After each successful \nrolls,the next score \ngets a x1.05 \nmultiplier. Active until \nyou set off a store \nalarm or police \narive.",
-    cost=10,
-    apply_modifier=lucky_streak_modifier,
+    cost=50,
+    #apply_modifier=lucky_streak_modifier,
+)
+
+paid_off = Modifier(
+    name="Paid Off",
+    description="Keep your stored money \nafter a police raid. \nActive until \nafter caught by the \npolice",
+    cost=200,
+    #apply_modifier=paid_off,
 )
 
 '''
@@ -179,7 +190,10 @@ roll_rewind = Modifier(
 '''
 
 # List of all available modifiers
-available_modifiers = [lucky_streak]
+available_modifiers = [
+    lucky_streak, 
+    paid_off
+]
 '''hot_dice,
     cumulative_boost,
     bonus_round,

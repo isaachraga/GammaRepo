@@ -542,6 +542,7 @@ class Game:
 
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y+8), "Mods" , (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10), "Mods" , Settings.COLOR_TEXT)
+            offset = 0
             for m in p.currentMods:
                 offset = offset + 20
                 self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
@@ -987,8 +988,12 @@ class Game:
     def snakeEyes(self):
 
         for p in self.Players:
+            
             if p.status != -1:
-                p.score = 0
+                if modifier.paid_off not in p.currentMods:
+                    p.score = 0
+                else:
+                    del p.currentMods[modifier.paid_off]
                 p.status = -1
                 if modifier.lucky_streak in p.currentMods:
                     del p.currentMods[modifier.lucky_streak]
