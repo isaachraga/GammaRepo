@@ -3,29 +3,29 @@
     {
         "colours":
         {
-            "normal_bg":"#8f8f8f",
-            "normal_text":"#000000",
-            "normal_border": "#1f1f1f",
+            "normal_bg":"#303030",
+            "normal_text":"#FFFFFF",
+            "normal_border": "#e6e6e6",
 
-            "hovered_bg":"#6e6e6e",
-            "hovered_text":"#000000",
-            "hovered_border": "#1f1f1f",
+            "hovered_bg":"#3c3c3c",
+            "hovered_text":"#FFFFFF",
+            "hovered_border": "#e6e6e6",
 
             "disabled_bg":"#25292e",
             "disabled_text":"#6d736f",
-            "disabled_border": "#1f1f1f",
+            "disabled_border": "#e6e6e6",
 
             "selected_bg":"#193754",
-            "selected_text":"#000000",
-            "selected_border": "#1f1f1f",
+            "selected_text":"#FFFFFF",
+            "selected_border": "#e6e6e6",
 
             "active_bg": "#474747",
             "active_text": "#b3b3b3",
-            "active_border": "#1f1f1f",
+            "active_border": "#e6e6e6",
 
-            "dark_bg":"#6e6e6e",
+            "dark_bg":"#383838",
             
-            "text_shadow": "#FFFFFF",
+            "text_shadow": "#000000",
 
             "link_text": "#0000EE",
             "link_hover": "#2020FF",
@@ -46,8 +46,8 @@
         },
         "misc":
          {
-             "text_shadow": "1",
-             "text_shadow_size": "1",
+             "text_shadow": "0",
+             "text_shadow_size": "0",
              "text_shadow_offset": "0,0"
          }
     },
@@ -59,7 +59,7 @@
         {
             "shape": "rounded_rectangle",
             "shape_corner_radius": "5",
-            "border_width": "1"
+            "border_width": "2"
         },
         "font": {
             "name": "HighlandGothicFLF-Bold",
@@ -69,6 +69,10 @@
     },
 
     "horizontal_slider": {
+        "colours":
+        {
+            "dark_bg": "#262626"
+        },
         "misc":
         {
             "shape": "rounded_rectangle",
@@ -89,13 +93,13 @@
     {
         "colours":
          {
-             "normal_border": "#000000"
+             "normal_border": "#ffffff"
          },
         "misc":
          {
              "shape": "rounded_rectangle",
              "shape_corner_radius": "8",
-             "border_width": "2"
+             "border_width": "4"
          }
     },
     "#red_panel":
@@ -130,7 +134,7 @@
     {
         "colours":
          {
-             "dark_bg":"#dbdbdb"
+             "dark_bg":"#3c3c3c"
          }
     },
 
@@ -138,7 +142,7 @@
     {
         "colours":
          {
-             "dark_bg":"#cccccc"
+             "dark_bg":"#3c3c3c"
          },
         "font": 
         {

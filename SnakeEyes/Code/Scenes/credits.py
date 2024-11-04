@@ -53,10 +53,10 @@ class Credits:
 
     def render(self):
         self.ui_manager.update(self.time_delta)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
-        self.GAME_FONT.render_to(self.screen, (10, 130), "Credits", (0, 0, 0))
-        self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
+        self.GAME_FONT.render_to(self.screen, (10, 130), "Credits", Settings.COLOR_TEXT)
+        self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", Settings.COLOR_TEXT)
 
         self.ui_manager.draw_ui(self.screen)
         pygame.display.flip()
