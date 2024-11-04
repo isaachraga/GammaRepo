@@ -86,5 +86,5 @@ class GameMods:
                             p.modSelection = p.modSelection + 1
 
                     if event.key == p.ready and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
-                        p.score = p.score - self.available_mods[p.modSelection].cost
+                        p.score = round(p.score - self.available_mods[p.modSelection].cost)
                         p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
