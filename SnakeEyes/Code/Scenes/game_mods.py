@@ -66,8 +66,6 @@ class GameMods:
 
             if event.type == pygame.KEYDOWN:
                 for p in self.game.Players:
-                    print(str(event.key))
-                    print(str(p.left))
                     if event.key == pygame.K_SPACE:
                         self.game.statusFlag = False
                         self.scene_manager.switch_scene('game')
@@ -76,7 +74,7 @@ class GameMods:
                         self.scene_manager.switch_scene('pause')
 
                     if event.key == p.left:
-                        #print(str(len(self.game.Players)))
+                        print(str(len(self.available_mods)))
                         if(p.modSelection - 1 < 0):
                             p.modSelection = len(self.available_mods) -1 
                         else:

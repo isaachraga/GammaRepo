@@ -6,6 +6,7 @@ import math
 from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+from SnakeEyes.Code import modifier
 
 ### TO DO ###
 
@@ -284,6 +285,7 @@ class Game:
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
+            p.scoreText = ""
 
     ### Resets player location to starting point
     def playerLocReset(self):
@@ -537,6 +539,14 @@ class Game:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
+
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y+8), "Mods" , (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10), "Mods" , Settings.COLOR_TEXT)
+            for m in p.currentMods:
+                offset = offset + 20
+                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
+
             #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             if p.status == 0:
@@ -547,6 +557,8 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(p.tmpScore+p.score), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+58), p.scoreText, (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+60), p.scoreText, (0,255,0))
 
             #stoplight status
             '''
@@ -613,35 +625,34 @@ class Game:
 
                     
                     if tempX != 0 or tempY != 0:
-                                    # if both, check for both
-                                    if tempX != 0 and tempY != 0:
-                                        #print("both")
-                                        if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = tempX*(math.sqrt(2)/2)
-                                        else:
-                                            tempX = 0
-                                        
-                                        if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = tempY*(math.sqrt(2)/2)
-                                        else:
-                                            tempY = 0
-                                        #print("vars: "+tempX+" "+tempY)
-                                           
-                                        
-                                    # if h check      
-                                    elif tempX != 0 and tempY == 0:
-                                        #print("X")
-                                        if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
-                                            tempX = 0
-                                    # if y check 
-                                    elif tempX == 0 and tempY != 0:
-                                        #print("Y")
-                                        if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                            tempY = 0 
+                        # if both, check for both
+                        if tempX != 0 and tempY != 0:
+                            #print("both")
+                            if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = tempX*(math.sqrt(2)/2)
+                            else:
+                                tempX = 0
+                            
+                            if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = tempY*(math.sqrt(2)/2)
+                            else:
+                                tempY = 0
+                            #print("vars: "+tempX+" "+tempY)
+                            
+                        # if h check      
+                        elif tempX != 0 and tempY == 0:
+                            #print("X")
+                            if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = 0
+                        # if y check 
+                        elif tempX == 0 and tempY != 0:
+                            #print("Y")
+                            if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = 0 
 
-                                    p.position.x += tempX * dt
-                                    p.position.y += tempY * dt
-                                    p.collider.center = p.position
+                        p.position.x += tempX * dt
+                        p.position.y += tempY * dt
+                        p.collider.center = p.position
 
         for event in pygame.event.get():
 
@@ -758,15 +769,32 @@ class Game:
                                             for p in s.players:
                                                 p.status = 0
                                                 p.tmpScore = 0
+                                                p.scoreText = ""
+                                                p.streak = 0
+
+                                                if modifier.lucky_streak in p.currentMods:
+                                                    del p.currentMods[modifier.lucky_streak]
+                                                    p.streak = 0
 
                                             s.players.clear()
                                         else:
                                             self.result = "Roll Default"
                                             for p in s.players:
                                                 if p.status == 1:
-                                                    p.tmpScore = p.tmpScore+self.award
+                                                    printScore = 0
+                                                    
+                                                    if modifier.lucky_streak in p.currentMods:
+                                                        p.streak = p.streak + 1
+                                                        printScore = modifier.lucky_streak_modifier(self.award, p.streak)
+                                                        p.tmpScore = p.tmpScore+printScore
+                                                    else:
+                                                        printScore = self.award
+                                                        p.tmpScore = p.tmpScore+printScore
+                                                    
+                                                    p.tmpScore = round(p.tmpScore, 2)
+                                                    printScore = round(printScore, 2)
                                                     p.status = 0
-                                                    s.scoreText = "+"+str(self.award)
+                                                    p.scoreText = "+"+str(printScore)
                                                     s.scoreTextColor = (0,255,0)
                     # check for all alarms
                     count = 0
@@ -962,6 +990,9 @@ class Game:
             if p.status != -1:
                 p.score = 0
                 p.status = -1
+                if modifier.lucky_streak in p.currentMods:
+                    del p.currentMods[modifier.lucky_streak]
+                    p.streak = 0
         if not self.lastRound:
             self.result = "SNAKE EYES"
         #else:
@@ -1138,6 +1169,9 @@ class Player:
         self.YCol.center = self.position
         self.modSelection = 0
         self.currentMods = {}
+        self.streak = 0
+        self.scoreText = ""
+        
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
