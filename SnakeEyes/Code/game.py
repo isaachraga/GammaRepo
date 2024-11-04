@@ -510,6 +510,7 @@ class Game:
             if s.status == -1:
                 s.color = (255,0,0)
             else:
+                
                 offset = 0
                 for x in range(s.risk):
                     self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
@@ -521,6 +522,15 @@ class Game:
                     self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
                     offset = offset+20
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
+                
+                offset = 0
+                for p in s.players:
+                    if p.status == 1:
+                        s.scoreText = ""
+                        self.GAME_FONT.render_to(self.screen, (s.position.x-101+offset, s.position.y-301), "P"+str(p.playerNum), (255,255,255))
+                        self.GAME_FONT.render_to(self.screen, (s.position.x-100+offset, s.position.y-300), "P"+str(p.playerNum), p.color)
+                        offset = offset + 40
+
 
         for p in self.Players:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(p.score), (0, 0, 0))
@@ -560,7 +570,7 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            print("Scene1")
+            #print("Scene1")
             self.resetRound()
             self.scene_manager.switch_scene('status')
 
@@ -675,7 +685,6 @@ class Game:
                                         else:
                                             tempY = 0
                                         #print("vars: "+tempX+" "+tempY)
-                                           
                                         
                                     # if h check      
                                     elif tempX != 0 and tempY == 0:
@@ -1127,6 +1136,8 @@ class Player:
         self.XCol.center = self.position
         self.YCol = pygame.Rect(0,0,10,10)
         self.YCol.center = self.position
+        self.modSelection = 0
+        self.currentMods = {}
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
