@@ -6,6 +6,7 @@ import math
 from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+from SnakeEyes.Code import modifier
 
 ### TO DO ###
 
@@ -275,6 +276,7 @@ class Game:
     def playerStatusReset(self):
         for p in self.Players:
             p.status = 0
+            p.scoreText = ""
 
     ### Resets player location to starting point
     def playerLocReset(self):
@@ -507,6 +509,7 @@ class Game:
             if s.status == -1:
                 s.color = (255,0,0)
             else:
+                
                 offset = 0
                 for x in range(s.risk):
                     self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
@@ -518,13 +521,35 @@ class Game:
                     self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
                     offset = offset+20
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
+                
+                offset = 0
+                for p in s.players:
+                    if p.status == 1:
+                        s.scoreText = ""
+                        self.GAME_FONT.render_to(self.screen, (s.position.x-101+offset, s.position.y-301), "P"+str(p.playerNum), (255,255,255))
+                        self.GAME_FONT.render_to(self.screen, (s.position.x-100+offset, s.position.y-300), "P"+str(p.playerNum), p.color)
+                        offset = offset + 40
+
 
         for p in self.Players:
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(p.score), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
+
+
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y+8), "Mods" , (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10), "Mods" , Settings.COLOR_TEXT)
+            offset = 0
+            for m in p.currentMods:
+                offset = offset + 20
+                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
+                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
+
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+
             # self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+
 
             if p.status == 0:
 
@@ -534,6 +559,8 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(p.tmpScore+p.score), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+58), p.scoreText, (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+60), p.scoreText, (0,255,0))
 
             # stoplight status
             '''
@@ -554,7 +581,7 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            print("Scene1")
+            #print("Scene1")
             self.resetRound()
             self.scene_manager.switch_scene('status')
 
@@ -650,9 +677,7 @@ class Game:
                                             tempY = tempY * (math.sqrt(2) / 2)
                                         else:
                                             tempY = 0
-                                        # print("vars: "+tempX+" "+tempY)
 
-                                    # if h check
                                     elif tempX != 0 and tempY == 0:
                                         # print("X")
                                         if not self.boundaryCollision(
@@ -811,9 +836,16 @@ class Game:
     def snakeEyes(self):
 
         for p in self.Players:
+            
             if p.status != -1:
-                p.score = 0
+                if modifier.paid_off not in p.currentMods:
+                    p.score = 0
+                else:
+                    del p.currentMods[modifier.paid_off]
                 p.status = -1
+                if modifier.lucky_streak in p.currentMods:
+                    del p.currentMods[modifier.lucky_streak]
+                    p.streak = 0
         if not self.lastRound:
             self.result = "SNAKE EYES"
         # else:
@@ -1125,6 +1157,11 @@ class Player:
         self.XCol.center = self.position
         self.YCol = pygame.Rect(0,0,10,10)
         self.YCol.center = self.position
+        self.modSelection = 0
+        self.currentMods = {}
+        self.streak = 0
+        self.scoreText = ""
+        
 
         ##### STATUS #####
         self.gr = pygame.Vector2(0, 0)
