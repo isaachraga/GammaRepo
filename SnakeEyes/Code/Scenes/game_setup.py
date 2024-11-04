@@ -546,8 +546,9 @@ class GameSetup:
         # Handle Overlapping Controls
         tracker = new_index
         while options[new_index] in (Preferences.RED_CONTROLS, Preferences.BLUE_CONTROLS, Preferences.YELLOW_CONTROLS, Preferences.GREEN_CONTROLS):
-            if (options[new_index] == "Controller"): #Allows multiple controllers
-                break
+            # Disabling this for now until multiple controllers can be used
+            # if (options[new_index] == "Controller"): #Allows multiple controllers
+            #     break
             new_index = (new_index + direction) % (len(options)-1)
             if (new_index == tracker):  #Prevents infinite loops if not enough options
                 break
