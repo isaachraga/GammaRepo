@@ -74,7 +74,7 @@ class GameMods:
                         self.scene_manager.switch_scene('pause')
 
                     if event.key == p.left:
-                        print(str(len(self.available_mods)))
+                        #print(str(len(self.available_mods)))
                         if(p.modSelection - 1 < 0):
                             p.modSelection = len(self.available_mods) -1 
                         else:

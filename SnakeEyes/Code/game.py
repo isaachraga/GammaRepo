@@ -736,70 +736,24 @@ class Game:
                         if self.lastRound:
                             self.gameOver()
                         else:
-                            #print("allAlarms: "+str(self.allAlarms))
-                            #for s in self.Stores:
-                                #print("Store Num: " + str(s.storeNum))
-                                #print("Store Status: "+str(s.status))
                             self.resetRound()
                     else: 
                         if self.ready:
-
                             for s in self.Stores:
                                 if len(s.players) != 0:
-
                                     #police roll if a store is alarmed
                                     if self.alarmedStores > 0 and self.roundSkipped:
                                         if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
-                                            self.resetTempScores()
-                                            s.scoreText = "POLICE"
-                                            s.scoreTextColor = (255,0,0)
-                                            s.status = -1
-                                            self.police = True
-                                            self.snakeEyes()
+                                            self.policeRoll(s)
 
                                     if not self.police:
                                         # roll for value/alarm
                                         self.award = self.roll(1,9,s.risk,s.reward) 
 
                                         if self.award == -1:
-                                            s.scoreText = "ALARMED"
-                                            s.scoreTextColor = (255,0,0)
-                                            self.alarmedStores = self.alarmedStores + 1
-                                            s.status=-1
-
-                                            for p in s.players:
-                                                p.status = 0
-                                                p.scoreText = ""
-                                                p.streak = 0
-                                                if modifier.quick_hands not in p.currentMods:
-                                                    p.tmpScore = 0
-                                                else:
-                                                    del p.currentMods[modifier.quick_hands]
-
-                                                if modifier.lucky_streak in p.currentMods:
-                                                    del p.currentMods[modifier.lucky_streak]
-                                                    p.streak = 0
-
-                                            s.players.clear()
+                                            self.alarmedStoreRoll(s)
                                         else:
-                                            self.result = "Roll Default"
-                                            for p in s.players:
-                                                if p.status == 1:
-                                                    printScore = 0
-                                                    
-                                                    if modifier.lucky_streak in p.currentMods:
-                                                        p.streak = p.streak + 1
-                                                        printScore = modifier.lucky_streak_modifier(self.award, p.streak)
-                                                        p.tmpScore = p.tmpScore+printScore
-                                                    else:
-                                                        printScore = self.award
-                                                        p.tmpScore = p.tmpScore+printScore
-                                                    
-                                                    p.tmpScore = round(p.tmpScore, 2)
-                                                    printScore = round(printScore, 2)
-                                                    p.status = 0
-                                                    p.scoreText = "+"+str(printScore)
-                                                    s.scoreTextColor = (0,255,0)
+                                            self.defaultRoll(s)
                     # check for all alarms
                     count = 0
                     for s in self.Stores:
@@ -864,6 +818,66 @@ class Game:
             # if event.type == pygame.JOYDEVICEADDED:
             #     controller = pygame.joystick.Joystick(event.device_index)
             #     self.controllers.append(controller)
+    def policeRoll(self, store):
+        self.resetTempScores()
+        store.scoreText = "POLICE"
+        store.scoreTextColor = (255,0,0)
+        store.status = -1
+        self.police = True
+        for p in self.Players:
+            
+            if p.status != -1:
+                if modifier.paid_off not in p.currentMods:
+                    p.score = 0
+                else:
+                    del p.currentMods[modifier.paid_off]
+                p.status = -1
+                if modifier.lucky_streak in p.currentMods:
+                    del p.currentMods[modifier.lucky_streak]
+                    p.streak = 0
+        if not self.lastRound:
+            self.result = "SNAKE EYES"
+
+    def alarmedStoreRoll(self, store):
+        store.scoreText = "ALARMED"
+        store.scoreTextColor = (255,0,0)
+        self.alarmedStores = self.alarmedStores + 1
+        store.status=-1
+
+        for p in store.players:
+            p.status = 0
+            p.scoreText = ""
+            p.streak = 0
+            if modifier.quick_hands not in p.currentMods:
+                p.tmpScore = 0
+            else:
+                del p.currentMods[modifier.quick_hands]
+
+            if modifier.lucky_streak in p.currentMods:
+                del p.currentMods[modifier.lucky_streak]
+                p.streak = 0
+
+        store.players.clear()
+    
+    def defaultRoll(self, store):
+        self.result = "Roll Default"
+        for p in store.players:
+            if p.status == 1:
+                printScore = 0
+                
+                if modifier.lucky_streak in p.currentMods:
+                    p.streak = p.streak + 1
+                    printScore = modifier.lucky_streak_modifier(self.award, p.streak)
+                    p.tmpScore = p.tmpScore+printScore
+                else:
+                    printScore = self.award
+                    p.tmpScore = p.tmpScore+printScore
+                
+                p.tmpScore = round(p.tmpScore, 2)
+                printScore = round(printScore, 2)
+                p.status = 0
+                p.scoreText = "+"+str(printScore)
+                store.scoreTextColor = (0,255,0)
 
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         #print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
@@ -987,24 +1001,7 @@ class Game:
     
         
         
-    ### handles snake eyes roll ##
-    def snakeEyes(self):
-
-        for p in self.Players:
-            
-            if p.status != -1:
-                if modifier.paid_off not in p.currentMods:
-                    p.score = 0
-                else:
-                    del p.currentMods[modifier.paid_off]
-                p.status = -1
-                if modifier.lucky_streak in p.currentMods:
-                    del p.currentMods[modifier.lucky_streak]
-                    p.streak = 0
-        if not self.lastRound:
-            self.result = "SNAKE EYES"
-        #else:
-            #self.gameOver()
+    
 
     def resetTempScores(self):
         for p in self.Players:
