@@ -1,9 +1,10 @@
 class Modifier:
-    def __init__(self, name, description, cost, apply_modifier):
+    #def __init__(self, name, description, cost, apply_modifier):
+    def __init__(self, name, description, cost):
         self.name = name
         self.description = description
         self.cost = cost
-        self.apply_modifier = apply_modifier
+        #self.apply_modifier = apply_modifier
         self.active = False  # Track if  modifier is currently active
         self.duration = 0  # Tracks how many turns modifier is active
 
@@ -24,9 +25,7 @@ class Modifier:
 
 
 
-#Isaac mod ideas
-# Raise all store rewards by one (max of 5)
-# Lower all store rewards by one (min of 5)
+
 
 
 
@@ -34,12 +33,25 @@ class Modifier:
 
 
 # Score Enhancers
-def lucky_streak_modifier(player, dice_rolls, game):
+def lucky_streak_modifier(score, streak):
+    '''
     if player.tmpScore >= 20:  # Example threshold
         player.tmpScore = int(player.tmpScore * 1.5)
         game.result = f'Lucky Streak activated for Player {player.playerNum}!'
+        '''
+    temp = score
+    for x in range(streak):
+        temp = temp * 1.05
+    
+    print("Original: "+str(score))
+    print("Streak: "+str(streak))
+    print("Modified: "+str(temp))
+    return temp
+    
+    
 
 
+'''
 def hot_dice_modifier(player, dice_rolls, game):
     if dice_rolls == (5, 5):
         player.hot_dice_buff = 2  # Buff lasts for two turns
@@ -95,16 +107,31 @@ def roll_rewind_modifier(player, dice_rolls, game):
     if player.bad_roll:
         player.roll_rewind = True
         game.result = f'Roll Rewind activated for Player {player.playerNum}!'
-
+'''
 
 # Creating modifier instances
 lucky_streak = Modifier(
     name="Lucky Streak",
-    description="After successful rolls,\nthe next score gets a \nx1.5 multiplier.",
-    cost=10,
-    apply_modifier=lucky_streak_modifier,
+    description="After each successful \nrolls,the next score \ngets a x1.05 \nmultiplier. Active until \nyou set off a store \nalarm or police \narive.",
+    cost=50,
+    #apply_modifier=lucky_streak_modifier,
 )
 
+paid_off = Modifier(
+    name="Paid Off",
+    description="Keep your stored money \nafter a police raid. \nActive until \nafter caught by the \npolice",
+    cost=200,
+    #apply_modifier=paid_off,
+)
+
+quick_hands = Modifier(
+    name="Quick Hands",
+    description="Keep your money after \nan alarm is triggered. \nActive until \nafter an alarm is \ntriggered",
+    cost=100,
+    #apply_modifier=paid_off,
+)
+
+'''
 hot_dice = Modifier(
     name="Hot Dice",
     description="Rolling a 5 and 5 \ngrants a temporary \nbuff that adds +1 to \neach die roll for the \nnext two turns.",
@@ -167,11 +194,15 @@ roll_rewind = Modifier(
     cost=10,
     apply_modifier=roll_rewind_modifier,
 )
+'''
 
 # List of all available modifiers
 available_modifiers = [
-    lucky_streak,
-    hot_dice,
+    lucky_streak, 
+    paid_off,
+    quick_hands
+]
+'''hot_dice,
     cumulative_boost,
     bonus_round,
     shield,
@@ -179,5 +210,5 @@ available_modifiers = [
     second_chance,
     reset_immunity,
     dice_swap,
-    roll_rewind
-]
+    roll_rewind'''
+#]
