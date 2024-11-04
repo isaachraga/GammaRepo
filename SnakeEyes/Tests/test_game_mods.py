@@ -107,8 +107,8 @@ def test_quick_hands(setup_game):
     game.Players[0].tmpScore = 100
     game.Players[1].tmpScore = 200
     game.alarmedStoreRoll(game.Stores[0])
-    assert(game.Players[0].tmpStore == 100)
-    assert(game.Players[1].tmpStore == 0)
+    assert(game.Players[0].tmpScore == 100)
+    assert(game.Players[1].tmpScore == 0)
 
 def test_quick_hands_removal(setup_game):
     game = setup_game
