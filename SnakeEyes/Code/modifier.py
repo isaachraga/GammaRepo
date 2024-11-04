@@ -98,70 +98,70 @@ def roll_rewind_modifier(player, dice_rolls, game):
 # Creating modifier instances
 lucky_streak = Modifier(
     name="Lucky Streak",
-    description="After successful rolls, the next score gets a x1.5 multiplier.",
+    description="After successful rolls,\nthe next score gets a \nx1.5 multiplier.",
     cost=10,
     apply_modifier=lucky_streak_modifier,
 )
 
 hot_dice = Modifier(
     name="Hot Dice",
-    description="Rolling a 5 and 5 grants a temporary buff that adds +1 to each die roll for the next two turns.",
+    description="Rolling a 5 and 5 \ngrants a temporary \nbuff that adds +1 to \neach die roll for the \nnext two turns.",
     cost=8,
     apply_modifier=hot_dice_modifier,
 )
 
 cumulative_boost = Modifier(
     name="Cumulative Boost",
-    description="If a player rolls the same number three times in a row, they gain an increasing score multiplier.",
+    description="If a player rolls the \nsame number three \ntimes in a row, \nthey gain an \nincreasing score \nmultiplier.",
     cost=12,
     apply_modifier=cumulative_boost_modifier,
 )
 
 bonus_round = Modifier(
     name="Bonus Round",
-    description="If a player rolls 'snake eyes', they enter a bonus round with triple scores for three turns.",
+    description="If a player rolls 'snake \neyes', they \nenter a bonus round \nwith triple scores for \nthree turns.",
     cost=15,
     apply_modifier=bonus_round_modifier,
 )
 
 shield = Modifier(
     name="Shield",
-    description="Rolling certain numbers (1 and 6) gives protection against penalties.",
+    description="Rolling certain \nnumbers (1 and 6) \ngives protection \nagainst penalties.",
     cost=5,
     apply_modifier=shield_modifier,
 )
 
 safe_cash_out = Modifier(
     name="Safe Cash Out",
-    description="Players rolling a pair of threes can cash out with no penalty.",
+    description="Players rolling a pair \nof threes can cash \nout with no penalty.",
     cost=7,
     apply_modifier=safe_cash_out_modifier,
 )
 
 second_chance = Modifier(
     name="Second Chance",
-    description="One chance to roll again before a penalty applies on a losing combination.",
+    description="One chance to roll \nagain before a penalty \napplies on a losing \ncombination.",
     cost=9,
     apply_modifier=second_chance_modifier,
 )
 
 reset_immunity = Modifier(
     name="Reset Immunity",
-    description="After cashing out once, player becomes immune to resets for the next round.",
+    description="After cashing out once, \nplayer becomes \nimmune to resets for \nthe next round.",
     cost=6,
     apply_modifier=reset_immunity_modifier,
 )
 
 dice_swap = Modifier(
     name="Dice Swap",
-    description="On certain rolls, the player can swap dice values to turn a bad roll into a good one.",
+    description="On certain rolls, the \nplayer can swap \ndice values to turn a \nbad roll into a \ngood one.",
     cost=8,
     apply_modifier=dice_swap_modifier,
 )
 
 roll_rewind = Modifier(
     name="Roll Rewind",
-    description="After a bad roll, player can rewind one turn and use the previous roll result.",
+    description="After a bad roll, player \ncan rewind one \nturn and use the \nprevious roll result.",
     cost=10,
     apply_modifier=roll_rewind_modifier,
 )
