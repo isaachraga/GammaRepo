@@ -43,9 +43,9 @@ def lucky_streak_modifier(score, streak):
     for x in range(streak):
         temp = temp * 1.05
     
-    print("Original: "+str(score))
-    print("Streak: "+str(streak))
-    print("Modified: "+str(temp))
+    #print("Original: "+str(score))
+    #print("Streak: "+str(streak))
+    #print("Modified: "+str(temp))
     return round(temp, 2)
     
     
