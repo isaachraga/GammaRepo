@@ -181,13 +181,14 @@ def test_game_win_police(setup_game):
     game.Players[3].status = 1
     game.run()
     game.roundCheck()
-
+    game.policeRoll(game.Stores[0])
+    '''
     game.resetTempScores()
     game.police = True
     for s in game.Stores:
         s.status = -1
     game.snakeEyes()
-
+    '''
     newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
     pygame.event.post(newevent) 
     game.run()
