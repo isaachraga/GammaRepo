@@ -1,6 +1,7 @@
 name: Package and Release Sticky Fingers
 
 on:
+  workflow_dispatch: #For running manually
   push:
     branches:
       - main
@@ -21,14 +22,14 @@ jobs:
       with:
         python-version: 3.x 
 
-    - name: Install dependencies
+    - name: Install packaging dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r SnakeEyes/requirements.txt
         pip install pyinstaller
         pip install Pillow        #For icon conversion on Mac
 
-    - name: Package executable
+    - name: Package executables
       run: |
         bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
           python -m PyInstaller --onefile --windowed --name="StickyFingers_Windows" --icon="SnakeEyes/Assets/Characters/Profile/Jeff Profile.png" --add-data="Fonts;Fonts" --add-data="SnakeEyes;SnakeEyes" sticky_fingers.py
@@ -38,11 +39,8 @@ jobs:
           python -m PyInstaller --onefile --windowed --name="StickyFingers_Linux" --icon="SnakeEyes/Assets/Characters/Profile/Jeff Profile.png" --add-data="Fonts:Fonts" --add-data="SnakeEyes:SnakeEyes" sticky_fingers.py
         fi'
       
-      
-      
 
-       
-    - name: Create Release
+    - name: Release to GitHub under 'latest' tag
       uses: softprops/action-gh-release@v1
       with:
         tag_name: latest  #Overwrites previous release
@@ -53,4 +51,30 @@ jobs:
         draft: false  #Publish immediately
         prerelease: false
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  #GitHub provides this token automatically??
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  #GitHub provides this token automatically
+
+    - name: Install Butler for Itch.io deployment
+      run: |
+        bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
+          curl -L -o butler.zip https://broth.itch.ovh/butler/windows-amd64/latest/archive/default
+          unzip butler.zip -d butler
+          mv butler/butler.exe /usr/local/bin/butler.exe
+        elif [ "${{ runner.os }}" == "macOS" ]; then
+          curl -L -o butler.zip https://broth.itch.ovh/butler/darwin-amd64/latest/archive/default
+          unzip butler.zip -d butler
+          chmod +x butler/butler
+          mv butler/butler /usr/local/bin/butler
+        else
+          curl -L -o butler.zip https://broth.itch.ovh/butler/linux-amd64/latest/archive/default
+          unzip butler.zip -d butler
+          chmod +x butler/butler
+          mv butler/butler /usr/local/bin/butler
+        fi
+  
+    - name: Deploy to Itch.io
+      run: |
+        butler push dist/StickyFingers_Windows.exe GammaTeamSE/sticky-fingers:windows
+        butler push dist/StickyFingers_macOS GammaTeamSE/sticky-fingers:mac
+        butler push dist/StickyFingers_Linux GammaTeamSE/sticky-fingers:linux
+      env:
+        BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
