@@ -371,11 +371,6 @@ class Game:
 
         ##### DEBUG / STATUS #####
 
-        # self.GAME_FONT.render_to(self.screen, (10, 10), "Dice 1: "+str(self.num1), (0, 0, 0))
-        # self.GAME_FONT.render_to(self.screen, (10, 30), "Dice 2: "+str(self.num2), (0, 0, 0))
-
-        # self.GAME_FONT.render_to(self.screen, (10, 380), self.result, (0, 0, 0))
-
         if self.police:
             self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
         else:
@@ -450,11 +445,11 @@ class Game:
 
         # pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
 
-        for s in self.Stores:
+        #for s in self.Stores:
             # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
             # needs to clear each round
-            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
-            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
+            #self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
+            #self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
 
         ##### PLAYERS #####
         for p in self.Players:
@@ -714,8 +709,9 @@ class Game:
                     if p.controller.controller_type == 'keyboard':
                         if event.key == p.controller.action_buttons.get('space'):
                             # DEBUG STATEMENT
-                            # print("space pressed...")
-                            self.handle_dice_roll()
+                            if p.playerNum == 1:
+                                print("space pressed...")
+                                self.handle_dice_roll()
 
                         elif event.key == p.controller.action_buttons.get('ready'):
                             # DEBUG STATEMENT
@@ -748,25 +744,10 @@ class Game:
             #     controller = pygame.joystick.Joystick(event.device_index)
             #     self.controllers.append(controller)
 
-            ### joystick events ###
-            elif event.type == pygame.JOYBUTTONDOWN:
-                joystick_id = event.joy
-                button_id = event.button
-
-                for p in self.Players:
-                    if p.controller.controller_type == 'joystick':
-                        if p.controller.joystick.get_instance_id() == joystick_id:
-                            if button_id == p.controller.action_buttons.get('space'):
-                                # DEBUG STATEMENT
-                                # print("space pressed...")
-                                self.handle_dice_roll()
-                            elif button_id == p.controller.action_buttons.get('ready'):
-                                # DEBUG STATEMENT
-                                # print("ready pressed...")
-                                self.handle_ready_action(p)
+            
     def handle_dice_roll(self):
         # DEBUG STATEMENT
-        # print("handle_dice_roll() called...")
+        print("handle_dice_roll() called...")
         # Clear store text
         for s in self.Stores:
             if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
@@ -804,6 +785,7 @@ class Game:
                             if self.award == -1:
                                 self.alarmedStoreRoll(s)
                             else:
+                                print("Default Roll Started")
                                 self.defaultRoll(s)
         # check for all alarms
         count = 0
@@ -898,6 +880,7 @@ class Game:
                 p.status = 0
                 p.scoreText = "+"+str(printScore)
                 store.scoreTextColor = (0,255,0)
+                print("Default Roll Finished")
 
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         # print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
@@ -1101,7 +1084,7 @@ class Game:
         for p in self.Players:
             if p.playerNum == playerNum:
                 return str(p.score)
-
+'''
     def handle_dice_roll(self):
         # DEBUG STATEMENT
         # print("handle_dice_roll() called...")
@@ -1183,7 +1166,7 @@ class Game:
                     if player.status != -1:
                         player.status = 1
                         break
-
+'''
 ########## CONTROLLER ##########
 class Controller:
     def __init__(
