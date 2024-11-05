@@ -75,7 +75,7 @@ jobs:
       run: |
         bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
           cd butler
-          ./butler push dist/StickyFingers_Windows.exe GammaTeamSE/sticky-fingers:windows
+          ./butler push ../dist/StickyFingers_Windows.exe GammaTeamSE/sticky-fingers:windows
         elif [ "${{ runner.os }}" == "macOS" ]; then
           butler push dist/StickyFingers_macOS GammaTeamSE/sticky-fingers:mac
         else
