@@ -7,6 +7,10 @@ from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 from SnakeEyes.Code import modifier
+from SnakeEyes.Code import controller
+from SnakeEyes.Code import player
+from SnakeEyes.Code import car
+from SnakeEyes.Code import store
 
 ### TO DO ###
 
@@ -163,22 +167,22 @@ class Game:
 
     ### Resets all stores to starting state ###
     def storeReset(self):
-        self.store1 = Store()
+        self.store1 = store.Store()
         self.store1.storeNum = 1
         self.store1.position = pygame.Vector2(250, 310)
         self.assignStoreStats(self.store1)
 
-        self.store2 = Store()
+        self.store2 = store.Store()
         self.store2.storeNum = 2
         self.store2.position = pygame.Vector2(500, 310)
         self.assignStoreStats(self.store2)
 
-        self.store3 = Store()
+        self.store3 = store.Store()
         self.store3.storeNum = 3
         self.store3.position = pygame.Vector2(750, 310)
         self.assignStoreStats(self.store3)
 
-        self.store4 = Store()
+        self.store4 = store.Store()
         self.store4.storeNum = 4
         self.store4.position = pygame.Vector2(1000, 310)
         self.assignStoreStats(self.store4)
@@ -192,7 +196,7 @@ class Game:
         self.Players = []
         self.joystick_id = 0
         if Preferences.RED_PLAYER_TYPE == "Player":
-            self.p1 = Player()
+            self.p1 = player.Player()
             self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
             self.p1.color = (255,0,0)
@@ -203,7 +207,7 @@ class Game:
             self.Players.append(self.p1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
-            self.p2 = Player()
+            self.p2 = player.Player()
             self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
             self.p2.color = (0,0,255)
@@ -214,7 +218,7 @@ class Game:
             self.Players.append(self.p2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
-            self.p3 = Player()
+            self.p3 = player.Player()
             self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
             self.p3.color = (204,204,0)
@@ -225,7 +229,7 @@ class Game:
             self.Players.append(self.p3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
-            self.p4 = Player()
+            self.p4 = player.Player()
             self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
             self.p4.color = (0,255,0)
@@ -242,28 +246,28 @@ class Game:
         self.Cars = []
 
         if Preferences.RED_PLAYER_TYPE == "Player":
-            self.c1 = Car()
+            self.c1 = car.Car()
             self.c1.playerNum = self.p1.playerNum
             self.c1.position = pygame.Vector2(110, 520)
             self.c1.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
             self.Cars.append(self.c1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
-            self.c2 = Car()
+            self.c2 = car.Car()
             self.c2.playerNum = self.p2.playerNum
             self.c2.position = pygame.Vector2(310, 520)
             self.c2.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP2.png')
             self.Cars.append(self.c2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
-            self.c3 = Car()
+            self.c3 = car.Car()
             self.c3.playerNum = self.p3.playerNum
             self.c3.position = pygame.Vector2(715, 520)
             self.c3.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP3.png')
             self.Cars.append(self.c3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
-            self.c4 = Car()
+            self.c4 = car.Car()
             self.c4.playerNum = self.p4.playerNum
             self.c4.position = pygame.Vector2(1020, 520)
             self.c4.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP4.png')
@@ -334,7 +338,7 @@ class Game:
         # DEBUG STATEMENT
         # print(f"player {player.playerNum} assigned {controller_scheme}")
         # Create a Controller object and assign it to the player
-        player.controller = Controller(
+        player.controller = controller.Controller(
             controller_type=controller_type,
             controller_ID=controller_ID,
             controller_scheme=controller_scheme
@@ -1033,7 +1037,7 @@ class Game:
     def gameOver(self):
         if not self.gameOverFlag:
             self.gameOverFlag = True
-            self.TopPlayer = Player()
+            self.TopPlayer = player.Player()
             self.HighScore = 0
             for p in self.Players:
                 if p.score > self.HighScore:
@@ -1078,286 +1082,3 @@ class Game:
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
-        # self.scene_manager.switch_scene('status')
-
-    def getScore(self, playerNum):
-        for p in self.Players:
-            if p.playerNum == playerNum:
-                return str(p.score)
-'''
-    def handle_dice_roll(self):
-        # DEBUG STATEMENT
-        # print("handle_dice_roll() called...")
-        # Clear store text
-        for s in self.Stores:
-            if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
-                s.scoreText = ''
-                s.scoreTextColor = (255, 255, 255)
-
-        self.roundCheck()
-
-        ### Handles if police have been triggered ###
-        if self.police:
-            if self.lastRound:
-                self.gameOver()
-            else:
-                self.resetRound()
-        ### Handles if all alarms were set off ###
-        elif self.allAlarms:
-            if self.lastRound:
-                self.gameOver()
-            else:
-                self.resetRound()
-        else:
-            if self.ready:
-                for s in self.Stores:
-                    if len(s.players) != 0:
-                        # Police roll if a store is alarmed
-                        if self.alarmedStores > 0 and self.roundSkipped:
-                            if self.roll(1, (len(self.Stores)+11-self.alarmedStores), 1, 1) == -1:
-                                self.resetTempScores()
-                                s.scoreText = "POLICE"
-                                s.scoreTextColor = (255, 0, 0)
-                                s.status = -1
-                                self.police = True
-                                self.snakeEyes()
-                        if not self.police:
-                            # Roll for value/alarm
-                            self.award = self.roll(1, 9, s.risk, s.reward)
-                            if self.award == -1:
-                                s.scoreText = "ALARMED"
-                                s.scoreTextColor = (255, 0, 0)
-                                s.status = -1
-                                for p in s.players:
-                                    p.status = 0
-                                    p.tmpScore = 0
-                                s.players.clear()
-                            else:
-                                for p in s.players:
-                                    if p.status == 1:
-                                        p.tmpScore += self.award
-                                        p.status = 0
-                                        s.scoreText = "+" + str(self.award)
-                                        s.scoreTextColor = (0, 255, 0)
-
-        # Check for all alarms
-        self.alarmedStores = sum(1 for s in self.Stores if s.status == -1)
-        if self.alarmedStores == len(self.Stores):
-            self.allAlarms = True
-
-        # Delay police roll from happening until the first alarmed round has finished
-        if self.alarmedStores > 0 and not self.roundSkipped:
-            self.roundSkipped = True
-
-    def handle_ready_action(self, player):
-        for c in self.Cars:
-            # If at car cash out
-            if c.ready and c.playerNum == player.playerNum:
-                player.score += player.tmpScore
-                player.tmpScore = 0
-                player.status = -1
-                self.Cars.remove(c)
-                self.roundCheck()
-                break
-        else:
-            # If player is at a store, set to ready
-            for s in self.Stores:
-                if player in s.players:
-                    if player.status != -1:
-                        player.status = 1
-                        break
-'''
-########## CONTROLLER ##########
-class Controller:
-    def __init__(
-        self, controller_type="keyboard", controller_ID=None, controller_scheme=None
-    ):
-        self.controller_type = controller_type  # 'keyboard' or 'joystick'
-        self.controller_ID = controller_ID  # Joystick ID if using a controller
-        self.controller_scheme = controller_scheme
-        self.joystick = None
-
-        if self.controller_type == "joystick" and controller_ID is not None:
-            self.joystick = pygame.joystick.Joystick(controller_ID)
-
-        self.define_controls()
-
-    def get_joystick_id(self):
-        if self.joystick:
-            return self.joystick.get_instance_id()
-        return None
-
-    def define_controls(self):
-        if self.controller_type == "joystick":
-            self.axis_horizontal = 0
-            self.axis_vertical = 1
-            self.action_buttons = {"ready": 0, "space": 1}
-        elif self.controller_type == "keyboard":
-            self.map_keyboard_controls()
-
-    def map_keyboard_controls(self):
-        if not self.controller_scheme:
-            print(f"Error: No control scheme provided for keyboard controller.")
-            self.controller_scheme = "WASD"
-
-        # DEBUG STATEMENT
-        # print(f"Mapping controls for: {self.controller_scheme}")
-
-        control_schemes = {
-            "WASD": {
-                "up": pygame.K_w,
-                "down": pygame.K_s,
-                "left": pygame.K_a,
-                "right": pygame.K_d,
-                "ready": pygame.K_1,
-                "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_2,
-            },
-            "TFGH": {
-                "up": pygame.K_t,
-                "down": pygame.K_g,
-                "left": pygame.K_f,
-                "right": pygame.K_h,
-                "ready": pygame.K_3,
-                "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_4,
-            },
-            "IJKL": {
-                "up": pygame.K_i,
-                "down": pygame.K_k,
-                "left": pygame.K_j,
-                "right": pygame.K_l,
-                "ready": pygame.K_5,
-                "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_6,
-            },
-            "Arrows": {
-                "up": pygame.K_UP,
-                "down": pygame.K_DOWN,
-                "left": pygame.K_LEFT,
-                "right": pygame.K_RIGHT,
-                "ready": pygame.K_7,
-                "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_8,
-            },
-        }
-
-        scheme = control_schemes.get(self.controller_scheme)
-
-        if scheme:
-            self.up = scheme["up"]
-            self.down = scheme["down"]
-            self.left = scheme["left"]
-            self.right = scheme["right"]
-            self.action_buttons = {
-                "ready": scheme["ready"],
-                "space": scheme["space"]
-                #"cash_out": scheme["cash_out"],
-            }
-        else:
-            print(f"Error: Unknown control scheme '{self.controller_scheme}'")
-
-    def get_movement(self):
-            if self.controller_type == "keyboard":
-                keys = pygame.key.get_pressed()
-                x_movement = 0
-                y_movement = 0
-                if keys[self.left]:
-                    x_movement -= 1
-                if keys[self.right]:
-                    x_movement += 1
-                if keys[self.up]:
-                    y_movement -= 1
-                if keys[self.down]:
-                    y_movement += 1
-
-                length = (x_movement**2 + y_movement**2) ** 0.5
-                if length > 0:
-                    x_movement /= length
-                    y_movement /= length
-                return x_movement, y_movement
-
-            elif self.controller_type == "joystick":
-                x_axis = self.joystick.get_axis(self.axis_horizontal)
-                y_axis = self.joystick.get_axis(self.axis_vertical)
-
-                deadzone = 0.1
-                if abs(x_axis) < deadzone:
-                    x_axis = 0
-                if abs(y_axis) < deadzone:
-                    y_axis = 0
-                return x_axis, y_axis
-
-
-    def is_action_pressed(self, action_name):
-        if self.controller_type == "keyboard":
-            keys = pygame.key.get_pressed()
-            return keys[self.action_buttons[action_name]]
-        elif self.controller_type == "joystick":
-            button_ID = self.action_buttons[action_name]
-            # DEBUG STATEMENT
-            # print(button_ID)
-            return self.joystick.get_button(button_ID)
-
-########## PLAYER ##########
-class Player:
-    def __init__(self):
-        self.tmpScore = 0
-        self.score = 0
-        self.status = 0 #-1 - cashed out | 0 - waiting | 1 ready
-        self.playerNum = 0
-        self.controller = None
-        self.color = (255, 0, 0)
-        self.position = pygame.Vector2(0, 0)
-        self.collider = pygame.Rect(0,0,100,100)
-        self.collider.center = self.position
-        self.XCol = pygame.Rect(0,0,10,10)
-        self.XCol.center = self.position
-        self.YCol = pygame.Rect(0,0,10,10)
-        self.YCol.center = self.position
-        self.modSelection = 0
-        self.currentMods = {}
-        self.streak = 0
-        self.scoreText = ""
-        
-
-        ##### STATUS #####
-        self.gr = pygame.Vector2(0, 0)
-        self.yl = pygame.Vector2(0, 0)
-        self.rd = pygame.Vector2(0, 0)
-
-        ##### Controlls #####
-        self.up = pygame.K_w
-        self.down = pygame.K_s
-        self.left = pygame.K_a
-        self.right = pygame.K_d
-        self.ready = pygame.K_1
-        ##self.cashOut = pygame.K_2
-        #store status locations for programatic access
-
-########## CAR ###########
-class Car:
-    def __init__(self):
-        self.playerNum = 0
-        self.position = pygame.Vector2(0, 0)
-        self.collider = pygame.Rect(self.position.x, self.position.y, 0,150)
-        self.rb = pygame.Rect(self.position.x, self.position.y, 60,150)
-        self.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
-        self.ready = False
-
-########## STORE ##########
-class Store:
-    def __init__(self):
-        self.num1 = 0
-        self.num2 = 0
-        self.storeNum = 0
-        self.scoreText = ""
-        self.scoreTextColor = (255,255,255)
-        self.status = 0 #0 - ready | -1 alarmed
-        self.color = (0,0,255)
-        self.position = pygame.Vector2(0, 0)
-        #risk/reward are scales that go from 1-5 that modify roll information
-        self.risk = 0
-        self.reward = 0
-        self.collider = pygame.Rect(self.position.x, self.position.y, 20,20)
-        self.players = []
