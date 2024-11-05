@@ -78,4 +78,4 @@ jobs:
         butler push dist/StickyFingers_macOS GammaTeamSE/sticky-fingers:mac
         butler push dist/StickyFingers_Linux GammaTeamSE/sticky-fingers:linux
       env:
-        BUTLER_CREDENTIALS: ${{ secrets.ITCH_IO_API_KEY }}
+        BUTLER_API_KEY: ${{ secrets.ITCH_IO_API_KEY }}
