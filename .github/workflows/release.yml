@@ -56,7 +56,7 @@ jobs:
 
     - name: Install Butler for Itch.io deployment
       run: |
-        bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
+        if [ "${{ runner.os }}" == "Windows" ]; then
           curl -L -o butler.zip https://broth.itch.ovh/butler/windows-amd64/latest/archive/default
           unzip butler.zip -d butler
           mv butler/butler.exe /usr/local/bin/butler.exe
