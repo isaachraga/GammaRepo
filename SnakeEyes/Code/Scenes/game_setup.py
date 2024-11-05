@@ -26,7 +26,17 @@ class GameSetup:
         option_label_heigth = 38
 
         self.player_type_options = ["Player", "CPU", "None"]
-        self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
+        
+        if pygame.joystick.get_count() != 0:
+            self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
+        else:
+            self.control_type_options = [
+                "WASD",
+                "TFGH",
+                "IJKL",
+                "Arrows",
+                "None",
+            ]
 
         #Red Player
         self.red_panel = pygame_gui.elements.UIPanel(
@@ -337,6 +347,23 @@ class GameSetup:
 
     ##### Update #####
     def update(self):
+        if pygame.joystick.get_count() != 0:
+            self.control_type_options = [
+                "WASD",
+                "TFGH",
+                "IJKL",
+                "Arrows",
+                "Controller",
+                "None",
+            ]
+        else:
+            self.control_type_options = [
+                "WASD",
+                "TFGH",
+                "IJKL",
+                "Arrows",
+                "None",
+            ]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                     self.scene_manager.quit()

@@ -90,7 +90,12 @@ def test_keyboard_inputs_arrows(setup_game):
     #Testing s
     keyboard_input_down(game, pygame.K_DOWN, "Arrows")
 
-    
+def test_keyboard_inputs_wrong_scene(setup_game):
+    game = setup_game
+    logging.info("Testing input on wrong scene")
+    game.scene_manager.switch_scene('status')
+    assert(game.scene_manager.current_scene != 'game')
+    keyboard_input_down_false(game, pygame.K_DOWN, "Arrows")   
 
 def keyboard_input_left(game, key, controller):
     
@@ -131,5 +136,15 @@ def keyboard_input_down(game, key, controller):
     pygame.event.post(newevent)  
     game.run() 
     assert(game.Players[0].position.y > location)
+    game.playerReset()
+    game.playerLocReset()
+
+def keyboard_input_down_false(game, key, controller):
+    game.controllerAssignment(game.Players[0], controller)
+    location = game.Players[0].position.y
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=key, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent)  
+    game.run() 
+    assert(game.Players[0].position.y == location)
     game.playerReset()
     game.playerLocReset()
