@@ -95,7 +95,8 @@ def test_keyboard_inputs_wrong_scene(setup_game):
     logging.info("Testing input on wrong scene")
     game.scene_manager.switch_scene('status')
     assert(game.scene_manager.current_scene != 'game')
-    keyboard_input_down_false(game, pygame.K_DOWN, "Arrows")   
+    keyboard_input_down_false(game, pygame.K_DOWN, "Arrows")    
+
 
 def keyboard_input_left(game, key, controller):
     

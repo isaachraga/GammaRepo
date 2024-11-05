@@ -26,7 +26,7 @@ class GameSetup:
         option_label_heigth = 38
 
         self.player_type_options = ["Player", "CPU", "None"]
-        
+
         if pygame.joystick.get_count() != 0:
             self.control_type_options = ["WASD", "TFGH", "IJKL", "Arrows", "Controller", "None"]
         else:
@@ -38,7 +38,7 @@ class GameSetup:
                 "None",
             ]
 
-        #Red Player
+        # Red Player
         self.red_panel = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect(
                 ((80), (25)), #Position
@@ -105,7 +105,7 @@ class GameSetup:
             manager=self.ui_manager
         )
 
-        #Blue Player
+        # Blue Player
         self.blue_panel = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect(
                 ((1000), (25)), #Position
@@ -113,7 +113,7 @@ class GameSetup:
             object_id='#blue_panel',
             manager=self.ui_manager
         )
-            # Load an image to be displayed inside the panel
+        # Load an image to be displayed inside the panel
         self.image_surface = pygame.image.load('SnakeEyes/Assets/Characters/Profile/mj-profile.png').convert_alpha()
 
         # Create a UIImage inside the blue panel
@@ -171,7 +171,7 @@ class GameSetup:
             manager=self.ui_manager
         )
 
-        #Yellow Player
+        # Yellow Player
         self.yellow_panel = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect(
                 ((80), (385)), #Position
@@ -236,7 +236,7 @@ class GameSetup:
             manager=self.ui_manager
         )
 
-        #Green Player
+        # Green Player
         self.green_panel = pygame_gui.elements.UIPanel(
             relative_rect=pygame.Rect(
                 ((1000), (385)), #Position
@@ -301,7 +301,7 @@ class GameSetup:
             manager=self.ui_manager
         )
 
-        #Finishline Score Select
+        # Finishline Score Select
         self.finish_score_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((584), (364)), #Position
@@ -324,7 +324,7 @@ class GameSetup:
             manager=self.ui_manager
         )
 
-        #Start Button
+        # Start Button
         start_button_width = 150
         start_button_height = 60
         self.start_button = pygame_gui.elements.UIButton(
@@ -338,7 +338,7 @@ class GameSetup:
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
-        
+
     ##### Run #####
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
@@ -366,7 +366,7 @@ class GameSetup:
             ]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
                 # Scene Selection
@@ -377,14 +377,14 @@ class GameSetup:
             if event.type == pygame.USEREVENT:
                 # Check if a button was clicked
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    #Start Button
+                    # Start Button
                     if event.ui_element == self.start_button:
                         self.game.initialization()
                         self.game.delayedInit()
                         self.scene_manager.switch_scene('game')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
-                    #Player Type Select
+                    # Player Type Select
                     if event.ui_element == self.red_player_left:
                         self.playerTypeSelect('red', -1)
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
@@ -410,7 +410,7 @@ class GameSetup:
                         self.playerTypeSelect('green', 1)
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
-                    #Player Control Select
+                    # Player Control Select
                     if event.ui_element == self.red_control_left:
                         self.controlSchemeSelect('red', -1)
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
@@ -436,7 +436,7 @@ class GameSetup:
                         self.controlSchemeSelect('green', 1)
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
-                    #Finishline Score
+                    # Finishline Score
                     self.score_increments = 50
                     if event.ui_element == self.finish_score_dec:
                         if (Preferences.FINISHLINE_SCORE > self.score_increments):
@@ -448,9 +448,7 @@ class GameSetup:
                         self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
-
-
-    #Function to handle changing player type
+    # Function to handle changing player type
     def playerTypeSelect(self, color, direction):
         players = {
             "red" : {
@@ -478,24 +476,24 @@ class GameSetup:
         index_attr = players[color]["index"]
         label = players[color]["label"]
         preference_key = players[color]["preference"]
-        #Update Index
+        # Update Index
         index = getattr(self, index_attr)  #Get current index
         new_index = (index + direction) % len(options)
         setattr(self, index_attr, new_index)  #Update index
-        #Update Label
+        # Update Label
         label.set_text(str(options[new_index]))
-        #Update Preferences
+        # Update Preferences
         setattr(Preferences, preference_key, str(options[new_index]))
 
-        #Disable control scheme if not a player
+        # Disable control scheme if not a player
         if (options[new_index] != "Player"):
             self.controlSchemeSelect(color, 0)
-        #Enable control scheme if player
+        # Enable control scheme if player
         else:
             self.controlSchemeSelect(color, 2)
 
-    #Function to handle changing player control scheme
-    #Direction: -1: left,   1: right
+    # Function to handle changing player control scheme
+    # Direction: -1: left,   1: right
     #           0: disable, 2: enable
     def controlSchemeSelect(self, color, direction):
         players = {
@@ -526,41 +524,40 @@ class GameSetup:
         preference_key = players[color]["preference"]
         index = getattr(self, index_attr)  #Get current index
 
-        #If direction is 0, disable control schemes
+        # If direction is 0, disable control schemes
         if (direction == 0):
             setattr(self, index_attr, (len(options)-1))
             label.set_text("None")
             setattr(Preferences, preference_key, "None")
             return
-        #If direction is 2, enable control schemes
+        # If direction is 2, enable control schemes
         elif (direction == 2):
             setattr(self, index_attr, (len(options)-2))
             index = getattr(self, index_attr)
             direction = 1
-        
-        #Do nothing if controls disabled
+
+        # Do nothing if controls disabled
         if (index == (len(options)-1)):
             return
 
-        #Update Index
+        # Update Index
         new_index = (index + direction) % (len(options)-1)
-        
-        #Handle Overlapping Controls
+
+        # Handle Overlapping Controls
         tracker = new_index
-        while options[new_index] in (Preferences.RED_CONTROLS, Preferences.BLUE_CONTROLS, 
-                                     Preferences.YELLOW_CONTROLS, Preferences.GREEN_CONTROLS):
-            if (options[new_index] == "Controller"): #Allows multiple controllers
-                break
+        while options[new_index] in (Preferences.RED_CONTROLS, Preferences.BLUE_CONTROLS, Preferences.YELLOW_CONTROLS, Preferences.GREEN_CONTROLS):
+            # Disabling this for now until multiple controllers can be used
+            # if (options[new_index] == "Controller"): #Allows multiple controllers
+            #     break
             new_index = (new_index + direction) % (len(options)-1)
             if (new_index == tracker):  #Prevents infinite loops if not enough options
                 break
         setattr(self, index_attr, new_index)  #Update index
-        
-        #Update Label
+
+        # Update Label
         label.set_text(str(options[new_index]))
-        #Update Preferences
+        # Update Preferences
         setattr(Preferences, preference_key, str(options[new_index]))
-    
 
     ##### Render #####
     def render(self):
@@ -571,10 +568,12 @@ class GameSetup:
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (360, 0), (360, 720), 3)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (0, 360), (360, 360), 3)
         rect = pygame.Rect(920, 0, 360, 720)
+
         pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 0), (920, 720), 3)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 360), (1280, 360), 3)
         
+
         game_preferences_text = self.HEADER_FONT.get_rect("GAME PREFERENCES")
         game_preferences_text.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
         self.HEADER_FONT.render_to(self.screen, game_preferences_text, "GAME PREFERENCES", Settings.COLOR_TEXT)
@@ -584,9 +583,8 @@ class GameSetup:
         finish_text_rect.center = (finish_score_rect.centerx, finish_score_rect.top - Settings.FONT_SIZE)
         self.GAME_FONT.render_to(self.screen, finish_text_rect, "FINISHLINE SCORE", Settings.COLOR_TEXT)
 
-        #Render pygame_gui
+        # Render pygame_gui
         self.ui_manager.update(self.time_delta)
         self.ui_manager.draw_ui(self.screen) 
 
         pygame.display.flip()
-
