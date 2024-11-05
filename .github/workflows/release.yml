@@ -56,7 +56,7 @@ jobs:
 
     - name: Install Butler for Itch.io deployment
       run: |
-        if [ "${{ runner.os }}" == "Windows" ]; then
+        bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
           curl -L -o butler.zip https://broth.itch.ovh/butler/windows-amd64/LATEST/archive/default
           unzip butler.zip -d butler
           mv butler/butler.exe /usr/local/bin/butler.exe
@@ -70,16 +70,16 @@ jobs:
           unzip butler.zip -d butler
           chmod +x butler/butler
           mv butler/butler /usr/local/bin/butler
-        fi
+        fi'
   
     - name: Deploy to Itch.io
       run: |
-        if [ "${{ runner.os }}" == "Windows" ]; then
+        bash -c 'if [ "${{ runner.os }}" == "Windows" ]; then
           butler push dist/StickyFingers_Windows.exe GammaTeamSE/sticky-fingers:windows
         elif [ "${{ runner.os }}" == "macOS" ]; then
           butler push dist/StickyFingers_macOS GammaTeamSE/sticky-fingers:mac
         else
           butler push dist/StickyFingers_Linux GammaTeamSE/sticky-fingers:linux
-        fi
+        fi'
       env:
         BUTLER_API_KEY: ${{ secrets.ITCH_IO_API_KEY }}
