@@ -1,10 +1,8 @@
 name: Package and Release Sticky Fingers
 
 on:
-  workflow_dispatch: #For running manually
   push:
     branches:
-      - ItchDeployment #For Debugging
       - main
 
 jobs:
