@@ -292,6 +292,7 @@ class Game:
     ### Handles control assignment from game setup ###
     def controllerAssignment(self, player, controls):
 
+
         if not pygame.joystick.get_init():
             pygame.joystick.init()
 
@@ -581,7 +582,7 @@ class Game:
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            #print("Scene1")
+            print("Scene1")
             self.resetRound()
             self.scene_manager.switch_scene('status')
 
@@ -595,44 +596,55 @@ class Game:
                     if self.scene_manager.current_scene == "game":
                         # Update player status if moving
                         if p.controller.get_movement() != (0, 0) and p.status == 1:
+
+                        #print("Reset")
                             p.status = 0
 
-                        move_x, move_y = p.controller.get_movement()
-                        tempX = move_x * self.moveSpeed
-                        tempY = move_y * self.moveSpeed
+                    move_x, move_y = p.controller.get_movement()
+                    tempX = move_x * self.moveSpeed
+                    tempY = move_y * self.moveSpeed
+                        
+                    # Update character sprite based on movement direction
+                    if move_y < 0:  # Moving up
+                        self.updateCharacterSprite(self.character_sprites, p.character, "back")
+                    elif move_y > 0:  # Moving down
+                        self.updateCharacterSprite(self.character_sprites, p.character, "forward")
+                    if move_x < 0:  # Moving left
+                        self.updateCharacterSprite(self.character_sprites, p.character, "left")
+                    elif move_x > 0:  # Moving right
+                        self.updateCharacterSprite(self.character_sprites, p.character, "right")
 
-                        # Update character sprite based on movement direction
-                        if move_y < 0:  # Moving up
-                            self.updateCharacterSprite(self.character_sprites, p.character, "back")
-                        elif move_y > 0:  # Moving down
-                            self.updateCharacterSprite(self.character_sprites, p.character, "forward")
-                        if move_x < 0:  # Moving left
-                            self.updateCharacterSprite(self.character_sprites, p.character, "left")
-                        elif move_x > 0:  # Moving right
-                            self.updateCharacterSprite(self.character_sprites, p.character, "right")
+                    
+                    if tempX != 0 or tempY != 0:
+                        # if both, check for both
+                        if tempX != 0 and tempY != 0:
+                            #print("both")
+                            if self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = tempX*(math.sqrt(2)/2)
+                            else:
+                                tempX = 0
+                            
+                            if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = tempY*(math.sqrt(2)/2)
+                            else:
+                                tempY = 0
+                            #print("vars: "+tempX+" "+tempY)
+                            
+                        # if h check      
+                        elif tempX != 0 and tempY == 0:
+                            #print("X")
+                            if not self.boundaryCollision(p, tempX, 0,p.position.x, p.position.y):
+                                tempX = 0
+                        # if y check 
+                        elif tempX == 0 and tempY != 0:
+                            #print("Y")
+                            if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
+                                tempY = 0 
 
-                        if tempX != 0 or tempY != 0:
-                            # Handle movement and collision
-                            # (Your existing collision code)
-                            if tempX != 0 and tempY != 0:
-                                if self.boundaryCollision(p, tempX, 0, p.position.x, p.position.y):
-                                    tempX *= (math.sqrt(2)/2)
-                                else:
-                                    tempX = 0
-                                if self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                    tempY *= (math.sqrt(2)/2)
-                                else:
-                                    tempY = 0
-                            elif tempX != 0:
-                                if not self.boundaryCollision(p, tempX, 0, p.position.x, p.position.y):
-                                    tempX = 0
-                            elif tempY != 0:
-                                if not self.boundaryCollision(p, 0, tempY, p.position.x, p.position.y):
-                                    tempY = 0
+                        p.position.x += tempX * dt
+                        p.position.y += tempY * dt
+                        p.collider.center = p.position
 
-                            p.position.x += tempX * dt
-                            p.position.y += tempY * dt
-                            p.collider.center = p.position
 
         for event in pygame.event.get():
 
@@ -644,7 +656,9 @@ class Game:
             ### Handle keyboard events ###
             if event.type == pygame.KEYDOWN:
                 #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
+
                 if self.testing and self.scene_manager.current_scene == "game":
+
                     if not self.police:
                         for p in self.Players:
                             if p.status != -1:
@@ -702,10 +716,12 @@ class Game:
                             # DEBUG STATEMENT
                             # print("space pressed...")
                             self.handle_dice_roll()
+
                         elif event.key == p.controller.action_buttons.get('ready'):
                             # DEBUG STATEMENT
                             # print("ready pressed...")
                             self.handle_ready_action(p)
+
 
                 if event.key == pygame.K_ESCAPE:
                     if not self.testing:
@@ -731,7 +747,98 @@ class Game:
             # if event.type == pygame.JOYDEVICEADDED:
             #     controller = pygame.joystick.Joystick(event.device_index)
             #     self.controllers.append(controller)
+
+            ### joystick events ###
+            elif event.type == pygame.JOYBUTTONDOWN:
+                joystick_id = event.joy
+                button_id = event.button
+
+                for p in self.Players:
+                    if p.controller.controller_type == 'joystick':
+                        if p.controller.joystick.get_instance_id() == joystick_id:
+                            if button_id == p.controller.action_buttons.get('space'):
+                                # DEBUG STATEMENT
+                                # print("space pressed...")
+                                self.handle_dice_roll()
+                            elif button_id == p.controller.action_buttons.get('ready'):
+                                # DEBUG STATEMENT
+                                # print("ready pressed...")
+                                self.handle_ready_action(p)
+    def handle_dice_roll(self):
+        # DEBUG STATEMENT
+        # print("handle_dice_roll() called...")
+        # Clear store text
+        for s in self.Stores:
+            if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
+                s.scoreText = ''
+                s.scoreTextColor = (255,255,255)
+
+        self.roundCheck()
+
+        
+        ### handles if police have been triggered
+        if self.police:
+            if self.lastRound:
+                self.gameOver()
+            else:
+                self.resetRound()
+        ### handles if all alarms were set off
+        elif self.allAlarms:
+            if self.lastRound:
+                self.gameOver()
+            else:
+                self.resetRound()
+        else: 
+            if self.ready:
+                for s in self.Stores:
+                    if len(s.players) != 0:
+                        #police roll if a store is alarmed
+                        if self.alarmedStores > 0 and self.roundSkipped:
+                            if self.roll(1,(len(self.Stores)+11-self.alarmedStores),1,1) == -1:
+                                self.policeRoll(s)
+
+                        if not self.police:
+                            # roll for value/alarm
+                            self.award = self.roll(1,9,s.risk,s.reward) 
+
+                            if self.award == -1:
+                                self.alarmedStoreRoll(s)
+                            else:
+                                self.defaultRoll(s)
+        # check for all alarms
+        count = 0
+        for s in self.Stores:
+            if s.status == -1:
+                count = count + 1
+
+        self.alarmedStores = count
+
+        if count == len(self.Stores):
+            self.allAlarms = True
+
+
+        # delays police roll from happening until the first alarmed round has finished
+        if self.alarmedStores > 0 and not self.roundSkipped:
+            self.roundSkipped = True
+
+    def handle_ready_action(self, player):
+        for c in self.Cars:
+            ##### if at car cash out
+            if c.ready and c.playerNum == player.playerNum:
+                player.score = player.score + player.tmpScore
+                player.tmpScore = 0
+                player.status = -1
+                self.Cars.remove(c)
+                self.roundCheck()
+            else:
+        #### if at store, set to ready
+                for s in self.Stores:
+                    if player in s.players:
+                        if player.status != -1:
+                            player.status = 1
+
     def policeRoll(self, store):
+        print("Police Roll")
         self.resetTempScores()
         store.scoreText = "POLICE"
         store.scoreTextColor = (255,0,0)
@@ -971,6 +1078,7 @@ class Game:
         self.scene_manager.switch_scene('status')
         # print("Scene2")
 
+
     def resetGame(self):
         self.dt = 0
         self.num1 = 0
@@ -1167,35 +1275,36 @@ class Controller:
             print(f"Error: Unknown control scheme '{self.controller_scheme}'")
 
     def get_movement(self):
-        if self.controller_type == "keyboard":
-            keys = pygame.key.get_pressed()
-            x_movement = 0
-            y_movement = 0
-            if keys[self.left]:
-                x_movement -= 1
-            if keys[self.right]:
-                x_movement += 1
-            if keys[self.up]:
-                y_movement -= 1
-            if keys[self.down]:
-                y_movement += 1
+            if self.controller_type == "keyboard":
+                keys = pygame.key.get_pressed()
+                x_movement = 0
+                y_movement = 0
+                if keys[self.left]:
+                    x_movement -= 1
+                if keys[self.right]:
+                    x_movement += 1
+                if keys[self.up]:
+                    y_movement -= 1
+                if keys[self.down]:
+                    y_movement += 1
 
-            length = (x_movement**2 + y_movement**2) ** 0.5
-            if length > 0:
-                x_movement /= length
-                y_movement /= length
-            return x_movement, y_movement
+                length = (x_movement**2 + y_movement**2) ** 0.5
+                if length > 0:
+                    x_movement /= length
+                    y_movement /= length
+                return x_movement, y_movement
 
-        elif self.controller_type == "joystick":
-            x_axis = self.joystick.get_axis(self.axis_horizontal)
-            y_axis = self.joystick.get_axis(self.axis_vertical)
+            elif self.controller_type == "joystick":
+                x_axis = self.joystick.get_axis(self.axis_horizontal)
+                y_axis = self.joystick.get_axis(self.axis_vertical)
 
-            deadzone = 0.1
-            if abs(x_axis) < deadzone:
-                x_axis = 0
-            if abs(y_axis) < deadzone:
-                y_axis = 0
-            return x_axis, y_axis
+                deadzone = 0.1
+                if abs(x_axis) < deadzone:
+                    x_axis = 0
+                if abs(y_axis) < deadzone:
+                    y_axis = 0
+                return x_axis, y_axis
+
 
     def is_action_pressed(self, action_name):
         if self.controller_type == "keyboard":
