@@ -449,11 +449,11 @@ class Game:
 
         # pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
 
-        #for s in self.Stores:
+        for s in self.Stores:
             # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
             # needs to clear each round
-            #self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
-            #self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
+            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
+            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
 
         ##### PLAYERS #####
         for p in self.Players:
@@ -1082,3 +1082,8 @@ class Game:
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
+
+    def getScore(self, playerNum):
+            for p in self.Players:
+                if p.playerNum == playerNum:
+                    return str(p.score)
