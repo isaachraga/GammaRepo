@@ -250,6 +250,7 @@ class Game:
             self.c1.playerNum = self.p1.playerNum
             self.c1.position = pygame.Vector2(110, 520)
             self.c1.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
+            self.c1.carSprite = pygame.transform.scale(self.c1.carSprite, (60,150))
             self.Cars.append(self.c1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
@@ -257,6 +258,7 @@ class Game:
             self.c2.playerNum = self.p2.playerNum
             self.c2.position = pygame.Vector2(310, 520)
             self.c2.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP2.png')
+            self.c2.carSprite = pygame.transform.scale(self.c2.carSprite, (60,150))
             self.Cars.append(self.c2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
@@ -264,6 +266,7 @@ class Game:
             self.c3.playerNum = self.p3.playerNum
             self.c3.position = pygame.Vector2(715, 520)
             self.c3.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP3.png')
+            self.c3.carSprite = pygame.transform.scale(self.c3.carSprite, (60,150))
             self.Cars.append(self.c3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
@@ -271,6 +274,7 @@ class Game:
             self.c4.playerNum = self.p4.playerNum
             self.c4.position = pygame.Vector2(1020, 520)
             self.c4.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP4.png')
+            self.c4.carSprite = pygame.transform.scale(self.c4.carSprite, (60,150))
             self.Cars.append(self.c4)
 
         for c in self.Cars:
