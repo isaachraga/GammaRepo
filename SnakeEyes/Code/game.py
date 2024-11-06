@@ -493,13 +493,13 @@ class Game:
 
             if p.status == 0:
                 printTemp = round(p.tmpScore+p.score, 2)
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(f'{round(p.tmpScore, 2):,}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, 2):,}'), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, 2):,}'), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+38), "$"+str(f'{round(printTemp, 2):,}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, 2):,}'), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, 2):,}'), (175, 175, 175))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-16, p.position.y-69), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+58), p.scoreText, (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+59), p.scoreText, (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+60), p.scoreText, (0,255,0))
 
             # stoplight status
