@@ -2,7 +2,7 @@
 #Edit to change default options
 
 class Preferences:
-    FINISHLINE_SCORE = 500
+    FINISHLINE_SCORE = 1000000
 
     #Player types: Player, CPU, or None
     RED_PLAYER_TYPE = "Player"

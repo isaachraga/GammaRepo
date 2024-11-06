@@ -306,7 +306,7 @@ class GameSetup:
             relative_rect=pygame.Rect(
                 ((584), (364)), #Position
                 (option_label_width, option_label_heigth)),  #Size
-            text=str(Preferences.FINISHLINE_SCORE),  # Show current option
+            text=str(f'{Preferences.FINISHLINE_SCORE:,}'),  # Show current option
             manager=self.ui_manager
         )
         self.finish_score_dec = pygame_gui.elements.UIButton(
@@ -437,15 +437,15 @@ class GameSetup:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     # Finishline Score
-                    self.score_increments = 50
+                    self.score_increments = 50000
                     if event.ui_element == self.finish_score_dec:
                         if (Preferences.FINISHLINE_SCORE > self.score_increments):
                             Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - self.score_increments
-                            self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
+                            self.finish_score_label.set_text(str(f'{Preferences.FINISHLINE_SCORE:,}'))
                             self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.finish_score_inc:
                         Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
-                        self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
+                        self.finish_score_label.set_text(str(f'{Preferences.FINISHLINE_SCORE:,}'))
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     # Function to handle changing player type
