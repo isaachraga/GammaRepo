@@ -1,4 +1,5 @@
 import pygame
+from SnakeEyes.Code import CPU
 class Player:
     def __init__(self):
         self.tmpScore = 0
@@ -33,3 +34,5 @@ class Player:
         self.ready = pygame.K_1
         ##self.cashOut = pygame.K_2
         #store status locations for programatic access
+
+        self.CPU = CPU.CPU()
