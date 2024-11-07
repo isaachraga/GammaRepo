@@ -22,7 +22,7 @@ class GameSetup:
     def makeGUI(self):
         option_select_width = 38
         option_select_height = 38
-        option_label_width = 112
+        option_label_width = 130
         option_label_heigth = 38
 
         self.player_type_options = ["Player", "CPU", "None"]
@@ -306,19 +306,19 @@ class GameSetup:
             relative_rect=pygame.Rect(
                 ((584), (364)), #Position
                 (option_label_width, option_label_heigth)),  #Size
-            text=str(Preferences.FINISHLINE_SCORE),  # Show current option
+            text="$"+str(f'{Preferences.FINISHLINE_SCORE:,}'),  # Show current option
             manager=self.ui_manager
         )
         self.finish_score_dec = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                ((552), (364)), #Position
+                ((522), (364)), #Position
                 (option_select_width, option_select_height)),  #Size
             text='<',
             manager=self.ui_manager
         )
         self.finish_score_inc = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                ((696), (364)), #Position
+                ((736), (364)), #Position
                 (option_select_width, option_select_height)),  #Size
             text='>',
             manager=self.ui_manager
@@ -437,15 +437,15 @@ class GameSetup:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     # Finishline Score
-                    self.score_increments = 50
+                    self.score_increments = 50000
                     if event.ui_element == self.finish_score_dec:
                         if (Preferences.FINISHLINE_SCORE > self.score_increments):
                             Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - self.score_increments
-                            self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
+                            self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
                             self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.finish_score_inc:
                         Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
-                        self.finish_score_label.set_text(str(Preferences.FINISHLINE_SCORE))
+                        self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     # Function to handle changing player type

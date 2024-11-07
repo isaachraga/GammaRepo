@@ -250,6 +250,7 @@ class Game:
             self.c1.playerNum = self.p1.playerNum
             self.c1.position = pygame.Vector2(110, 520)
             self.c1.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP1.png')
+            self.c1.carSprite = pygame.transform.scale(self.c1.carSprite, (60,150))
             self.Cars.append(self.c1)
 
         if Preferences.BLUE_PLAYER_TYPE == "Player":
@@ -257,6 +258,7 @@ class Game:
             self.c2.playerNum = self.p2.playerNum
             self.c2.position = pygame.Vector2(310, 520)
             self.c2.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP2.png')
+            self.c2.carSprite = pygame.transform.scale(self.c2.carSprite, (60,150))
             self.Cars.append(self.c2)
 
         if Preferences.YELLOW_PLAYER_TYPE == "Player":
@@ -264,6 +266,7 @@ class Game:
             self.c3.playerNum = self.p3.playerNum
             self.c3.position = pygame.Vector2(715, 520)
             self.c3.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP3.png')
+            self.c3.carSprite = pygame.transform.scale(self.c3.carSprite, (60,150))
             self.Cars.append(self.c3)
 
         if Preferences.GREEN_PLAYER_TYPE == "Player":
@@ -271,6 +274,7 @@ class Game:
             self.c4.playerNum = self.p4.playerNum
             self.c4.position = pygame.Vector2(1020, 520)
             self.c4.carSprite = pygame.image.load('SnakeEyes/Assets/Environment/Objects/carP4.png')
+            self.c4.carSprite = pygame.transform.scale(self.c4.carSprite, (60,150))
             self.Cars.append(self.c4)
 
         for c in self.Cars:
@@ -362,35 +366,27 @@ class Game:
     ##### Update Game #####
     def update(self):
         self.inputManager()
-        # self.lastRoundCheck()
         self.readyCheck()
+        self.colliderUpdate()
 
     ##### Render Game #####
     def render(self):
         ### Fill Background ###
         self.screen.fill((255,255,255))
         ### Set Background Image ###
-
         self.screen.blit(self.loadingScreen, (0,0))
 
+        ### All game status updates ###
+        self.debugStatus()
+        self.gameStatus()
+        self.storeStatus()
+        self.carStatus()
+        self.playerStatus()
+
+        pygame.display.flip()
+
+    def debugStatus(self):
         ##### DEBUG / STATUS #####
-
-        if self.police:
-            self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
-        else:
-            if self.ready:
-                self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to try your luck...", (255, 255, 255))
-            else:
-                self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
-
-        if self.alarmedStores > 0:
-            if not self.police:
-                if self.allAlarms:
-                    self.GAME_FONT.render_to(self.screen, (350, 430), "All stores alarmed, time to leave the mall...", (255, 255, 255))
-                else:
-                    self.GAME_FONT.render_to(self.screen, (350, 430), "Police are on their way!", (255, 255, 255))
-            else: 
-                self.GAME_FONT.render_to(self.screen, (200, 430), " !!POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS !!", (255, 255, 255))
         # self.GAME_FONT.render_to(self.screen, (10, 370), "Press Num key for player (P1 == 1) to cash out of the round", (0, 0, 0))
         # self.GAME_FONT.render_to(self.screen, (10, 395), "Press S for scene selection", (0, 0, 0))
 
@@ -406,105 +402,32 @@ class Game:
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
-        ##### STORE COLLIDERS #####
-        ### checks for any players colliding with the store col, adds them to the store if they're not in yet
-        for s in self.Stores:
-            for p in self.Players:
-                if p.status != -1:
-                    collide = s.collider.colliderect(p.collider)
-                    if s.status != -1:
-                        if collide:
-                            if p not in s.players:
-                                s.players.append(p)
 
-                            # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+    def gameStatus(self):
+        if self.police:
+            self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
+        else:
+            if self.ready:
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to try your luck...", (255, 255, 255))
+            else:
+                self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
 
-                        else:
-                            if len(s.players) == 0:
-                                s.color = (0, 0, 255)
-                            if p in s.players:
-                                s.players.remove(p)
-                                p.status = 0
+        if self.alarmedStores > 0:
+            if not self.police:
+                if self.allAlarms:
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "All stores alarmed, time to leave the mall...", (255, 255, 255))
+                else:
+                    self.GAME_FONT.render_to(self.screen, (350, 430), "Police are on their way!", (255, 255, 255))
+            else: 
+                self.GAME_FONT.render_to(self.screen, (200, 430), "POLICE HAVE ARRIVED, ALL PLAYERS STILL IN LOSE THEIR SAVINGS", (255, 255, 255))
 
-        ##### CAR COLLIDERS #####
-        ### check for specified player's colision, sets option for cash out if collision is true
-        for c in self.Cars:
-            # pygame.draw.rect(self.screen, (255,255,255), c.collider)
-            # pygame.draw.rect(self.screen, (255,0,0), c.rb)
-            self.screen.blit(c.carSprite, c.position)
-            for p in self.Players:
-                if c.playerNum == p.playerNum:
-                    collide = c.collider.colliderect(p.collider)
-                    if collide and p.status != -1:
-                        c.ready = True
-                        self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
-                        self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
-
-                    else:
-                        c.ready = False
-
-        ##### STORES #####
-
-        # pygame.draw.rect(self.screen, (255,255,255), (160, 0, 950, 290))
-
-        # pygame.draw.rect(self.screen, (255,255,255), (170, 0, 940, 270))
-
+    def storeStatus(self):
         for s in self.Stores:
             # pygame.draw.rect(self.screen, s.color, (s.position.x, s.position.y, 40,40))
             # needs to clear each round
             self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
             self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
-
-        ##### PLAYERS #####
-        for p in self.Players:
-            if p.status != -1:
-                # pygame.draw.circle(self.screen, p.color , p.position, 20)
-                # pygame.draw.rect(self.screen, (255,255,0), p.XCol)
-                # pygame.draw.rect(self.screen, (0,0,255), p.YCol)
-
-                ### Collider Visualization ###
-
-                # Render sprite
-                if p.status == 0:
-                    for action_name, sprite in self.character_sprites[p.character].items():
-                        # Check if this action is the last updated action for this character
-                        if action_name == self.character_sprites[p.character]["last_action"]:
-                            # Render the last updated sprite
-                            adjusted_position = p.position - pygame.Vector2(30, 50)
-                            self.screen.blit(sprite.current_sprite, adjusted_position)
-
-        # runs the status updates for all dynamic objects
-
-        self.status()
-
-        pygame.display.flip()
-
-    # Updates character sprites
-    def updateCharacterSprite(self, character_sprites, character, action):
-        sprite = character_sprites[character][action]
-        new_current_frame = sprite.current_frame + 1
-        if new_current_frame >= len(sprite.sprite_list) * sprite.frame_rate:
-            new_current_frame = 0
-        new_current_sprite = sprite.sprite_list[new_current_frame // sprite.frame_rate]
-        updated_state = sprite._replace(current_frame=new_current_frame, current_sprite=new_current_sprite)
-        character_sprites[character][action] = updated_state #Save updated state
-        character_sprites[character]["last_action"] = action
-
-    ### checks ready status for all players
-    def readyCheck(self):
-        count = 0
-        for p in self.Players:
-            if p.status == 0:
-                count = count + 1
-
-        if count != 0:
-            self.ready = False
-        else:
-            self.ready = True
-
-    ### displays the status of players and stores
-    def status(self):
-        for s in self.Stores:
+        
             # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-80), "Store "+str(s.storeNum), (0, 0, 0))
             if s.status == -1:
                 s.color = (255,0,0)
@@ -530,10 +453,27 @@ class Game:
                         self.GAME_FONT.render_to(self.screen, (s.position.x-100+offset, s.position.y-300), "P"+str(p.playerNum), p.color)
                         offset = offset + 40
 
-
+    def playerStatus(self):
+        ##### PLAYERS #####
         for p in self.Players:
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(p.score), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(p.score), (255, 255, 255))
+            if p.status != -1:
+                # pygame.draw.circle(self.screen, p.color , p.position, 20)
+                # pygame.draw.rect(self.screen, (255,255,0), p.XCol)
+                # pygame.draw.rect(self.screen, (0,0,255), p.YCol)
+
+                ### Collider Visualization ###
+
+                # Render sprite
+                if p.status == 0:
+                    for action_name, sprite in self.character_sprites[p.character].items():
+                        # Check if this action is the last updated action for this character
+                        if action_name == self.character_sprites[p.character]["last_action"]:
+                            # Render the last updated sprite
+                            adjusted_position = p.position - pygame.Vector2(30, 50)
+                            self.screen.blit(sprite.current_sprite, adjusted_position)
+        
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(f'{round(p.score, 2):,}'), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(f'{round(p.score, 2):,}'), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
 
@@ -553,13 +493,13 @@ class Game:
 
             if p.status == 0:
                 printTemp = round(p.tmpScore+p.score, 2)
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+18), "$"+str(p.tmpScore), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(p.tmpScore), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+38), "$"+str(printTemp), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(printTemp), (175, 175, 175))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-13, p.position.y-68), "P"+str(p.playerNum), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, 2):,}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, 2):,}'), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, 2):,}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, 2):,}'), (175, 175, 175))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-16, p.position.y-69), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-18, p.position.y+58), p.scoreText, (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+59), p.scoreText, (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+60), p.scoreText, (0,255,0))
 
             # stoplight status
@@ -575,13 +515,93 @@ class Game:
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
             '''
+    def carStatus(self):
+        for c in self.Cars:
+            # pygame.draw.rect(self.screen, (255,255,255), c.collider)
+            # pygame.draw.rect(self.screen, (255,0,0), c.rb)
+            self.screen.blit(c.carSprite, c.position)
+            for p in self.Players:
+                if c.playerNum == p.playerNum:
+                    if c.ready == True:
+                        self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
+                        self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
+
+
+    # Updates character sprites
+    def updateCharacterSprite(self, character_sprites, character, action):
+        sprite = character_sprites[character][action]
+        new_current_frame = sprite.current_frame + 1
+        if new_current_frame >= len(sprite.sprite_list) * sprite.frame_rate:
+            new_current_frame = 0
+        new_current_sprite = sprite.sprite_list[new_current_frame // sprite.frame_rate]
+        updated_state = sprite._replace(current_frame=new_current_frame, current_sprite=new_current_sprite)
+        character_sprites[character][action] = updated_state #Save updated state
+        character_sprites[character]["last_action"] = action
+
+    def colliderUpdate(self):
+        self.storeColliders()
+        self.carColliders()
+
+    def storeColliders(self):
+        ##### STORE COLLIDERS #####
+        ### checks for any players colliding with the store col, adds them to the store if they're not in yet
+        for s in self.Stores:
+            for p in self.Players:
+                if p.status != -1:
+                    collide = s.collider.colliderect(p.collider)
+                    if s.status != -1:
+                        if collide:
+                            if p not in s.players:
+                                s.players.append(p)
+
+                            # self.GAME_FONT.render_to(self.screen, (s.position.x-20, s.position.y-20), "Ready?", (0, 0, 0))
+
+                        else:
+                            if len(s.players) == 0:
+                                s.color = (0, 0, 255)
+                            if p in s.players:
+                                s.players.remove(p)
+                                p.status = 0
+    
+    def carColliders(self):
+        ##### CAR COLLIDERS #####
+        ### check for specified player's colision, sets option for cash out if collision is true
+        for c in self.Cars:
+            # pygame.draw.rect(self.screen, (255,255,255), c.collider)
+            # pygame.draw.rect(self.screen, (255,0,0), c.rb)
+            #self.screen.blit(c.carSprite, c.position)
+            for p in self.Players:
+                if c.playerNum == p.playerNum:
+                    collide = c.collider.colliderect(p.collider)
+                    if collide and p.status != -1:
+                        c.ready = True
+                    else:
+                        c.ready = False
+
+    ### checks ready status for all players
+    def readyCheck(self):
+        count = 0
+        for p in self.Players:
+            if p.status == 0:
+                count = count + 1
+
+        if count != 0:
+            self.ready = False
+        else:
+            self.ready = True
+
+
+        
+
+
+        
 
     ##### Game Functions #####
 
     ### handles all inputs for the game ###
     def inputManager(self):
         if self.statusFlag:
-            print("Scene1")
+            #print("Scene1")
             self.resetRound()
             self.scene_manager.switch_scene('status')
 
@@ -714,7 +734,7 @@ class Game:
                         if event.key == p.controller.action_buttons.get('space'):
                             # DEBUG STATEMENT
                             if p.playerNum == 1:
-                                print("space pressed...")
+                                #print("space pressed...")
                                 self.handle_dice_roll()
 
                         elif event.key == p.controller.action_buttons.get('ready'):
@@ -751,7 +771,7 @@ class Game:
             
     def handle_dice_roll(self):
         # DEBUG STATEMENT
-        print("handle_dice_roll() called...")
+        #print("handle_dice_roll() called...")
         # Clear store text
         for s in self.Stores:
             if s.scoreText != "ALARMED" and s.scoreText != "POLICE":
@@ -789,7 +809,7 @@ class Game:
                             if self.award == -1:
                                 self.alarmedStoreRoll(s)
                             else:
-                                print("Default Roll Started")
+                                #print("Default Roll Started")
                                 self.defaultRoll(s)
         # check for all alarms
         count = 0
@@ -824,7 +844,7 @@ class Game:
                             player.status = 1
 
     def policeRoll(self, store):
-        print("Police Roll")
+        #print("Police Roll")
         self.resetTempScores()
         store.scoreText = "POLICE"
         store.scoreTextColor = (255,0,0)
@@ -882,9 +902,9 @@ class Game:
                 p.tmpScore = round(p.tmpScore, 2)
                 printScore = round(printScore, 2)
                 p.status = 0
-                p.scoreText = "+"+str(printScore)
+                p.scoreText = "+"+str(f'{round(printScore, 2):,}')
                 store.scoreTextColor = (0,255,0)
-                print("Default Roll Finished")
+                #print("Default Roll Finished")
 
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         # print("Loc: "+str(tempX)+" "+str(tempY)+" "+str(locX)+" "+str(locY))
@@ -938,7 +958,7 @@ class Game:
         if self.roll1 == self.roll2:
             return -1
         else: 
-            return (self.roll1+self.roll2)*self.rewardScale(rewardMod)
+            return int((self.roll1+self.roll2)*self.rewardScale(rewardMod)*2000)
 
     ### handles the reward scaling
     def rewardScale(self, rewardMod):
@@ -990,7 +1010,7 @@ class Game:
                 self.gameOver()
             self.statusFlag = True
 
-
+    '''
     ### handles snake eyes roll ##
     def snakeEyes(self):
 
@@ -1009,7 +1029,7 @@ class Game:
             self.result = "SNAKE EYES"
         # else:
         # self.gameOver()
-
+    '''
 
     def resetTempScores(self):
         for p in self.Players:
@@ -1087,3 +1107,5 @@ class Game:
             for p in self.Players:
                 if p.playerNum == playerNum:
                     return str(p.score)
+    
+    
