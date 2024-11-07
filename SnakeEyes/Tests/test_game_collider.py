@@ -29,7 +29,7 @@ def setup_game(setup_scene_manager):
 
     pygame.init()
     game = Game(setup_scene_manager) #Instantiate Game
-     #Set to current scene
+    #Set to current scene
     game.initialization()
     game.delayedInit()
     game.scene_manager.switch_scene('game')
