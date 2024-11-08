@@ -6,6 +6,8 @@ class Settings:
     SFX_VOLUME = 0.25
     BGM_VOLUME = 0.25
 
+    CONTROLLER_DEADZONE = 0.3
+
     COLOR_BACKGROUND = (30, 30, 30)
     COLOR_PRIMARY = (60, 60, 60)
     COLOR_ACCENT = (230, 230, 230)

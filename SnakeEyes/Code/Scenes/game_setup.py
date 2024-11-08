@@ -373,6 +373,9 @@ class GameSetup:
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
+                # Pause Menu
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.switch_scene("pause")
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
