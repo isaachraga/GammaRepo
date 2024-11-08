@@ -28,11 +28,11 @@ class GameMods:
         self.GAME_FONT.render_to(self.screen, (10, 20), "Game Mods", Settings.COLOR_TEXT)
 
         for p in self.game.Players:
-            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 50), "Player "+str(p.playerNum)+": $"+str(p.score), Settings.COLOR_TEXT)
+            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 50), "Player "+str(p.playerNum)+": $"+str(f'{p.score:,}'), Settings.COLOR_TEXT)
             self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 110), "Available Mods ", Settings.COLOR_TEXT)
             self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 150), self.available_mods[p.modSelection].name, Settings.COLOR_TEXT)
             #self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 340), modifier.available_modifiers[p.modSelection].description, Settings.COLOR_TEXT)
-            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 190), "$"+str(self.available_mods[p.modSelection].cost), Settings.COLOR_TEXT)
+            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 190), "$"+str(f'{round(self.available_mods[p.modSelection].cost, 2):,}'), Settings.COLOR_TEXT)
             #self.drawText(self.screen, modifier.available_modifiers[p.modSelection].description, pygame.Rect(80+(300*(p.playerNum-1)), 340, 300, 300), self.GAME_FONT)
             offset = 0
             send = ''
@@ -66,30 +66,31 @@ class GameMods:
 
             if event.type == pygame.KEYDOWN:
                 for p in self.game.Players:
-                    if event.key == p.controller.left:
-                            #print(str(len(self.available_mods)))
-                            if(p.modSelection - 1 < 0):
-                                p.modSelection = len(self.available_mods) -1 
+                    if p.controller.controller_type == "keyboard" or p.controller.controller_type == "joystick":
+                        if event.key == p.controller.left:
+                                #print(str(len(self.available_mods)))
+                                if(p.modSelection - 1 < 0):
+                                    p.modSelection = len(self.available_mods) -1 
+                                else:
+                                    p.modSelection = p.modSelection -1
+                        if event.key == p.controller.right:
+                            if(p.modSelection == len(self.available_mods) - 1):
+                                p.modSelection = 0
                             else:
-                                p.modSelection = p.modSelection -1
-                    if event.key == p.controller.right:
-                        if(p.modSelection == len(self.available_mods) - 1):
-                            p.modSelection = 0
-                        else:
-                            p.modSelection = p.modSelection + 1
+                                p.modSelection = p.modSelection + 1
 
-                    if p.controller.controller_type == 'keyboard':
-                        # Scene Selection
-                        if event.key == pygame.K_ESCAPE:
-                            self.scene_manager.switch_scene('pause')
-                        
-                        if event.key == p.controller.action_buttons.get('space'):
-                            self.game.statusFlag = False
-                            self.scene_manager.switch_scene('game')
+                        if p.controller.controller_type == 'keyboard':
+                            # Scene Selection
+                            if event.key == pygame.K_ESCAPE:
+                                self.scene_manager.switch_scene('pause')
+                            
+                            if event.key == p.controller.action_buttons.get('space'):
+                                self.game.statusFlag = False
+                                self.scene_manager.switch_scene('game')
 
-                        if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
-                            p.score = round(p.score - self.available_mods[p.modSelection].cost)
-                            p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
+                            if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
+                                p.score = round(p.score - self.available_mods[p.modSelection].cost)
+                                p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
             
             elif event.type == pygame.JOYBUTTONDOWN:
                 joystick_id = event.joy

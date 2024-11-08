@@ -113,21 +113,21 @@ def roll_rewind_modifier(player, dice_rolls, game):
 lucky_streak = Modifier(
     name="Lucky Streak",
     description="After each successful \nrolls,the next score \ngets a x1.05 \nmultiplier. Active until \nyou set off a store \nalarm or police \narive.",
-    cost=50,
+    cost=70000,
     #apply_modifier=lucky_streak_modifier,
 )
 
 paid_off = Modifier(
     name="Paid Off",
     description="Keep your stored money \nafter a police raid. \nActive until \nafter caught by the \npolice",
-    cost=200,
+    cost=300000,
     #apply_modifier=paid_off,
 )
 
 quick_hands = Modifier(
     name="Quick Hands",
     description="Keep your money after \nan alarm is triggered. \nActive until \nafter an alarm is \ntriggered",
-    cost=100,
+    cost=140000,
     #apply_modifier=paid_off,
 )
 

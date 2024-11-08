@@ -35,6 +35,7 @@ def setup_preferences():
     Preferences.BLUE_CONTROLS = "TFGH"
     Preferences.YELLOW_CONTROLS = "IJKL"
     Preferences.GREEN_CONTROLS = "Arrows"
+    Preferences.FINISHLINE_SCORE = 500
     return True
 
 @pytest.fixture 
