@@ -22,7 +22,8 @@ class GameSetup:
     def makeGUI(self):
         option_select_width = 38
         option_select_height = 38
-        option_label_width = 130
+        player_option_label_width = 112
+        game_option_label_width = 130
         option_label_heigth = 38
 
         self.player_type_options = ["Player", "CPU", "None"]
@@ -63,7 +64,7 @@ class GameSetup:
         self.red_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (251)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.red_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -86,7 +87,7 @@ class GameSetup:
         self.red_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (300)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.red_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -129,7 +130,7 @@ class GameSetup:
         self.blue_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (251)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.blue_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -152,7 +153,7 @@ class GameSetup:
         self.blue_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (300)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.blue_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -194,7 +195,7 @@ class GameSetup:
         self.yellow_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (611)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.yellow_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -217,7 +218,7 @@ class GameSetup:
         self.yellow_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (660)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.yellow_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -259,7 +260,7 @@ class GameSetup:
         self.green_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (611)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.green_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -282,7 +283,7 @@ class GameSetup:
         self.green_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (660)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.green_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -305,7 +306,7 @@ class GameSetup:
         self.finish_score_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((584), (364)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (game_option_label_width, option_label_heigth)),  #Size
             text="$"+str(f'{Preferences.FINISHLINE_SCORE:,}'),  # Show current option
             manager=self.ui_manager
         )

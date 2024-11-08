@@ -121,8 +121,8 @@ class GameStatus:
             player_num_rect.midright = (rect.left - 5, rect.centery - Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_num_rect, player_num_text, Settings.COLOR_TEXT)
             
-            player_score_text = str(f'{int(self.game.getScore(p.playerNum)):,}')
-            player_score_rect = self.GAME_FONT.get_rect(self.game.getScore(p.playerNum))
+            player_score_text = "$"+str(f'{int(self.game.getScore(p.playerNum)):,}')
+            player_score_rect = self.GAME_FONT.get_rect(player_score_text)
             player_score_rect.midright = (rect.left - 5, rect.centery + Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_score_rect, player_score_text, Settings.COLOR_TEXT)
 
