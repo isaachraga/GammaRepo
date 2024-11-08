@@ -3,6 +3,7 @@
 
 class Preferences:
     FINISHLINE_SCORE = 1000000
+    MODS_PREFERENCE = "Enabled"
 
     #Player types: Player, CPU, or None
     RED_PLAYER_TYPE = "Player"
