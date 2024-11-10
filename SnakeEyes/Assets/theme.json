@@ -1,0 +1,162 @@
+{
+    "defaults":
+    {
+        "colours":
+        {
+            "normal_bg":"#303030",
+            "normal_text":"#FFFFFF",
+            "normal_border": "#e6e6e6",
+
+            "hovered_bg":"#3c3c3c",
+            "hovered_text":"#FFFFFF",
+            "hovered_border": "#e6e6e6",
+
+            "disabled_bg":"#25292e",
+            "disabled_text":"#6d736f",
+            "disabled_border": "#e6e6e6",
+
+            "selected_bg":"#193754",
+            "selected_text":"#FFFFFF",
+            "selected_border": "#e6e6e6",
+
+            "active_bg": "#474747",
+            "active_text": "#b3b3b3",
+            "active_border": "#e6e6e6",
+
+            "dark_bg":"#383838",
+            
+            "text_shadow": "#000000",
+
+            "link_text": "#0000EE",
+            "link_hover": "#2020FF",
+            "link_selected": "#551A8B",
+            
+            "filled_bar":"#f4251b",
+            "unfilled_bar":"#CCCCCC"
+        }
+    },
+
+    "label":
+    {
+        "font": 
+        {
+            "name": "HighlandGothicFLF-Bold",
+            "size": "20",
+            "regular_path": "Fonts/HighlandGothicFLF-Bold.ttf"
+        },
+        "misc":
+         {
+             "text_shadow": "0",
+             "text_shadow_size": "0",
+             "text_shadow_offset": "0,0"
+         }
+    },
+
+    
+    "button":
+    {
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "5",
+            "border_width": "2"
+        },
+        "font": {
+            "name": "HighlandGothicFLF-Bold",
+            "size": "20",
+            "regular_path": "Fonts/HighlandGothicFLF-Bold.ttf"
+        }
+    },
+
+    "horizontal_slider": {
+        "colours":
+        {
+            "dark_bg": "#262626"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "8",
+            "enable_arrow_buttons": "0",
+            "sliding_button_width": "40"
+        }
+    },
+    "horizontal_slider.#sliding_button": {
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "6"
+        }
+    },
+
+    "panel":
+    {
+        "colours":
+         {
+             "normal_border": "#ffffff"
+         },
+        "misc":
+         {
+             "shape": "rounded_rectangle",
+             "shape_corner_radius": "8",
+             "border_width": "4"
+         }
+    },
+    "#red_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#FF7F7F"
+         }
+    },
+    "#blue_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#7F7FFF"
+         }
+    },
+    "#yellow_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#FFF59E"
+         }
+    },
+    "#green_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#7FFF7F"
+         }
+    },
+    "#back_panel":
+    {
+        "colours":
+         {
+             "dark_bg":"#3c3c3c"
+         }
+    },
+
+    "text_box":
+    {
+        "colours":
+         {
+             "dark_bg":"#3c3c3c"
+         },
+        "font": 
+        {
+            "name": "HighlandGothicFLF-Bold",
+            "size": "20",
+            "regular_path": "Fonts/HighlandGothicFLF-Bold.ttf"
+        },
+        "misc":
+        {
+            "shape": "rounded_rectangle",
+            "shape_corner_radius": "8",
+            "border_width": "2",
+            "text_horiz_alignment": "center",
+            "text_vert_alignment": "center"
+        }
+    }
+}

@@ -1,0 +1,10 @@
+# Requirements File
+# Installs all Required Packages
+# Directions to Install:
+#  1) Open terminal
+#  2) In terminal, navigate to GammaRepo\SnakeEyes\
+#  3) Run: 'pip install -r requirements.txt'
+
+pygame>=2.6.0
+pygame_gui==0.6.9
+pytest
