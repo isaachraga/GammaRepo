@@ -124,8 +124,8 @@ paid_off = Modifier(
     #apply_modifier=paid_off,
 )
 
-quick_hands = Modifier(
-    name="Quick Hands",
+On_a_roll = Modifier(
+    name="On a Roll",
     description="Keep your money after \nan alarm is triggered. \nActive until \nafter an alarm is \ntriggered",
     cost=140000,
     #apply_modifier=paid_off,
@@ -200,7 +200,7 @@ roll_rewind = Modifier(
 available_modifiers = [
     lucky_streak, 
     paid_off,
-    quick_hands
+    On_a_roll
 ]
 '''hot_dice,
     cumulative_boost,

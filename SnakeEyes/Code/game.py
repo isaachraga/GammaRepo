@@ -993,10 +993,10 @@ class Game:
             p.status = 0
             p.scoreText = ""
             p.streak = 0
-            if modifier.quick_hands not in p.currentMods:
+            if modifier.On_a_roll not in p.currentMods:
                 p.tmpScore = 0
             else:
-                del p.currentMods[modifier.quick_hands]
+                del p.currentMods[modifier.On_a_roll]
 
             if modifier.lucky_streak in p.currentMods:
                 del p.currentMods[modifier.lucky_streak]

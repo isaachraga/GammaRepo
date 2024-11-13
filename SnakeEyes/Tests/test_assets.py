@@ -63,7 +63,9 @@ def test_environment_object_assets():
 def test_icon_assets():
     logging.info("Testing Icon Assets")
     assert os.path.exists("SnakeEyes/Assets/Icons/policeBadge.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/badge.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/WadofCash.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/cash.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/Title animated.png")
 
 def test_GUI_theme():
