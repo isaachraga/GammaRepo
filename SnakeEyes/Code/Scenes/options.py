@@ -34,10 +34,12 @@ class OptionsMenu:
         #Sliders
         self.slider_width = 350
         self.slider_height = 20
+        top_slider_y = 320
+        slider_distance = 80
 
         self.BGM_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (370)), #Position
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*0))), #Position
                 (self.slider_width, self.slider_height)),  #Size
             start_value=Settings.BGM_VOLUME,
             value_range=(0.0, 1.0),
@@ -45,9 +47,18 @@ class OptionsMenu:
         )
         self.SFX_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (450)), #Position
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*1))), #Position
                 (self.slider_width, self.slider_height)),  #Size
             start_value=Settings.SFX_VOLUME,
+            value_range=(0.0, 1.0),
+            manager=self.ui_manager
+        )
+
+        self.deadzone_slider = pygame_gui.elements.UIHorizontalSlider(
+            relative_rect=pygame.Rect(
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*2))), #Position
+                (self.slider_width, self.slider_height)),  #Size
+            start_value=Settings.CONTROLLER_DEADZONE,
             value_range=(0.0, 1.0),
             manager=self.ui_manager
         )
@@ -57,7 +68,7 @@ class OptionsMenu:
         self.option_select_height = 50
         self.option_label_width = 150
         self.option_label_heigth = 50
-        self.fullscreen_y = 250
+        self.fullscreen_y = 200
 
         self.fullscreen_options = ["Disabled", "Enabled"]
         self.fullscreen_option_index = 0
@@ -113,7 +124,7 @@ class OptionsMenu:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     #Fullscreen Option Select
                     if event.ui_element == self.fullscreen_left_arrow:
@@ -124,7 +135,7 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     elif event.ui_element == self.fullscreen_right_arrow:
                         self.fullscreen_option_index += 1
                         self.fullscreen_option_index %= len(self.fullscreen_options)  #Wrap list
@@ -133,7 +144,7 @@ class OptionsMenu:
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT), pygame.FULLSCREEN)
                         else: #Disable fullscreen
                             self.scene_manager.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
             
                 # Check if slider is being used
                 if event.user_type == pygame_gui.UI_HORIZONTAL_SLIDER_MOVED:
@@ -147,38 +158,47 @@ class OptionsMenu:
                         Settings.SFX_VOLUME = self.SFX_slider.get_current_value()
                         print(f"SFX Slider Value: {Settings.SFX_VOLUME}")
                         self.scene_manager.update_volume()
+                    #Deadzone Slider
+                    if event.ui_element == self.deadzone_slider:
+                        Settings.CONTROLLER_DEADZONE = self.deadzone_slider.get_current_value()
+                        print(f"Deadzone Slider Value: {Settings.CONTROLLER_DEADZONE}")
 
     ##### Render #####
     def render(self):
         self.ui_manager.update(self.time_delta)
 
-        self.screen.fill((255,255,255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, rect)
         rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (205, 205, 205), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("OPTIONS")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "OPTIONS", Settings.COLOR_TEXT)
 
         volume_slider_rect = self.BGM_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("MUSIC VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "MUSIC VOLUME", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "MUSIC VOLUME", Settings.COLOR_TEXT)
         
         volume_slider_rect = self.SFX_slider.get_relative_rect()
         slider_text_rect = self.OPTIONS_FONT.get_rect("SOUND VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", Settings.COLOR_TEXT)
+
+        deadzone_slider_rect = self.deadzone_slider.get_relative_rect()
+        slider_text_rect = self.OPTIONS_FONT.get_rect("CONTROLLER DEADZONE")
+        slider_text_rect.center = (deadzone_slider_rect.centerx, deadzone_slider_rect.top - Settings.FONT_SIZE)
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "CONTROLLER DEADZONE", Settings.COLOR_TEXT)
 
         fullscreen_rect = self.fullscreen_label.get_relative_rect()
         fullscreen_text_rect = self.OPTIONS_FONT.get_rect("FULLSCREEN")
         fullscreen_text_rect.center = (fullscreen_rect.centerx, fullscreen_rect.top - Settings.FONT_SIZE)
-        self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", (0, 0, 0))
+        self.OPTIONS_FONT.render_to(self.screen, fullscreen_text_rect, "FULLSCREEN", Settings.COLOR_TEXT)
 
 
         self.ui_manager.draw_ui(self.screen)

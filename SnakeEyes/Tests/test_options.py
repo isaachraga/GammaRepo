@@ -136,6 +136,29 @@ def test_volume(setup_options_menu):
     assert options_menu.SFX_slider.get_current_value() == 1
     assert options_menu.SFX_slider.get_current_value() == Settings.SFX_VOLUME
 
+def test_deadzone(setup_options_menu):
+    logging.info("Testing Deadzone Slider")
+    options_menu = setup_options_menu
+
+    simulate_gui_slider(options_menu, options_menu.deadzone_slider, 0)
+    assert options_menu.deadzone_slider.get_current_value() == 0
+    assert options_menu.deadzone_slider.get_current_value() == Settings.CONTROLLER_DEADZONE
+    
+    simulate_gui_slider(options_menu, options_menu.deadzone_slider, 0.25)
+    assert options_menu.deadzone_slider.get_current_value() == 0.25
+    assert options_menu.deadzone_slider.get_current_value() == Settings.CONTROLLER_DEADZONE
+    
+    simulate_gui_slider(options_menu, options_menu.deadzone_slider, 0.5)
+    assert options_menu.deadzone_slider.get_current_value() == 0.5
+    assert options_menu.deadzone_slider.get_current_value() == Settings.CONTROLLER_DEADZONE
+    
+    simulate_gui_slider(options_menu, options_menu.deadzone_slider, 0.75)
+    assert options_menu.deadzone_slider.get_current_value() == 0.75
+    assert options_menu.deadzone_slider.get_current_value() == Settings.CONTROLLER_DEADZONE
+    
+    simulate_gui_slider(options_menu, options_menu.deadzone_slider, 1)
+    assert options_menu.deadzone_slider.get_current_value() == 1
+    assert options_menu.deadzone_slider.get_current_value() == Settings.CONTROLLER_DEADZONE
 
 def test_back(setup_options_menu):
     logging.info("Testing Back Button")

@@ -3,7 +3,7 @@
 #To run manually, run 'python -m pytest SnakeEyes/Tests/test_game_win_states.py'
 #To run all tests, run 'python -m pytest SnakeEyes/Tests'
 
-import pygame, pytest, pygame_gui
+import pygame, pytest
 import os, logging
 os.environ["SDL_VIDEODRIVER"] = "dummy" #Dummy video driver for headless environment (no visuals)
 os.environ["SDL_AUDIODRIVER"] = "dummy" #Dummy audio driver for headless environment
@@ -35,6 +35,7 @@ def setup_preferences():
     Preferences.BLUE_CONTROLS = "TFGH"
     Preferences.YELLOW_CONTROLS = "IJKL"
     Preferences.GREEN_CONTROLS = "Arrows"
+    Preferences.FINISHLINE_SCORE = 500
     return True
 
 @pytest.fixture 
@@ -59,6 +60,30 @@ def setup_game(setup_scene_manager, setup_preferences):
 ###############################################
 #################### TESTS ####################
 ###############################################
+
+def test_game_resets_correctly_on_all_alarms_and_cashout(setup_game):
+    game = setup_game
+    logging.info("Testing that game resets properly when all alarms are triggered and player continues playing after other player cashes out")
+    game.Players[1].status = -1
+    assert(game.statusFlag == False)
+    game.Stores[0].status = -1
+    game.Stores[1].status = -1
+    game.Stores[2].status = -1
+    game.Stores[3].status = -1
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+    assert(game.statusFlag == False)
+    game.Players[1].status = -1
+    game.Players[0].status = 1
+    newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
+    pygame.event.post(newevent) 
+    game.run()
+    assert(game.statusFlag == False)
+
 
 
 def test_game_win_all_cash_out_first_player(setup_game):
@@ -157,13 +182,14 @@ def test_game_win_police(setup_game):
     game.Players[3].status = 1
     game.run()
     game.roundCheck()
-
+    game.policeRoll(game.Stores[0])
+    '''
     game.resetTempScores()
     game.police = True
     for s in game.Stores:
         s.status = -1
     game.snakeEyes()
-
+    '''
     newevent = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=pygame.locals.KMOD_NONE)  
     pygame.event.post(newevent) 
     game.run()

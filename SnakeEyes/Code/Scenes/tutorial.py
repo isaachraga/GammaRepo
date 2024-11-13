@@ -230,7 +230,7 @@ class Tutorial:
                     #Back Button
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     
                     #Page Change
                     if event.ui_element == self.page_left or event.ui_element == self.page_right:
@@ -238,7 +238,7 @@ class Tutorial:
                             self.page_index -= 1
                         if event.ui_element == self.page_right:
                             self.page_index += 1
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                         self.update_UI()
 
     def update_UI(self):
@@ -267,10 +267,10 @@ class Tutorial:
 
 
     def render(self):
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
         tutorial_header = self.HEADER_FONT.get_rect("TUTORIAL")
         tutorial_header.center = ((Settings.WIDTH / 2), (Settings.HEADER_FONT_SIZE/2) + 10)
-        self.HEADER_FONT.render_to(self.screen, tutorial_header, "TUTORIAL", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, tutorial_header, "TUTORIAL", Settings.COLOR_TEXT)
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)

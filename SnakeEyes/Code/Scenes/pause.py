@@ -88,36 +88,36 @@ class Pause:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     if event.ui_element == self.tutorial_button:
                         self.scene_manager.switch_scene('tutorial')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.options_button:
                         self.scene_manager.switch_scene('options')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.credits_button:
                         self.scene_manager.switch_scene('credits')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.quit_button:
                         self.game.resetGame()
                         self.scene_manager.switch_scene('menu')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     if event.ui_element == self.back_button:
                         self.scene_manager.switch_scene('back')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/Music/blipSelect.wav")
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                 
 
     def render(self):
         self.ui_manager.update(self.time_delta)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill(Settings.COLOR_BACKGROUND)
 
         rect = pygame.Rect(0, 0, self.menu_width, self.menu_height)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (0, 0, 0), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, rect)
         rect = pygame.Rect(0, 0, self.menu_width-5, self.menu_height-5)
         rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2))
-        pygame.draw.rect(self.screen, (205, 205, 205), rect)
+        pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
 
         options_text_rect = self.HEADER_FONT.get_rect("PAUSED")
         options_text_rect.center = ((Settings.WIDTH / 2), (Settings.HEIGHT / 2) - (self.menu_height / 2) + Settings.HEADER_FONT_SIZE + self.menu_buffer)
-        self.HEADER_FONT.render_to(self.screen, options_text_rect, "PAUSED", (0, 0, 0))
+        self.HEADER_FONT.render_to(self.screen, options_text_rect, "PAUSED", Settings.COLOR_TEXT)
         
         self.ui_manager.draw_ui(self.screen)
 
