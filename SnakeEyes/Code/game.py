@@ -364,7 +364,7 @@ class Game:
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainGameLoop.wav")
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainGameLoop.mp3")
 
     ##### Run Game Loop #####
     def run(self):
