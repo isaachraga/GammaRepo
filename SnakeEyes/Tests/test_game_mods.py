@@ -98,10 +98,10 @@ def test_paid_off_removal(setup_game):
     game.policeRoll(game.Stores[0])
     assert(len(game.Players[0].currentMods) == 0)
 
-def test_quick_hands(setup_game):
+def test_On_a_roll(setup_game):
     logging.info("Testing that paid off is working properly")
     game = setup_game
-    game.Players[0].currentMods[modifier.quick_hands]=modifier.quick_hands
+    game.Players[0].currentMods[modifier.On_a_roll]=modifier.On_a_roll
     game.Stores[0].players.append(game.Players[0])
     game.Stores[0].players.append(game.Players[1])
     game.Players[0].tmpScore = 100
@@ -110,10 +110,10 @@ def test_quick_hands(setup_game):
     assert(game.Players[0].tmpScore == 100)
     assert(game.Players[1].tmpScore == 0)
 
-def test_quick_hands_removal(setup_game):
+def test_On_a_roll_removal(setup_game):
     game = setup_game
     logging.info("Testing that paid off gets removed")
-    game.Players[0].currentMods[modifier.quick_hands]=modifier.quick_hands
+    game.Players[0].currentMods[modifier.On_a_roll]=modifier.On_a_roll
     game.Stores[0].players.append(game.Players[0])
     game.alarmedStoreRoll(game.Stores[0])
     assert(len(game.Players[0].currentMods) == 0)
