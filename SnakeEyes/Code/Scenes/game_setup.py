@@ -22,8 +22,13 @@ class GameSetup:
     def makeGUI(self):
         option_select_width = 38
         option_select_height = 38
-        option_label_width = 130
+        player_option_label_width = 112
+        game_option_label_width = 130
         option_label_heigth = 38
+
+        ##########################
+        ##### PLAYER OPTIONS #####
+        ##########################
 
         self.player_type_options = ["Player", "CPU", "None"]
 
@@ -63,7 +68,7 @@ class GameSetup:
         self.red_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (251)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.red_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -86,7 +91,7 @@ class GameSetup:
         self.red_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (300)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.red_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -129,7 +134,7 @@ class GameSetup:
         self.blue_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (251)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.blue_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -152,7 +157,7 @@ class GameSetup:
         self.blue_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (300)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.blue_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -194,7 +199,7 @@ class GameSetup:
         self.yellow_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (611)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.yellow_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -217,7 +222,7 @@ class GameSetup:
         self.yellow_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((124), (660)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.yellow_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -259,7 +264,7 @@ class GameSetup:
         self.green_player_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (611)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.player_type_options[self.green_player_index],  # Show current option
             manager=self.ui_manager
         )
@@ -282,7 +287,7 @@ class GameSetup:
         self.green_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((1044), (660)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                (player_option_label_width, option_label_heigth)),  #Size
             text=self.control_type_options[self.green_control_index],  # Show current option
             manager=self.ui_manager
         )
@@ -301,24 +306,57 @@ class GameSetup:
             manager=self.ui_manager
         )
 
+        ########################
+        ##### GAME OPTIONS #####
+        ########################
+
+        game_option_y = 304
+        game_option_space = 80
+
         # Finishline Score Select
         self.finish_score_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
-                ((584), (364)), #Position
-                (option_label_width, option_label_heigth)),  #Size
+                ((584), (game_option_y + (game_option_space*0))), #Position
+                (game_option_label_width, option_label_heigth)),  #Size
             text="$"+str(f'{Preferences.FINISHLINE_SCORE:,}'),  # Show current option
             manager=self.ui_manager
         )
         self.finish_score_dec = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                ((522), (364)), #Position
+                ((522), (game_option_y + (game_option_space*0))), #Position
                 (option_select_width, option_select_height)),  #Size
             text='<',
             manager=self.ui_manager
         )
         self.finish_score_inc = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                ((736), (364)), #Position
+                ((736), (game_option_y + (game_option_space*0))), #Position
+                (option_select_width, option_select_height)),  #Size
+            text='>',
+            manager=self.ui_manager
+        )
+        
+        # Enable/Disable Mods
+        self.mods_options = ["Disabled", "Enabled"]
+        self.mods_option_index = 1
+
+        self.mods_label = pygame_gui.elements.UILabel(
+            relative_rect=pygame.Rect(
+                ((584), (game_option_y + (game_option_space*1))), #Position
+                (game_option_label_width, option_label_heigth)),  #Size
+            text=Preferences.MODS_PREFERENCE,  # Show current option
+            manager=self.ui_manager
+        )
+        self.mods_left = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(
+                ((522), (game_option_y + (game_option_space*1))), #Position
+                (option_select_width, option_select_height)),  #Size
+            text='<',
+            manager=self.ui_manager
+        )
+        self.mods_right = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(
+                ((736), (game_option_y + (game_option_space*1))), #Position
                 (option_select_width, option_select_height)),  #Size
             text='>',
             manager=self.ui_manager
@@ -372,6 +410,9 @@ class GameSetup:
                 # Scene Selection
                 if event.key == pygame.K_s:
                     self.scene_manager.switch_scene('scene')
+                # Pause Menu
+                if event.key == pygame.K_ESCAPE:
+                    self.scene_manager.switch_scene("pause")
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
@@ -446,6 +487,17 @@ class GameSetup:
                     if event.ui_element == self.finish_score_inc:
                         Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
                         self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+
+                    #Mods Option Select
+                    if event.ui_element == self.mods_left or event.ui_element == self.mods_right:
+                        if event.ui_element == self.mods_left:
+                            self.mods_option_index -= 1
+                        elif event.ui_element == self.mods_right:
+                            self.mods_option_index += 1
+                        self.mods_option_index %= len(self.mods_options)  #Wrap list
+                        Preferences.MODS_PREFERENCE = self.mods_options[self.mods_option_index]
+                        self.mods_label.set_text(Preferences.MODS_PREFERENCE)
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     # Function to handle changing player type
@@ -572,6 +624,8 @@ class GameSetup:
         pygame.draw.rect(self.screen, Settings.COLOR_PRIMARY, rect)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 0), (920, 720), 3)
         pygame.draw.line(self.screen, Settings.COLOR_ACCENT, (920, 360), (1280, 360), 3)
+
+        text_y_shift = 5
         
 
         game_preferences_text = self.HEADER_FONT.get_rect("GAME PREFERENCES")
@@ -580,8 +634,14 @@ class GameSetup:
 
         finish_score_rect = self.finish_score_label.get_relative_rect()
         finish_text_rect = self.GAME_FONT.get_rect("FINISHLINE SCORE")
-        finish_text_rect.center = (finish_score_rect.centerx, finish_score_rect.top - Settings.FONT_SIZE)
+        finish_text_rect.center = (finish_score_rect.centerx, finish_score_rect.top - Settings.FONT_SIZE + text_y_shift)
         self.GAME_FONT.render_to(self.screen, finish_text_rect, "FINISHLINE SCORE", Settings.COLOR_TEXT)
+        
+        mods_text = "MODIFIERS"
+        mods_rect = self.mods_label.get_relative_rect()
+        mods_text_rect = self.GAME_FONT.get_rect(mods_text)
+        mods_text_rect.center = (mods_rect.centerx, mods_rect.top - Settings.FONT_SIZE + text_y_shift)
+        self.GAME_FONT.render_to(self.screen, mods_text_rect, mods_text, Settings.COLOR_TEXT)
 
         # Render pygame_gui
         self.ui_manager.update(self.time_delta)

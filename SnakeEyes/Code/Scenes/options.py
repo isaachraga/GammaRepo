@@ -34,10 +34,12 @@ class OptionsMenu:
         #Sliders
         self.slider_width = 350
         self.slider_height = 20
+        top_slider_y = 320
+        slider_distance = 80
 
         self.BGM_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (370)), #Position
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*0))), #Position
                 (self.slider_width, self.slider_height)),  #Size
             start_value=Settings.BGM_VOLUME,
             value_range=(0.0, 1.0),
@@ -45,9 +47,18 @@ class OptionsMenu:
         )
         self.SFX_slider = pygame_gui.elements.UIHorizontalSlider(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (450)), #Position
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*1))), #Position
                 (self.slider_width, self.slider_height)),  #Size
             start_value=Settings.SFX_VOLUME,
+            value_range=(0.0, 1.0),
+            manager=self.ui_manager
+        )
+
+        self.deadzone_slider = pygame_gui.elements.UIHorizontalSlider(
+            relative_rect=pygame.Rect(
+                (((Settings.WIDTH / 2) - (self.slider_width / 2)), (top_slider_y + (slider_distance*2))), #Position
+                (self.slider_width, self.slider_height)),  #Size
+            start_value=Settings.CONTROLLER_DEADZONE,
             value_range=(0.0, 1.0),
             manager=self.ui_manager
         )
@@ -57,7 +68,7 @@ class OptionsMenu:
         self.option_select_height = 50
         self.option_label_width = 150
         self.option_label_heigth = 50
-        self.fullscreen_y = 250
+        self.fullscreen_y = 200
 
         self.fullscreen_options = ["Disabled", "Enabled"]
         self.fullscreen_option_index = 0
@@ -147,6 +158,10 @@ class OptionsMenu:
                         Settings.SFX_VOLUME = self.SFX_slider.get_current_value()
                         print(f"SFX Slider Value: {Settings.SFX_VOLUME}")
                         self.scene_manager.update_volume()
+                    #Deadzone Slider
+                    if event.ui_element == self.deadzone_slider:
+                        Settings.CONTROLLER_DEADZONE = self.deadzone_slider.get_current_value()
+                        print(f"Deadzone Slider Value: {Settings.CONTROLLER_DEADZONE}")
 
     ##### Render #####
     def render(self):
@@ -174,6 +189,11 @@ class OptionsMenu:
         slider_text_rect = self.OPTIONS_FONT.get_rect("SOUND VOLUME")
         slider_text_rect.center = (volume_slider_rect.centerx, volume_slider_rect.top - Settings.FONT_SIZE)
         self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "SOUND VOLUME", Settings.COLOR_TEXT)
+
+        deadzone_slider_rect = self.deadzone_slider.get_relative_rect()
+        slider_text_rect = self.OPTIONS_FONT.get_rect("CONTROLLER DEADZONE")
+        slider_text_rect.center = (deadzone_slider_rect.centerx, deadzone_slider_rect.top - Settings.FONT_SIZE)
+        self.OPTIONS_FONT.render_to(self.screen, slider_text_rect, "CONTROLLER DEADZONE", Settings.COLOR_TEXT)
 
         fullscreen_rect = self.fullscreen_label.get_relative_rect()
         fullscreen_text_rect = self.OPTIONS_FONT.get_rect("FULLSCREEN")

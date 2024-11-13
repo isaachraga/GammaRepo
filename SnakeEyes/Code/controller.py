@@ -1,3 +1,5 @@
+from SnakeEyes.Code.settings import Settings
+
 import pygame
 class Controller:
     def __init__(
@@ -112,7 +114,7 @@ class Controller:
                 x_axis = self.joystick.get_axis(self.axis_horizontal)
                 y_axis = self.joystick.get_axis(self.axis_vertical)
 
-                deadzone = 0.1
+                deadzone = Settings.CONTROLLER_DEADZONE
                 if abs(x_axis) < deadzone:
                     x_axis = 0
                 if abs(y_axis) < deadzone:
