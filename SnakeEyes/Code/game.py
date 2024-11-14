@@ -86,6 +86,7 @@ class Game:
                 frame = sprite_sheet.subsurface((x, y, frame_width, frame_height))
                 frames.append(frame)
         return frames
+
     # Helper function to convert spritesheet to working sprite
     def makeCharacterSprite(self, path, width, height, fr, flipped=False):
         CharacterState = namedtuple('CharacterState', ['sprite_list', 'frame_rate', 'current_frame', 'current_sprite'])
@@ -410,7 +411,6 @@ class Game:
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
 
-
     def gameStatus(self):
         if self.police:
             self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
@@ -523,6 +523,7 @@ class Game:
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
             '''
+
     def carStatus(self):
         for c in self.Cars:
             # pygame.draw.rect(self.screen, (255,255,255), c.collider)
@@ -533,7 +534,6 @@ class Game:
                     if c.ready == True:
                         self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
                         self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
-
 
     # Updates character sprites
     def updateCharacterSprite(self, character_sprites, character, action):
@@ -597,12 +597,6 @@ class Game:
             self.ready = False
         else:
             self.ready = True
-
-
-        
-
-
-        
 
     ##### Game Functions #####
 
@@ -746,8 +740,8 @@ class Game:
                 for p in self.Players:
                     if p.controller.controller_type == 'keyboard':
                         if event.key == p.controller.action_buttons.get('space'):
-                            # DEBUG STATEMENT
                             if p.playerNum == 1:
+                                # DEBUG STATEMENT
                                 #print("space pressed...")
                                 self.handle_dice_roll()
 
@@ -778,10 +772,6 @@ class Game:
                                 # print("ready pressed...")
                                 self.handle_ready_action(p)
 
-            # if event.type == pygame.JOYDEVICEADDED:
-            #     controller = pygame.joystick.Joystick(event.device_index)
-            #     self.controllers.append(controller)
-
     
     def CPUDumbManager(self, p, dt):
         if p.controller.controller_type == "None":
@@ -795,9 +785,6 @@ class Game:
                         #move to location
 
                     #if at location, interact
-                        
-                    
-
 
     def CPUSelectLocation(self, CPU):
         #selecting store
@@ -956,7 +943,7 @@ class Game:
                 self.Cars.remove(c)
                 self.roundCheck()
             else:
-        #### if at store, set to ready
+            #### if at store, set to ready
                 for s in self.Stores:
                     if player in s.players:
                         if player.status != -1:
@@ -1220,7 +1207,6 @@ class Game:
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
         # print("Scene2")
-
 
     def resetGame(self):
         self.dt = 0
