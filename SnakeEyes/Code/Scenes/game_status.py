@@ -57,7 +57,7 @@ class GameStatus:
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.scene_manager.switch_scene('mods')
+                    self.next_scene()
                 if event.key == pygame.K_ESCAPE:
                     self.scene_manager.switch_scene('pause')
             
@@ -66,8 +66,15 @@ class GameStatus:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Continue Button
                     if event.ui_element == self.continue_button:
-                        self.scene_manager.switch_scene('mods')
+                        self.next_scene()
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+
+    def next_scene(self):
+        if Preferences.MODS_PREFERENCE == "Enabled":
+            self.scene_manager.switch_scene('mods')
+        else:
+            self.game.statusFlag = False
+            self.scene_manager.switch_scene('game')
 
     def render(self):
         self.screen.fill(Settings.COLOR_BACKGROUND)
@@ -121,8 +128,8 @@ class GameStatus:
             player_num_rect.midright = (rect.left - 5, rect.centery - Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_num_rect, player_num_text, Settings.COLOR_TEXT)
             
-            player_score_text = str(f'{int(self.game.getScore(p.playerNum)):,}')
-            player_score_rect = self.GAME_FONT.get_rect(self.game.getScore(p.playerNum))
+            player_score_text = "$"+str(f'{int(self.game.getScore(p.playerNum)):,}')
+            player_score_rect = self.GAME_FONT.get_rect(player_score_text)
             player_score_rect.midright = (rect.left - 5, rect.centery + Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_score_rect, player_score_text, Settings.COLOR_TEXT)
 

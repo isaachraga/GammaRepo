@@ -364,7 +364,7 @@ class Game:
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainGameLoop.mp3")
 
     ##### Run Game Loop #####
     def run(self):
@@ -993,10 +993,10 @@ class Game:
             p.status = 0
             p.scoreText = ""
             p.streak = 0
-            if modifier.quick_hands not in p.currentMods:
+            if modifier.On_a_roll not in p.currentMods:
                 p.tmpScore = 0
             else:
-                del p.currentMods[modifier.quick_hands]
+                del p.currentMods[modifier.On_a_roll]
 
             if modifier.lucky_streak in p.currentMods:
                 del p.currentMods[modifier.lucky_streak]
