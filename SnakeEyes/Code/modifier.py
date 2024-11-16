@@ -1,3 +1,5 @@
+from SnakeEyes.Code.settings import Settings
+
 class Modifier:
     #def __init__(self, name, description, cost, apply_modifier):
     def __init__(self, name, description, cost):
@@ -46,7 +48,10 @@ def lucky_streak_modifier(score, streak):
     #print("Original: "+str(score))
     #print("Streak: "+str(streak))
     #print("Modified: "+str(temp))
-    return round(temp, 2)
+    if (Settings.ROUNDING_PRECISION != 0):
+        return round(temp, Settings.ROUNDING_PRECISION)
+    else:
+        return int(temp)
     
     
 

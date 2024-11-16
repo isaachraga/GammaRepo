@@ -480,8 +480,8 @@ class Game:
                             adjusted_position = p.position - pygame.Vector2(30, 50)
                             self.screen.blit(sprite.current_sprite, adjusted_position)
         
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(f'{round(p.score, 2):,}'), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(f'{round(p.score, 2):,}'), (255, 255, 255))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(f'{round(p.score, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(f'{round(p.score, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
 
@@ -500,11 +500,11 @@ class Game:
 
 
             if p.status == 0:
-                printTemp = round(p.tmpScore+p.score, 2)
-                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, 2):,}'), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, 2):,}'), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, 2):,}'), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, 2):,}'), (175, 175, 175))
+                printTemp = round(p.tmpScore+p.score, Settings.ROUNDING_PRECISION)
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-16, p.position.y-69), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+59), p.scoreText, (0,0,0))
@@ -1011,10 +1011,10 @@ class Game:
                     printScore = self.award
                     p.tmpScore = p.tmpScore+printScore
                 
-                p.tmpScore = round(p.tmpScore, 2)
-                printScore = round(printScore, 2)
+                p.tmpScore = round(p.tmpScore, Settings.ROUNDING_PRECISION)
+                printScore = round(printScore, Settings.ROUNDING_PRECISION)
                 p.status = 0
-                p.scoreText = "+"+str(f'{round(printScore, 2):,}')
+                p.scoreText = "+"+str(f'{round(printScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}')
                 store.scoreTextColor = (0,255,0)
                 #print("Default Roll Finished")
 

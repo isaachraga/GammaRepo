@@ -13,5 +13,5 @@ class Settings:
     COLOR_ACCENT = (230, 230, 230)
     COLOR_TEXT = (255, 255, 255)
 
-    
+    ROUNDING_PRECISION = 0 #Decimal precision of scores, costs, etc
 

@@ -116,8 +116,15 @@ class GameStatus:
         #Player Bars
         pCurIndex = 1
         for p in self.game.Players:
+            #Handle decimals
+            pScore = float(self.game.getScore(p.playerNum))
+            if (Settings.ROUNDING_PRECISION != 0):
+                pScore = round(pScore, Settings.ROUNDING_PRECISION)
+            else:
+                pScore = int(pScore)
+
             #Score Bar
-            curBarWidth = minBarWidth + (barGoalWidth * (float(self.game.getScore(p.playerNum)) / Preferences.FINISHLINE_SCORE))
+            curBarWidth = minBarWidth + (barGoalWidth * (pScore / Preferences.FINISHLINE_SCORE))
             # curBarWidth = minBarWidth + barGoalWidth #DEBUG
             rect = pygame.Rect( barLeft, VerticalPadding+((pCurIndex-1)*(barHeight + bufferBetween)), curBarWidth, barHeight) #x, y, width, height
             pygame.draw.rect(self.screen, p.color, rect)
@@ -128,7 +135,7 @@ class GameStatus:
             player_num_rect.midright = (rect.left - 5, rect.centery - Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_num_rect, player_num_text, Settings.COLOR_TEXT)
             
-            player_score_text = "$"+str(f'{int(self.game.getScore(p.playerNum)):,}')
+            player_score_text = "$"+str(f'{pScore:,.{Settings.ROUNDING_PRECISION}f}')
             player_score_rect = self.GAME_FONT.get_rect(player_score_text)
             player_score_rect.midright = (rect.left - 5, rect.centery + Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_score_rect, player_score_text, Settings.COLOR_TEXT)
@@ -141,7 +148,7 @@ class GameStatus:
         goal_text_rect.midleft = (goal_rect.right + 5, goal_rect.centery - Settings.FONT_SIZE/2)
         self.GAME_FONT.render_to(self.screen, goal_text_rect, goal_text, Settings.COLOR_TEXT)
 
-        goal_score_text = "$"+str(f'{Preferences.FINISHLINE_SCORE:,}')
+        goal_score_text = "$"+str(f'{Preferences.FINISHLINE_SCORE:,.{Settings.ROUNDING_PRECISION}f}')
         goal_score_rect = self.GAME_FONT.get_rect(goal_score_text)
         goal_score_rect.midleft = (goal_rect.right + 5, goal_rect.centery + Settings.FONT_SIZE/2)
         self.GAME_FONT.render_to(self.screen, goal_score_rect, goal_score_text, Settings.COLOR_TEXT)
