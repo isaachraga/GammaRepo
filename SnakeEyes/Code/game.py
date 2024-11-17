@@ -793,14 +793,17 @@ class Game:
             for s in self.Stores:
                 if s.status == 0:
                     activeStores.append(s)
-            return activeStores[random.randint(0, len(activeStores)-1)].position
+            position = activeStores[random.randint(0, len(activeStores)-1)].position
+            modPos = pygame.Vector2(position.x+30, position.y)
+            return modPos
         else:
             #selecting Car
             for c in self.Cars:
                 ##### if at car cash out
                 if c.playerNum == CPU.playerNum:
-                    print(c.position)
-                    return c.position
+                    position = pygame.Vector2(c.position.x + 30, c.position.y)
+                    #print(c.position)
+                    return position
                 
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
@@ -809,10 +812,15 @@ class Game:
             return False
     
     def CPUMoveToLocation(self, CPU, dt):
-        CPU.CPU.counter += 1
-        if CPU.CPU.counter < 120 and CPU.status == 0:
+        #CPU.CPU.counter += 1
+        #cpu counter delays the cpu from moving instantly
+        if CPU.CPU.counter < 90 and CPU.status == 0:
+            print("Waiting...")
             CPU.CPU.counter += 1
-        else:
+        elif CPU.status == 0:            
+            print("X: "+str(CPU.CPU.moveToLocation.x)+" CPU: "+str(CPU.position.x))
+            print("Y: "+str(CPU.CPU.moveToLocation.y)+" CPU: "+str(CPU.position.y))
+            '''
             if CPU.CPU.moveToLocation.x - CPU.position.x > 40:
                 move_x = 1
             elif CPU.CPU.moveToLocation.x - CPU.position.x < 40:
@@ -820,9 +828,30 @@ class Game:
             else:
                 move_x = 0
 
+            
             if CPU.CPU.moveToLocation.y - CPU.position.y > 40:
                 move_y = 1
             elif CPU.CPU.moveToLocation.y - CPU.position.y < 40:
+                move_y = -1
+            else:
+                move_y = 0
+            '''
+            if CPU.CPU.moveToLocation.x < CPU.position.x+7 and CPU.CPU.moveToLocation.x > CPU.position.x-7:
+                print("X Block")
+                move_x = 0
+            elif CPU.CPU.moveToLocation.x > CPU.position.x:
+                move_x = 1
+            elif CPU.CPU.moveToLocation.x < CPU.position.x:
+                move_x = -1
+            else:
+                move_x = 0
+
+            if CPU.CPU.moveToLocation.y < CPU.position.y+7 and CPU.CPU.moveToLocation.y > CPU.position.y-7:
+                print("Y Block")
+                move_y = 0
+            elif CPU.CPU.moveToLocation.y > CPU.position.y:
+                move_y = 1
+            elif CPU.CPU.moveToLocation.y < CPU.position.y:
                 move_y = -1
             else:
                 move_y = 0
@@ -871,9 +900,11 @@ class Game:
                 CPU.position.y += tempY * dt
                 CPU.collider.center = CPU.position
 
-                if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 40 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 40:
-                    CPU.CPU.counter = 0
-                    self.handle_ready_action(CPU)
+                if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 100 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 100 and CPU.status == 0:
+                    print("Handle X: "+str(abs(CPU.CPU.moveToLocation.x - CPU.position.x)) + " || Handle Y: "+str(abs(CPU.CPU.moveToLocation.y - CPU.position.y)))
+                    if self.handle_ready_action(CPU):
+                        print("Hit")
+                        CPU.CPU.counter = 0
 
     def handle_dice_roll(self):
         # DEBUG STATEMENT
@@ -942,12 +973,14 @@ class Game:
                 player.status = -1
                 self.Cars.remove(c)
                 self.roundCheck()
+                return True
             else:
             #### if at store, set to ready
                 for s in self.Stores:
                     if player in s.players:
                         if player.status != -1:
                             player.status = 1
+                            return True
 
     def policeRoll(self, store):
         #print("Police Roll")
