@@ -448,7 +448,7 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
 
                 offset = 0
-                for x in range(s.risk):
+                for x in range(s.reward):
                     self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
                     offset = offset+20
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
