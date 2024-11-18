@@ -492,10 +492,12 @@ class Game:
             offset = 0
             for m in p.currentMods:
                 offset = offset + 20
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
+                modImg = m.image
+                modImg = pygame.transform.scale(m.image, (20,20))
+                self.screen.blit(modImg, (p.gr.x-20, p.gr.y+8+offset))
+                #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
 
-            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p).gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             # self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
