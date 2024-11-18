@@ -392,7 +392,8 @@ class Game:
         self.carStatus()
         self.playerStatus()
 
-        pygame.display.flip()
+        if not self.statusFlag: #Prevents rendering the reset stuff when ending round
+            pygame.display.flip()
 
     def debugStatus(self):
         ##### DEBUG / STATUS #####
@@ -605,7 +606,6 @@ class Game:
         if self.statusFlag:
             #print("Scene1")
             self.resetRound()
-            self.scene_manager.switch_scene('status')
 
         dt = self.clock.tick(60) / 1000
 
