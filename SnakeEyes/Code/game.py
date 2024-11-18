@@ -492,10 +492,12 @@ class Game:
             offset = 0
             for m in p.currentMods:
                 offset = offset + 20
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
+                modImg = m.image
+                modImg = pygame.transform.scale(m.image, (20,20))
+                self.screen.blit(modImg, (p.gr.x-20, p.gr.y+8+offset))
+                #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
 
-            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p).gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             # self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
@@ -815,29 +817,14 @@ class Game:
         #CPU.CPU.counter += 1
         #cpu counter delays the cpu from moving instantly
         if CPU.CPU.counter < 90 and CPU.status == 0:
-            print("Waiting...")
+            #print("Waiting...")
             CPU.CPU.counter += 1
         elif CPU.status == 0:            
-            print("X: "+str(CPU.CPU.moveToLocation.x)+" CPU: "+str(CPU.position.x))
-            print("Y: "+str(CPU.CPU.moveToLocation.y)+" CPU: "+str(CPU.position.y))
-            '''
-            if CPU.CPU.moveToLocation.x - CPU.position.x > 40:
-                move_x = 1
-            elif CPU.CPU.moveToLocation.x - CPU.position.x < 40:
-                move_x = -1
-            else:
-                move_x = 0
-
+            #print("X: "+str(CPU.CPU.moveToLocation.x)+" CPU: "+str(CPU.position.x))
+            #print("Y: "+str(CPU.CPU.moveToLocation.y)+" CPU: "+str(CPU.position.y))
             
-            if CPU.CPU.moveToLocation.y - CPU.position.y > 40:
-                move_y = 1
-            elif CPU.CPU.moveToLocation.y - CPU.position.y < 40:
-                move_y = -1
-            else:
-                move_y = 0
-            '''
             if CPU.CPU.moveToLocation.x < CPU.position.x+7 and CPU.CPU.moveToLocation.x > CPU.position.x-7:
-                print("X Block")
+                #print("X Block")
                 move_x = 0
             elif CPU.CPU.moveToLocation.x > CPU.position.x:
                 move_x = 1
@@ -847,7 +834,7 @@ class Game:
                 move_x = 0
 
             if CPU.CPU.moveToLocation.y < CPU.position.y+7 and CPU.CPU.moveToLocation.y > CPU.position.y-7:
-                print("Y Block")
+                #print("Y Block")
                 move_y = 0
             elif CPU.CPU.moveToLocation.y > CPU.position.y:
                 move_y = 1
@@ -901,9 +888,9 @@ class Game:
                 CPU.collider.center = CPU.position
 
                 if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 100 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 100 and CPU.status == 0:
-                    print("Handle X: "+str(abs(CPU.CPU.moveToLocation.x - CPU.position.x)) + " || Handle Y: "+str(abs(CPU.CPU.moveToLocation.y - CPU.position.y)))
+                    #print("Handle X: "+str(abs(CPU.CPU.moveToLocation.x - CPU.position.x)) + " || Handle Y: "+str(abs(CPU.CPU.moveToLocation.y - CPU.position.y)))
                     if self.handle_ready_action(CPU):
-                        print("Hit")
+                        #print("Hit")
                         CPU.CPU.counter = 0
 
     def handle_dice_roll(self):
