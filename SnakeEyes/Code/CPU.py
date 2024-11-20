@@ -6,3 +6,5 @@ class CPU:
         self.turn = 0
         self.previousScore = 0
         self.counter = 0
+    #   self.low_threshold = 0
+    #   self.high_threshold = 0

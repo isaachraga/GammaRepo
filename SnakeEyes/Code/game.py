@@ -814,6 +814,21 @@ class Game:
                 if c.playerNum == CPU.playerNum:
                     print(c.position)
                     return c.position
+
+    # def CPUDecisionProcess(self, CPU, Store):
+    #     if CPU.self.score < CPU.low_threshold: 
+    #         activeStores = []
+    #         for s in self.Stores:
+    #           if s.staus == 0:
+    #               activeStores.append(s)
+    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
+    #          modPos = pygame.Vector2(position.x+30, position.y)
+    #          return modPos
+    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
+    #         for c in self.Cars:
+    #             if c.playerNum == CPU.playerNum:
+    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
+    #                 return position
                 
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
