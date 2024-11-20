@@ -67,7 +67,7 @@ class Game:
         self.roundSkipped = False
         self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
 
-        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
+        self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/BACKGROUNDUPDATE3.png')
         self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
         self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
         self.playerReset()
