@@ -996,6 +996,8 @@ class Game:
         self.alarmedStores = self.alarmedStores + 1
         store.status=-1
 
+        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/alarm.mp3")
+
         for p in store.players:
             p.status = 0
             p.scoreText = ""
