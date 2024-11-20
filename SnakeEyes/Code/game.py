@@ -829,7 +829,9 @@ class Game:
     #             if c.playerNum == CPU.playerNum:
     #                 position = pygame.Vector2(c.position.x +30, c.position.y)
     #                 return position
-                
+                # test
+
+
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
             return True
