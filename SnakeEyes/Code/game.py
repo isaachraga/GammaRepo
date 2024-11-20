@@ -86,6 +86,7 @@ class Game:
                 frame = sprite_sheet.subsurface((x, y, frame_width, frame_height))
                 frames.append(frame)
         return frames
+
     # Helper function to convert spritesheet to working sprite
     def makeCharacterSprite(self, path, width, height, fr, flipped=False):
         CharacterState = namedtuple('CharacterState', ['sprite_list', 'frame_rate', 'current_frame', 'current_sprite'])
@@ -364,7 +365,7 @@ class Game:
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
-        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
+        self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainGameLoop.mp3")
 
     ##### Run Game Loop #####
     def run(self):
@@ -391,7 +392,8 @@ class Game:
         self.carStatus()
         self.playerStatus()
 
-        pygame.display.flip()
+        if not self.statusFlag: #Prevents rendering the reset stuff when ending round
+            pygame.display.flip()
 
     def debugStatus(self):
         ##### DEBUG / STATUS #####
@@ -409,7 +411,6 @@ class Game:
         # self.GAME_FONT.render_to(self.screen, (350, 20), "HIGHEST SCORE PAST "+str(self.winScore)+" WINS", (0, 0, 0))
         if self.lastRound:
             self.GAME_FONT.render_to(self.screen, (350, 50), self.result, (0, 0, 0))
-
 
     def gameStatus(self):
         if self.police:
@@ -448,7 +449,7 @@ class Game:
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
 
                 offset = 0
-                for x in range(s.risk):
+                for x in range(s.reward):
                     self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
                     offset = offset+20
                 self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
@@ -480,8 +481,8 @@ class Game:
                             adjusted_position = p.position - pygame.Vector2(30, 50)
                             self.screen.blit(sprite.current_sprite, adjusted_position)
         
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(f'{round(p.score, 2):,}'), (0, 0, 0))
-            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(f'{round(p.score, 2):,}'), (255, 255, 255))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-42), "$"+str(f'{round(p.score, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0, 0, 0))
+            self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-40), "$"+str(f'{round(p.score, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (255, 255, 255))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-18, p.gr.y-22), "P"+str(p.playerNum), (0, 0, 0))
             self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-20), "P"+str(p.playerNum), (255, 255, 255))
 
@@ -491,20 +492,22 @@ class Game:
             offset = 0
             for m in p.currentMods:
                 offset = offset + 20
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+8+offset), m.name , (0, 0, 0))
-                self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
+                modImg = m.image
+                modImg = pygame.transform.scale(m.image, (20,20))
+                self.screen.blit(modImg, (p.gr.x-20, p.gr.y+8+offset))
+                #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y+10+offset), m.name , (255, 255, 255))
 
-            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
+            #self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p).gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
             # self.GAME_FONT.render_to(self.screen, (p.gr.x-20, p.gr.y-60), "$"+str(p.tmpScore), (150, 150, 150))
 
 
             if p.status == 0:
-                printTemp = round(p.tmpScore+p.score, 2)
-                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, 2):,}'), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, 2):,}'), (255, 255, 255))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, 2):,}'), (0,0,0))
-                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, 2):,}'), (175, 175, 175))
+                printTemp = round(p.tmpScore+p.score, Settings.ROUNDING_PRECISION)
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+19), "$"+str(f'{round(p.tmpScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+20), "$"+str(f'{round(p.tmpScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (255, 255, 255))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+39), "$"+str(f'{round(printTemp, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (0,0,0))
+                self.GAME_FONT.render_to(self.screen, (p.position.x-20, p.position.y+40), "$"+str(f'{round(printTemp, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}'), (175, 175, 175))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-16, p.position.y-69), "P"+str(p.playerNum), (0,0,0))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-15, p.position.y-70), "P"+str(p.playerNum), (255, 255, 255))
                 self.GAME_FONT.render_to(self.screen, (p.position.x-21, p.position.y+59), p.scoreText, (0,0,0))
@@ -523,6 +526,7 @@ class Game:
             elif p.status == 1:
                 pygame.draw.circle(self.screen, "green" , p.gr, 10)
             '''
+
     def carStatus(self):
         for c in self.Cars:
             # pygame.draw.rect(self.screen, (255,255,255), c.collider)
@@ -533,7 +537,6 @@ class Game:
                     if c.ready == True:
                         self.GAME_FONT.render_to(self.screen, (c.position.x+10, c.position.y-85), "P"+str(p.playerNum), (255,255,255))
                         self.GAME_FONT.render_to(self.screen, (c.position.x-60, c.position.y-60), "SELECT to Cash-Out", (255,255,255))
-
 
     # Updates character sprites
     def updateCharacterSprite(self, character_sprites, character, action):
@@ -598,12 +601,6 @@ class Game:
         else:
             self.ready = True
 
-
-        
-
-
-        
-
     ##### Game Functions #####
 
     ### handles all inputs for the game ###
@@ -611,7 +608,6 @@ class Game:
         if self.statusFlag:
             #print("Scene1")
             self.resetRound()
-            self.scene_manager.switch_scene('status')
 
         dt = self.clock.tick(60) / 1000
 
@@ -746,8 +742,8 @@ class Game:
                 for p in self.Players:
                     if p.controller.controller_type == 'keyboard':
                         if event.key == p.controller.action_buttons.get('space'):
-                            # DEBUG STATEMENT
                             if p.playerNum == 1:
+                                # DEBUG STATEMENT
                                 #print("space pressed...")
                                 self.handle_dice_roll()
 
@@ -778,10 +774,6 @@ class Game:
                                 # print("ready pressed...")
                                 self.handle_ready_action(p)
 
-            # if event.type == pygame.JOYDEVICEADDED:
-            #     controller = pygame.joystick.Joystick(event.device_index)
-            #     self.controllers.append(controller)
-
     
     def CPUDumbManager(self, p, dt):
         if p.controller.controller_type == "None":
@@ -795,9 +787,6 @@ class Game:
                         #move to location
 
                     #if at location, interact
-                        
-                    
-
 
     def CPUSelectLocation(self, CPU):
         #selecting store
@@ -806,7 +795,9 @@ class Game:
             for s in self.Stores:
                 if s.status == 0:
                     activeStores.append(s)
-            return activeStores[random.randint(0, len(activeStores)-1)].position
+            position = activeStores[random.randint(0, len(activeStores)-1)].position
+            modPos = pygame.Vector2(position.x+30, position.y)
+            return modPos
         else:
             #selecting Car
             for c in self.Cars:
@@ -832,6 +823,11 @@ class Game:
                 # test
 
 
+                    position = pygame.Vector2(c.position.x + 30, c.position.y)
+                    #print(c.position)
+                    return position
+                
+
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
             return True
@@ -839,20 +835,31 @@ class Game:
             return False
     
     def CPUMoveToLocation(self, CPU, dt):
-        CPU.CPU.counter += 1
-        if CPU.CPU.counter < 120 and CPU.status == 0:
+        #CPU.CPU.counter += 1
+        #cpu counter delays the cpu from moving instantly
+        if CPU.CPU.counter < 90 and CPU.status == 0:
+            #print("Waiting...")
             CPU.CPU.counter += 1
-        else:
-            if CPU.CPU.moveToLocation.x - CPU.position.x > 40:
+        elif CPU.status == 0:            
+            #print("X: "+str(CPU.CPU.moveToLocation.x)+" CPU: "+str(CPU.position.x))
+            #print("Y: "+str(CPU.CPU.moveToLocation.y)+" CPU: "+str(CPU.position.y))
+            
+            if CPU.CPU.moveToLocation.x < CPU.position.x+7 and CPU.CPU.moveToLocation.x > CPU.position.x-7:
+                #print("X Block")
+                move_x = 0
+            elif CPU.CPU.moveToLocation.x > CPU.position.x:
                 move_x = 1
-            elif CPU.CPU.moveToLocation.x - CPU.position.x < 40:
+            elif CPU.CPU.moveToLocation.x < CPU.position.x:
                 move_x = -1
             else:
                 move_x = 0
 
-            if CPU.CPU.moveToLocation.y - CPU.position.y > 40:
+            if CPU.CPU.moveToLocation.y < CPU.position.y+7 and CPU.CPU.moveToLocation.y > CPU.position.y-7:
+                #print("Y Block")
+                move_y = 0
+            elif CPU.CPU.moveToLocation.y > CPU.position.y:
                 move_y = 1
-            elif CPU.CPU.moveToLocation.y - CPU.position.y < 40:
+            elif CPU.CPU.moveToLocation.y < CPU.position.y:
                 move_y = -1
             else:
                 move_y = 0
@@ -901,9 +908,11 @@ class Game:
                 CPU.position.y += tempY * dt
                 CPU.collider.center = CPU.position
 
-                if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 40 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 40:
-                    CPU.CPU.counter = 0
-                    self.handle_ready_action(CPU)
+                if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 100 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 100 and CPU.status == 0:
+                    #print("Handle X: "+str(abs(CPU.CPU.moveToLocation.x - CPU.position.x)) + " || Handle Y: "+str(abs(CPU.CPU.moveToLocation.y - CPU.position.y)))
+                    if self.handle_ready_action(CPU):
+                        #print("Hit")
+                        CPU.CPU.counter = 0
 
     def handle_dice_roll(self):
         # DEBUG STATEMENT
@@ -972,12 +981,14 @@ class Game:
                 player.status = -1
                 self.Cars.remove(c)
                 self.roundCheck()
+                return True
             else:
-        #### if at store, set to ready
+            #### if at store, set to ready
                 for s in self.Stores:
                     if player in s.players:
                         if player.status != -1:
                             player.status = 1
+                            return True
 
     def policeRoll(self, store):
         #print("Police Roll")
@@ -1006,14 +1017,16 @@ class Game:
         self.alarmedStores = self.alarmedStores + 1
         store.status=-1
 
+        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/alarm.mp3")
+
         for p in store.players:
             p.status = 0
             p.scoreText = ""
             p.streak = 0
-            if modifier.quick_hands not in p.currentMods:
+            if modifier.On_a_roll not in p.currentMods:
                 p.tmpScore = 0
             else:
-                del p.currentMods[modifier.quick_hands]
+                del p.currentMods[modifier.On_a_roll]
 
             if modifier.lucky_streak in p.currentMods:
                 del p.currentMods[modifier.lucky_streak]
@@ -1041,10 +1054,10 @@ class Game:
                     printScore = self.award
                     p.tmpScore = p.tmpScore+printScore
                 
-                p.tmpScore = round(p.tmpScore, 2)
-                printScore = round(printScore, 2)
+                p.tmpScore = round(p.tmpScore, Settings.ROUNDING_PRECISION)
+                printScore = round(printScore, Settings.ROUNDING_PRECISION)
                 p.status = 0
-                p.scoreText = "+"+str(f'{round(printScore, 2):,}')
+                p.scoreText = "+"+str(f'{round(printScore, Settings.ROUNDING_PRECISION):,.{Settings.ROUNDING_PRECISION}f}')
                 store.scoreTextColor = (0,255,0)
                 #print("Default Roll Finished")
 
@@ -1237,7 +1250,6 @@ class Game:
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
         # print("Scene2")
-
 
     def resetGame(self):
         self.dt = 0

@@ -67,6 +67,8 @@ def test_initial_preferences(setup_game_setup):
     assert Preferences.YELLOW_CONTROLS == game_setup.control_type_options[game_setup.yellow_control_index]
     assert Preferences.GREEN_PLAYER_TYPE == game_setup.player_type_options[game_setup.green_player_index]
     assert Preferences.GREEN_CONTROLS == game_setup.control_type_options[game_setup.green_control_index]
+    
+    assert Preferences.MODS_PREFERENCE == game_setup.mods_options[game_setup.mods_option_index]
 
 
 def test_player_selection(setup_game_setup):
@@ -145,6 +147,26 @@ def test_score_selection(setup_game_setup):
     # Restore the initial score
     while Preferences.FINISHLINE_SCORE < initial_score:
         simulate_gui_click(game_setup, game_setup.finish_score_inc)
+
+def test_mods_selection(setup_game_setup):
+    logging.info("Testing Modifier Selection")
+    game_setup = setup_game_setup
+
+    #Set Mods to disabled
+    if (Preferences.MODS_PREFERENCE == "Enabled"):
+        simulate_gui_click(game_setup, game_setup.mods_right)
+    assert(Preferences.MODS_PREFERENCE == "Disabled") 
+
+    #Test right button
+    simulate_gui_click(game_setup, game_setup.mods_right)
+    assert(Preferences.MODS_PREFERENCE == "Enabled") 
+    simulate_gui_click(game_setup, game_setup.mods_right)
+    assert(Preferences.MODS_PREFERENCE == "Disabled") 
+    #Test left button
+    simulate_gui_click(game_setup, game_setup.mods_left)
+    assert(Preferences.MODS_PREFERENCE == "Enabled") 
+    simulate_gui_click(game_setup, game_setup.mods_left)
+    assert(Preferences.MODS_PREFERENCE == "Disabled") 
 
 
 def test_game_start(setup_game_setup):

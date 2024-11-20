@@ -10,6 +10,7 @@ class GameMods:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.available_mods = modifier.available_modifiers
+        
     
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
@@ -28,11 +29,12 @@ class GameMods:
         self.GAME_FONT.render_to(self.screen, (10, 20), "Game Mods", Settings.COLOR_TEXT)
 
         for p in self.game.Players:
-            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 50), "Player "+str(p.playerNum)+": $"+str(f'{p.score:,}'), Settings.COLOR_TEXT)
-            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 110), "Available Mods ", Settings.COLOR_TEXT)
+            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 50), "Player "+str(p.playerNum)+": $"+str(f'{p.score:,.{Settings.ROUNDING_PRECISION}f}'), Settings.COLOR_TEXT)
+            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 70), "Available Mods ", Settings.COLOR_TEXT)
+            self.screen.blit(self.available_mods[p.modSelection].image, (75+(300*(p.playerNum-1)), 90))
             self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 150), self.available_mods[p.modSelection].name, Settings.COLOR_TEXT)
             #self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 340), modifier.available_modifiers[p.modSelection].description, Settings.COLOR_TEXT)
-            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 190), "$"+str(f'{round(self.available_mods[p.modSelection].cost, 2):,}'), Settings.COLOR_TEXT)
+            self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 190), "$"+str(f'{round(self.available_mods[p.modSelection].cost, 2):,.{Settings.ROUNDING_PRECISION}f}'), Settings.COLOR_TEXT)
             #self.drawText(self.screen, modifier.available_modifiers[p.modSelection].description, pygame.Rect(80+(300*(p.playerNum-1)), 340, 300, 300), self.GAME_FONT)
             offset = 0
             send = ''
@@ -50,9 +52,13 @@ class GameMods:
             offset = offset + 80
             self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 230+offset), "Current Mods" , Settings.COLOR_TEXT)
             offset = offset + 20
+            Xoffset = 0
             for m in p.currentMods:
-                offset = offset + 30
-                self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 230+offset), m.name , Settings.COLOR_TEXT)
+                modImg = m.image
+                modImg = pygame.transform.scale(m.image, (30,30))
+                self.screen.blit(modImg, (80+(300*(p.playerNum-1))+Xoffset, 230+offset))
+                Xoffset = Xoffset + 40
+                #self.GAME_FONT.render_to(self.screen, (80+(300*(p.playerNum-1)), 230+offset), m.image , Settings.COLOR_TEXT)
 
             
 

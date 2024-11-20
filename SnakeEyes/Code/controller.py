@@ -1,3 +1,5 @@
+from SnakeEyes.Code.settings import Settings
+
 import pygame
 class Controller:
     def __init__(
@@ -42,7 +44,6 @@ class Controller:
                 "right": pygame.K_d,
                 "ready": pygame.K_1,
                 "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_2,
             },
             "TFGH": {
                 "up": pygame.K_t,
@@ -51,7 +52,6 @@ class Controller:
                 "right": pygame.K_h,
                 "ready": pygame.K_3,
                 "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_4,
             },
             "IJKL": {
                 "up": pygame.K_i,
@@ -60,7 +60,6 @@ class Controller:
                 "right": pygame.K_l,
                 "ready": pygame.K_5,
                 "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_6,
             },
             "Arrows": {
                 "up": pygame.K_UP,
@@ -69,7 +68,6 @@ class Controller:
                 "right": pygame.K_RIGHT,
                 "ready": pygame.K_7,
                 "space": pygame.K_SPACE,
-                # "cash_out": pygame.K_8,
             },
         }
 
@@ -83,7 +81,6 @@ class Controller:
             self.action_buttons = {
                 "ready": scheme["ready"],
                 "space": scheme["space"]
-                #"cash_out": scheme["cash_out"],
             }
         else:
             print(f"Error: Unknown control scheme '{self.controller_scheme}'")
@@ -112,13 +109,12 @@ class Controller:
                 x_axis = self.joystick.get_axis(self.axis_horizontal)
                 y_axis = self.joystick.get_axis(self.axis_vertical)
 
-                deadzone = 0.1
+                deadzone = Settings.CONTROLLER_DEADZONE
                 if abs(x_axis) < deadzone:
                     x_axis = 0
                 if abs(y_axis) < deadzone:
                     y_axis = 0
                 return x_axis, y_axis
-
 
     def is_action_pressed(self, action_name):
         if self.controller_type == "keyboard":

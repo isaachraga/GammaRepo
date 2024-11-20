@@ -1,9 +1,13 @@
+import pygame
+from SnakeEyes.Code.settings import Settings
+
 class Modifier:
     #def __init__(self, name, description, cost, apply_modifier):
-    def __init__(self, name, description, cost):
+    def __init__(self, name, description, cost, image):
         self.name = name
         self.description = description
         self.cost = cost
+        self.image = image
         #self.apply_modifier = apply_modifier
         self.active = False  # Track if  modifier is currently active
         self.duration = 0  # Tracks how many turns modifier is active
@@ -46,7 +50,10 @@ def lucky_streak_modifier(score, streak):
     #print("Original: "+str(score))
     #print("Streak: "+str(streak))
     #print("Modified: "+str(temp))
-    return round(temp, 2)
+    if (Settings.ROUNDING_PRECISION != 0):
+        return round(temp, Settings.ROUNDING_PRECISION)
+    else:
+        return int(temp)
     
     
 
@@ -109,11 +116,13 @@ def roll_rewind_modifier(player, dice_rolls, game):
         game.result = f'Roll Rewind activated for Player {player.playerNum}!'
 '''
 
+
 # Creating modifier instances
 lucky_streak = Modifier(
     name="Lucky Streak",
     description="After each successful \nrolls,the next score \ngets a x1.05 \nmultiplier. Active until \nyou set off a store \nalarm or police \narive.",
     cost=70000,
+    image = pygame.image.load('SnakeEyes/Assets/Icons/luckyStreakModifier.png'),
     #apply_modifier=lucky_streak_modifier,
 )
 
@@ -121,13 +130,15 @@ paid_off = Modifier(
     name="Paid Off",
     description="Keep your stored money \nafter a police raid. \nActive until \nafter caught by the \npolice",
     cost=300000,
+    image = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
     #apply_modifier=paid_off,
 )
 
-quick_hands = Modifier(
-    name="Quick Hands",
+On_a_roll = Modifier(
+    name="On a Roll",
     description="Keep your money after \nan alarm is triggered. \nActive until \nafter an alarm is \ntriggered",
     cost=140000,
+    image = pygame.image.load('SnakeEyes/Assets/Icons/hotDiceModifier.png'),
     #apply_modifier=paid_off,
 )
 
@@ -200,7 +211,7 @@ roll_rewind = Modifier(
 available_modifiers = [
     lucky_streak, 
     paid_off,
-    quick_hands
+    On_a_roll
 ]
 '''hot_dice,
     cumulative_boost,

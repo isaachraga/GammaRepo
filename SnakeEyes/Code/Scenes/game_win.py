@@ -120,7 +120,7 @@ class GameWin:
             pygame.draw.rect(self.screen, (150, 150, 150), image_back)
             self.screen.blit(image, (image_x, image_y))
 
-            winner_text = f"${self.sorted_players[0].score:,}"
+            winner_text = f"${self.sorted_players[0].score:,.{Settings.ROUNDING_PRECISION}f}"
             currentFontSize = scoreTextSize
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             winner_score_rect = currentFont.get_rect(winner_text)
@@ -162,7 +162,7 @@ class GameWin:
             pygame.draw.rect(self.screen, (150, 150, 150), image_back)
             self.screen.blit(image, (image_x, image_y))
 
-            second_text = f"${self.sorted_players[1].score:,}"
+            second_text = f"${self.sorted_players[1].score:,.{Settings.ROUNDING_PRECISION}f}"
             currentFontSize = scoreTextSize*secondScale
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             second_score_rect = currentFont.get_rect(second_text)
@@ -204,7 +204,7 @@ class GameWin:
             pygame.draw.rect(self.screen, (150, 150, 150), image_back)
             self.screen.blit(image, (image_x, image_y))
 
-            third_text = f"${self.sorted_players[2].score:,}"
+            third_text = f"${self.sorted_players[2].score:,.{Settings.ROUNDING_PRECISION}f}"
             currentFontSize = scoreTextSize*thirdScale
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             third_score_rect = currentFont.get_rect(third_text)
@@ -246,7 +246,7 @@ class GameWin:
             pygame.draw.rect(self.screen, (150, 150, 150), image_back)
             self.screen.blit(image, (image_x, image_y))
 
-            fourth_text = f"${self.sorted_players[3].score:,}"
+            fourth_text = f"${self.sorted_players[3].score:,.{Settings.ROUNDING_PRECISION}f}"
             currentFontSize = scoreTextSize*fourthScale
             currentFont = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", currentFontSize)
             fourth_score_rect = currentFont.get_rect(fourth_text)
