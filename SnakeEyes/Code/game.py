@@ -802,6 +802,25 @@ class Game:
                     position = pygame.Vector2(c.position.x + 30, c.position.y)
                     #print(c.position)
                     return position
+    #def CPUDecisionProcess(self, CPU, Store):
+    #     if CPU.self.score < CPU.low_threshold: 
+    #         activeStores = []
+    #         for s in self.Stores:
+    #           if s.staus == 0:
+    #               activeStores.append(s)
+    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
+    #          modPos = pygame.Vector2(position.x+30, position.y)
+    #          return modPos
+    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
+    #         for c in self.Cars:
+    #             if c.playerNum == CPU.playerNum:
+    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
+    #                 return position
+                # test
+
+    #def CPUFindThreshold(self, CPU):
+        #find max player amount
+        #pull their score and mod it for threshold amount
                 
     ### Decides whether to play of quit
     def CPUDecidePlay(self, CPU):
@@ -1108,6 +1127,7 @@ class Game:
             if p.controller.controller_type != "keyboard" and p.controller.controller_type != "joystick":
                 p.CPU.turn = 0
                 p.CPU.moveToLocation = (0,0)
+                ###reset threshold
 
     ### get's num of active players
     def lastRoundCheck(self):
