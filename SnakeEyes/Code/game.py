@@ -163,25 +163,39 @@ class Game:
 
     ### Resets all stores to starting state ###
     def storeReset(self):
+
+        # Pick new store sprites
+        storeSprites = [
+            "SnakeEyes/Assets/Environment/Objects/ABC_Liquor.png",
+            "SnakeEyes/Assets/Environment/Objects/Perris_Jewels.png",
+            "SnakeEyes/Assets/Environment/Objects/RX-Express.png",
+            "SnakeEyes/Assets/Environment/Objects/Slow_Panda.png"
+        ]
+        selected_sprites = random.sample(storeSprites, 4)
+
         self.store1 = store.Store()
         self.store1.storeNum = 1
         self.store1.position = pygame.Vector2(250, 310)
         self.assignStoreStats(self.store1)
+        self.store1.sprite = pygame.image.load(selected_sprites[0])
 
         self.store2 = store.Store()
         self.store2.storeNum = 2
         self.store2.position = pygame.Vector2(500, 310)
         self.assignStoreStats(self.store2)
+        self.store2.sprite = pygame.image.load(selected_sprites[1])
 
         self.store3 = store.Store()
         self.store3.storeNum = 3
         self.store3.position = pygame.Vector2(750, 310)
         self.assignStoreStats(self.store3)
+        self.store3.sprite = pygame.image.load(selected_sprites[2])
 
         self.store4 = store.Store()
         self.store4.storeNum = 4
         self.store4.position = pygame.Vector2(1000, 310)
         self.assignStoreStats(self.store4)
+        self.store4.sprite = pygame.image.load(selected_sprites[3])
 
         self.Stores = [self.store1,self.store2,self.store3, self.store4]
 
@@ -378,6 +392,12 @@ class Game:
         self.screen.fill((255,255,255))
         ### Set Background Image ###
         self.screen.blit(self.loadingScreen, (0,0))
+        
+        ### Render the Stores ###
+        self.screen.blit(self.store1.sprite, (140,50))
+        self.screen.blit(self.store2.sprite, (390,50))
+        self.screen.blit(self.store3.sprite, (640,50))
+        self.screen.blit(self.store4.sprite, (890,50))
 
         ### All game status updates ###
         self.debugStatus()
