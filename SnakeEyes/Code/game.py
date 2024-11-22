@@ -59,7 +59,7 @@ class Game:
 
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
+        self.storeCollider = pygame.Rect((0, 0, 1280, 260)) 
 
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
@@ -200,7 +200,7 @@ class Game:
         self.Stores = [self.store1,self.store2,self.store3, self.store4]
 
         for s in self.Stores:
-            s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
+            s.collider = pygame.Rect(s.position.x-33, s.position.y, 100,20)
 
     ### Resets all Players to starting state ###
     def playerReset(self):
