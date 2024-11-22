@@ -11,24 +11,13 @@ from SnakeEyes.Code import controller
 from SnakeEyes.Code import player
 from SnakeEyes.Code import car
 from SnakeEyes.Code import store
+from bson.objectid import ObjectId
 
 
 ### TO DO ###
 
-
-### BUGS ###
-# need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
-# store collision needs fixed
-# dont set off police on first alarm
-# last round hanling with police call/all alarms going straight to win screen
-
-
-### FEATURE CHANGES ###
-# attach vault score to vehicle
-
-
 ########## GAME ##########
-class Game:
+class GameCLIENT:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
@@ -69,6 +58,22 @@ class Game:
         self.storeReset()
 
         self.initializePlayerSprites()
+
+    def getDB(self):
+        games = self.atlas_client.find (collection_name=Settings.COLLECTION_NAME, filter={"_id": ObjectId(self.DBID)})
+        if games:
+            for idx, games in enumerate (games):
+                print(f'{idx+1}\nid: {games["_id"]}\ntitle: {games["Name"]},\nyear: {games["X"]}\nplot: {games["Y"]}\n')
+        else:
+            print("Error")
+
+        
+
+    def setDB(self):
+        myquery = { "_id": ObjectId(self.DBID)}
+        newvalues = { "$set": { "X": self.p1.position.x, "Y": self.p1.position.y} }
+
+        self.atlas_client.update_one(myquery, newvalues)
 
     ### Character Sprites ###
     # Helper function to cut up sprite sheets
@@ -799,7 +804,7 @@ class Game:
             for c in self.Cars:
                 ##### if at car cash out
                 if c.playerNum == CPU.playerNum:
-                    #print(c.position)
+                    print(c.position)
                     return c.position
 
     # def CPUDecisionProcess(self, CPU, Store):

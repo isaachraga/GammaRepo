@@ -11,31 +11,24 @@ from SnakeEyes.Code import controller
 from SnakeEyes.Code import player
 from SnakeEyes.Code import car
 from SnakeEyes.Code import store
+from SnakeEyes.Code import AtlasClient
+from bson.objectid import ObjectId
 
 
 ### TO DO ###
 
-
-### BUGS ###
-# need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
-# store collision needs fixed
-# dont set off police on first alarm
-# last round hanling with police call/all alarms going straight to win screen
-
-
-### FEATURE CHANGES ###
-# attach vault score to vehicle
-
-
 ########## GAME ##########
-class Game:
+class GameHOST:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
+        self.pNum = 1
         self.initialization()
+
+    
 
 
     def initialization(self):
@@ -69,6 +62,7 @@ class Game:
         self.storeReset()
 
         self.initializePlayerSprites()
+        
 
     ### Character Sprites ###
     # Helper function to cut up sprite sheets
@@ -155,6 +149,7 @@ class Game:
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
+        print("HOST")
         self.winScore = Preferences.FINISHLINE_SCORE
         self.playerReset()
         self.playerLocReset()
@@ -365,6 +360,8 @@ class Game:
     def run(self):
         self.update() 
         self.render()
+
+    
 
     ##### Update Game #####
     def update(self):
@@ -799,7 +796,7 @@ class Game:
             for c in self.Cars:
                 ##### if at car cash out
                 if c.playerNum == CPU.playerNum:
-                    #print(c.position)
+                    print(c.position)
                     return c.position
 
     # def CPUDecisionProcess(self, CPU, Store):

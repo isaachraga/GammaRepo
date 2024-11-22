@@ -62,15 +62,23 @@ class MainMenu:
         #Play Game
         self.play_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.button_width / 2)), 285), #Position
+                (((Settings.WIDTH / 2) - (self.button_width / 2)), 215), #Position
                 (self.button_width, self.button_height)), #Size
             text='Play Game',
+            manager=self.ui_manager
+        )
+        #Multiplayer Game
+        self.Mult_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(
+                (((Settings.WIDTH / 2) - (self.button_width / 2)), 315), #Position
+                (self.button_width, self.button_height)), #Size
+            text='Multiplayer',
             manager=self.ui_manager
         )
         #Tutorial
         self.tutorial_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.button_width / 2)), 385), #Position
+                (((Settings.WIDTH / 2) - (self.button_width / 2)), 415), #Position
                 (self.button_width, self.button_height)), #Size
             text='Tutorial',
             manager=self.ui_manager
@@ -78,7 +86,7 @@ class MainMenu:
         #Options
         self.options_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.button_width / 2)), 485), #Position
+                (((Settings.WIDTH / 2) - (self.button_width / 2)), 515), #Position
                 (self.button_width, self.button_height)), #Size
             text='Options',
             manager=self.ui_manager
@@ -86,7 +94,7 @@ class MainMenu:
         #Credits
         self.credits_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (self.button_width / 2)), 585), #Position
+                (((Settings.WIDTH / 2) - (self.button_width / 2)), 615), #Position
                 (self.button_width, self.button_height)), #Size
             text='Credits',
             manager=self.ui_manager
@@ -134,6 +142,10 @@ class MainMenu:
                     #Play Game Button
                     if event.ui_element == self.play_button:
                         self.scene_manager.switch_scene('setup')
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    #Multiplayer Button
+                    if event.ui_element == self.Mult_button:
+                        self.scene_manager.switch_scene('mSetup')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     #Tutorial Button
                     if event.ui_element == self.tutorial_button:
