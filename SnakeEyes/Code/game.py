@@ -34,6 +34,8 @@ class Game:
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
+        self.SIPANEL_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", 18) # Store Info Panel
+        self.ALERT_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", 30) # Store Info Panel
         self.clock = pygame.time.Clock()
         self.initialization()
 
@@ -398,6 +400,11 @@ class Game:
         self.screen.blit(self.store2.sprite, (390,50))
         self.screen.blit(self.store3.sprite, (640,50))
         self.screen.blit(self.store4.sprite, (890,50))
+        # Store info Panels
+        self.screen.blit(pygame.image.load("SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png"), (148,6))
+        self.screen.blit(pygame.image.load("SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png"), (398,6))
+        self.screen.blit(pygame.image.load("SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png"), (648,6))
+        self.screen.blit(pygame.image.load("SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png"), (898,6))
 
         ### All game status updates ###
         self.debugStatus()
@@ -436,32 +443,93 @@ class Game:
     ### Information associated with each store ###
     def storeStatus(self):
         for s in self.Stores:
-            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
-            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
+            scoreTextRect = self.ALERT_FONT.get_rect(s.scoreText)
+            scoreTextRect.center = (s.position.x+15, s.position.y-262)
+
+            self.ALERT_FONT.render_to(self.screen, (scoreTextRect.left-1, scoreTextRect.top-1), s.scoreText, (255,255,255))
+            self.ALERT_FONT.render_to(self.screen, (scoreTextRect.left, scoreTextRect.top), s.scoreText, s.scoreTextColor)
 
             if s.status == -1:
                 s.color = (255,0,0)
             else:
                 
+                iconSize = 30
+                iconOffset = 0
+                
+                # Risk
+                scaledBadgeSprite = pygame.transform.scale(self.badgeSprite, (iconSize, iconSize))
+                center_x, center_y = s.position.x+15, s.position.y-280 
+                total_width = ((iconSize+iconOffset) * (s.risk)) - iconOffset 
+                start_x = center_x - total_width // 2
                 offset = 0
                 for x in range(s.risk):
-                    self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
-                    offset = offset+20
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
+                    self.screen.blit(scaledBadgeSprite, (start_x+offset, center_y-(iconSize//2)))
+                    offset += iconSize+iconOffset
 
+                # Reward
+                scaledMoneySprite = pygame.transform.scale(self.moneySprite, (iconSize, iconSize))
+                center_x, center_y = s.position.x+15, s.position.y-245 
+                total_width = ((iconSize+iconOffset) * (s.reward)) - iconOffset 
+                start_x = center_x - total_width // 2
                 offset = 0
                 for x in range(s.reward):
-                    self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
-                    offset = offset+20
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
+                    self.screen.blit(scaledMoneySprite, (start_x+offset, center_y-(iconSize//2)))
+                    offset += iconSize+iconOffset
                 
-                offset = 0
-                for p in s.players:
-                    if p.status == 1:
-                        s.scoreText = ""
-                        self.GAME_FONT.render_to(self.screen, (s.position.x-101+offset, s.position.y-301), "P"+str(p.playerNum), (255,255,255))
-                        self.GAME_FONT.render_to(self.screen, (s.position.x-100+offset, s.position.y-300), "P"+str(p.playerNum), p.color)
-                        offset = offset + 40
+                # Display players in the store
+                # Lots of math because font size, text, and padding are all adjustable
+                padding = 6
+                back_color = (255, 255, 255)
+                inactive_color = (65, 65, 65)
+                showInactive = False
+                # PLAYER 1
+                if hasattr(self, 'p1') and self.p1 in self.Players:
+                    p_text = "P1"
+                    p_text_rect = self.SIPANEL_FONT.get_rect(p_text)
+                    p_text_rect.topleft = (s.position.x-99, s.position.y-300)
+
+                    if self.p1 in s.players and self.p1.status == 1:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top+padding), p_text, self.p1.color)
+                    elif showInactive:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top+padding), p_text, inactive_color)
+                # PLAYER 2
+                if hasattr(self, 'p2') and self.p2 in self.Players:
+                    p_text = "P2"
+                    p_text_rect = self.SIPANEL_FONT.get_rect(p_text)
+                    p_text_rect.topright = (s.position.x+128, s.position.y-300)
+
+                    if self.p2 in s.players and self.p2.status == 1:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top+padding), p_text, self.p2.color)
+                    elif showInactive:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top+padding), p_text, inactive_color)
+                # PLAYER 3
+                if hasattr(self, 'p3') and self.p3 in self.Players:
+                    p_text = "P3"
+                    p_text_rect = self.SIPANEL_FONT.get_rect(p_text)
+                    p_text_rect.bottomleft = (s.position.x-99, s.position.y-225)
+
+                    if self.p3 in s.players and self.p3.status == 1:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top-padding), p_text, self.p3.color)
+                    elif showInactive:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top-padding), p_text, inactive_color)
+                # PLAYER 4
+                if hasattr(self, 'p4') and self.p4 in self.Players:
+                    p_text = "P4"
+                    p_text_rect = self.SIPANEL_FONT.get_rect(p_text)
+                    p_text_rect.bottomright = (s.position.x+128, s.position.y-225)
+
+                    if self.p4 in s.players and self.p4.status == 1:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top-padding), p_text, self.p4.color)
+                    elif showInactive:
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.SIPANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top-padding), p_text, inactive_color)
 
     ### Information associated with each player ###
     def playerStatus(self):
@@ -1027,7 +1095,7 @@ class Game:
         #print("Police Roll")
         self.resetTempScores()
         store.scoreText = "POLICE"
-        store.scoreTextColor = (255,0,0)
+        store.scoreTextColor = (0,0,255)
         store.status = -1
         self.police = True
         for p in self.Players:
