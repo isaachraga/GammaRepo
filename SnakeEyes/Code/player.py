@@ -8,7 +8,7 @@ class Player:
         self.playerNum = 0
         self.controller = None
         self.color = (255, 0, 0)
-        self.position = pygame.Vector2(0, 0)
+        self.position = pygame.Vector2(640, 360)
         self.collider = pygame.Rect(0,0,100,100)
         self.collider.center = self.position
         self.XCol = pygame.Rect(0,0,10,10)
