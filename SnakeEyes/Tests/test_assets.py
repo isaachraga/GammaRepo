@@ -46,6 +46,7 @@ def test_character_profile_assets():
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/Jeff Profile.png")
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/mj-profile.png")
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/mj-profileAlt.png")
+    assert os.path.exists("SnakeEyes/Assets/Characters/Profile/jeff teach.png")
 
 def test_environment_background_assets():
     logging.info("Testing Environment Background Assets")
@@ -68,6 +69,16 @@ def test_icon_assets():
     assert os.path.exists("SnakeEyes/Assets/Icons/cash.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/Title animated.png")
 
+def test_icon_assets():
+    logging.info("Testing Tutorial Assets")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 1.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 3.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 4.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 5.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 6.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 7.png")
+
+    
 def test_GUI_theme():
     logging.info("Testing GUI Theme")
     assert os.path.exists("SnakeEyes/Assets/theme.json")
