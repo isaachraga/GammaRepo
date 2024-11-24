@@ -7,13 +7,13 @@ class Preferences:
 
     #Player types: Player, CPU, or None
     RED_PLAYER_TYPE = "Player"
-    BLUE_PLAYER_TYPE = "Player"
+    BLUE_PLAYER_TYPE = "CPU"
     YELLOW_PLAYER_TYPE = "None"
     GREEN_PLAYER_TYPE = "None"
 
     #Player control schemes
     RED_CONTROLS = "WASD"
-    BLUE_CONTROLS = "TFGH"
+    BLUE_CONTROLS = "None"
     YELLOW_CONTROLS = "None"
     GREEN_CONTROLS = "None"
 

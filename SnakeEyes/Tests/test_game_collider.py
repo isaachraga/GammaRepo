@@ -30,6 +30,8 @@ def setup_game(setup_scene_manager):
     pygame.init()
     game = Game(setup_scene_manager) #Instantiate Game
     #Set to current scene
+    Preferences.BLUE_PLAYER_TYPE = "Player"
+    Preferences.BLUE_CONTROLS = "TFGH"
     game.initialization()
     game.delayedInit()
     game.scene_manager.switch_scene('game')
