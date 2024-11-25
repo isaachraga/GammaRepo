@@ -46,11 +46,13 @@ def test_character_profile_assets():
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/Jeff Profile.png")
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/mj-profile.png")
     assert os.path.exists("SnakeEyes/Assets/Characters/Profile/mj-profileAlt.png")
+    assert os.path.exists("SnakeEyes/Assets/Characters/Profile/jeff teach.png")
 
 def test_environment_background_assets():
     logging.info("Testing Environment Background Assets")
     assert os.path.exists("SnakeEyes/Assets/Environment/Background/Background.png")
     assert os.path.exists("SnakeEyes/Assets/Environment/Background/MainMenuBackground.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png")
 
 def test_environment_object_assets():
     logging.info("Testing Environment Object Assets")
@@ -59,6 +61,10 @@ def test_environment_object_assets():
     assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP2.png")
     assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP3.png")
     assert os.path.exists("SnakeEyes/Assets/Environment/Objects/carP4.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/ABC_Liquor.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/Perris_Jewels.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/RX-Express.png")
+    assert os.path.exists("SnakeEyes/Assets/Environment/Objects/Slow_Panda.png")
 
 def test_icon_assets():
     logging.info("Testing Icon Assets")
@@ -67,23 +73,21 @@ def test_icon_assets():
     assert os.path.exists("SnakeEyes/Assets/Icons/WadofCash.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/cash.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/Title animated.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/hotDiceModifier.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/luckyStreakModifier.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/shield modifier.png")
+    assert os.path.exists("SnakeEyes/Assets/Icons/boost modifier.png")
 
+def test_icon_assets():
+    logging.info("Testing Tutorial Assets")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 1.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 3.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 4.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 5.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 6.png")
+    assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 7.png")
+
+    
 def test_GUI_theme():
     logging.info("Testing GUI Theme")
     assert os.path.exists("SnakeEyes/Assets/theme.json")
-
-def test_hot_dice():
-    logging.info("Tesing hot dice icon")
-    assert os.path.exists("SnakeEyes/Assets/Icons/hotDiceModifier.png")
-
-def test_lucky_streak():
-    logging.info("Tesing lucky streak icon")
-    assert os.path.exists("SnakeEyes/Assets/Icons/luckyStreakModifier.png")
-
-def shield_modifier():
-    logging.info("Testing shield modifier icon")
-    assert os.path.exists("SnakeEyes/Assets/Icons/shield modifier.png")
-
-def shield_modifier():
-    logging.info("Testing boost modifier icon")
-    assert os.path.exists("SnakeEyes/Assets/Icons/boost modifier.png")
