@@ -3,7 +3,8 @@ import pygame_gui
 from SnakeEyes.Code.settings import Settings
 
 class Pause:
-    def __init__(self, scene_manager, game):
+    def __init__(self, scene_manager, game, Mult):
+        self.Mult = Mult
         self.scene_manager = scene_manager
         self.game = game
         self.screen = self.scene_manager.screen

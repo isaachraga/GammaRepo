@@ -35,4 +35,9 @@ class Player:
         ##self.cashOut = pygame.K_2
         #store status locations for programatic access
 
+        self.mMoveX = 0
+        self.mMoveY = 0
+        self.mReadyKey = False
+        self.mPauseKey = False
+
         self.CPU = CPU.CPU()

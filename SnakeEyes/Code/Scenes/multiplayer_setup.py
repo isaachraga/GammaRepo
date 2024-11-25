@@ -96,10 +96,10 @@ class MultiplayerSetup:
             # formation 
                 elif self.active1 and len(self.GC1) < 1:
                     self.GC1 += event.unicode
-                    print(str(len(self.GC1))+self.GC1)
+                    #print(str(len(self.GC1))+self.GC1)
                 elif self.active2 and len(self.GC2) < 5:
                     self.GC2 += event.unicode
-                    print(str(len(self.GC2))+self.GC2)
+                    #print(str(len(self.GC2))+self.GC2)
 
                      
                 # Scene Selection
@@ -119,14 +119,14 @@ class MultiplayerSetup:
                     #Play Game Button
                     if event.ui_element == self.create_button:
                         self.scene_manager.multiplayer_init(True)
-                        self.scene_manager.scenes["msetup"].ServerSetup()
-                        self.scene_manager.switch_scene('msetup')
+                        self.scene_manager.scenes["msetup2"].ServerSetup()
+                        self.scene_manager.switch_scene('msetup2')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     #Tutorial Button
                     if event.ui_element == self.join_button and (len(self.GC1) == 1 and len(self.GC2) == 5):
                         self.scene_manager.multiplayer_init(False)
-                        self.scene_manager.scenes["msetup"].ClientSetup(self.GC1, self.GC2)
-                        self.scene_manager.switch_scene('msetup')
+                        self.scene_manager.scenes["msetup2"].ClientSetup(self.GC1, self.GC2)
+                        self.scene_manager.switch_scene('msetup2')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     #Quit Button
                     if event.ui_element == self.quit_button:

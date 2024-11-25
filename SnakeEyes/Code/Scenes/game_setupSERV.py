@@ -1,21 +1,17 @@
 from pyngrok import ngrok
 import socket
 import threading
+import sys
 import pygame
 import pygame.freetype
 import pygame_gui
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+import pickle
 
 
 '''
-on selecting multiplayer
-choose join or host
-on join
-    input tcp address and port
-on host
-    setup server
-    start game setup, display
+take away control to change player type if already occupied
 '''
 
 
@@ -29,6 +25,11 @@ on host
 class GameSetupSERV:
     ##### Initial Setup #####
     def __init__(self, scene_manager, game):
+        self.running = True
+        self.GC1 = '0'
+        self.GC2 = '0'
+        self.thread = True
+        self.Clients = []
         self.counter = 0
         self.serverActive = False
         self.game = game
@@ -45,9 +46,37 @@ class GameSetupSERV:
     def handle_client(self, client, addr, player):
         client.send(("Hello  Player "+str(player)).encode())
         print(client.recv(1024).decode())
+        while client in self.Clients:
+            try:
+                receive = pickle.loads(client.recv(1024))
+                #print("Received: "+receive)
+                game_state = {
+                    'pNum': player,
+                    'FinishlineScore': Preferences.FINISHLINE_SCORE,
+                    'ModState': Preferences.MODS_PREFERENCE,
+                    'BluePT': Preferences.BLUE_PLAYER_TYPE,
+                    'YellowPT': Preferences.YELLOW_PLAYER_TYPE,
+                    'GreenPT': Preferences.GREEN_PLAYER_TYPE
+
+                }
+                #print("Sending...")
+                client.send(pickle.dumps(game_state))
+            except EOFError:
+                print("End of Connection")
+                self.thread = False
+                client.close()
+                self.Clients.remove(client)
+            #client.send(pickle.dumps(game_state))
         #client.close()
+        sys.exit()
     
     def ServerSetup(self):
+        
+        threading.Thread(target=self.ServerListen, args=()).start()
+            
+        
+    
+    def ServerListen(self): 
         print("Server Starting...")
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind(("localhost", 8000))
@@ -56,30 +85,44 @@ class GameSetupSERV:
 
         print("Server started. Waiting for connections...")
         ssh_tunnel = ngrok.connect("8000", "tcp")
+        #ssh_tunnel = ngrok.connect("8000")
         
         print(f"Ingress established at: {ssh_tunnel}")
         mod = str(ssh_tunnel)[:40]
         self.GC1 = str(ssh_tunnel)[20]
         self.GC2 = str(mod[len(mod)-5:])
         print(str(ssh_tunnel)[20]+" - "+mod[len(mod)-5:])
-        self.player = 2
-        self.serverActive = True
-            
-        
-    
-    def ServerListen(self): 
-        self.counter += 1
-
-        if self.player <= 4 and self.counter > 200:
-            self.counter = 0
-            print("Trying connection....")
-            self.s.settimeout(2.0)
+        while self.running:
             try:
+                self.s.settimeout(5)
+                self.player = 1
+                self.serverActive = True
+                print("Trying connection...."+str(len(self.Clients)))
+
                 client, addr = self.s.accept()
-                threading.Thread(target=self.handle_client, args=(client, addr, self.player)).start()
+                self.Clients.append(client)
                 self.player += 1
-            except socket.timeout:
-                print("Connection attempt timed out.")
+                self.autoPlayer()
+                threading.Thread(target=self.handle_client, args=(client, addr, self.player)).start()
+            except TimeoutError:
+                print("Connection Timed Out")
+            
+
+        self.s.close()
+        sys.exit()
+            
+            
+    
+    def autoPlayer(self):
+        if self.player == 2:
+            Preferences.BLUE_PLAYER_TYPE = 'Player'
+            self.blue_player_label.set_text(Preferences.BLUE_PLAYER_TYPE)  
+        if self.player == 3:
+            Preferences.YELLOW_PLAYER_TYPE = 'Player'  
+            self.yellow_player_label.set_text(Preferences.YELLOW_PLAYER_TYPE)    
+        if self.player == 4:
+            Preferences.RED_PLAYER_TYPE = 'Player'
+            self.green_player_label.set_text(Preferences.GREEN_PLAYER_TYPE)   
         
     def makeGUI(self):
         option_select_width = 38
@@ -442,8 +485,8 @@ class GameSetupSERV:
     ##### Run #####
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
-        if self.serverActive:
-            self.ServerListen()
+        #if self.serverActive:
+            #self.ServerListen()
         self.update()
         self.render()
 
@@ -468,6 +511,12 @@ class GameSetupSERV:
             ]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.running = False
+                for c in self.Clients:
+                    c.shutdown(socket.SHUT_RDWR)
+                    c.close()
+                    self.Clients.remove(c)
+                    print("closed client")
                 self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
@@ -486,7 +535,7 @@ class GameSetupSERV:
                     if event.ui_element == self.start_button:
                         self.game.initialization()
                         self.game.delayedInit()
-                        self.scene_manager.switch_scene('game')
+                        self.scene_manager.switch_scene('mgame')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     # Player Type Select

@@ -11,11 +11,21 @@ from SnakeEyes.Code import controller
 from SnakeEyes.Code import player
 from SnakeEyes.Code import car
 from SnakeEyes.Code import store
-from SnakeEyes.Code import AtlasClient
-from bson.objectid import ObjectId
 
 
 ### TO DO ###
+
+
+### BUGS ###
+# need to swap out space trigger for dice rolling, needs to work with controller and changed in test sim key
+# store collision needs fixed
+# dont set off police on first alarm
+# last round hanling with police call/all alarms going straight to win screen
+
+
+### FEATURE CHANGES ###
+# attach vault score to vehicle
+
 
 ########## GAME ##########
 class GameHOST:
@@ -25,10 +35,7 @@ class GameHOST:
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.clock = pygame.time.Clock()
-        self.pNum = 1
         self.initialization()
-
-    
 
 
     def initialization(self):
@@ -62,7 +69,6 @@ class GameHOST:
         self.storeReset()
 
         self.initializePlayerSprites()
-        
 
     ### Character Sprites ###
     # Helper function to cut up sprite sheets
@@ -149,7 +155,6 @@ class GameHOST:
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
-        print("HOST")
         self.winScore = Preferences.FINISHLINE_SCORE
         self.playerReset()
         self.playerLocReset()
@@ -361,13 +366,44 @@ class GameHOST:
         self.update() 
         self.render()
 
-    
-
     ##### Update Game #####
     def update(self):
         self.inputManager()
         self.readyCheck()
         self.colliderUpdate()
+
+    def getData(self, pNum, game_state):
+        if pNum == 2:
+            self.Players[1].mMoveX = game_state['moveX']
+            self.Players[1].mMoveY = game_state['moveY']
+            self.Players[1].mReadyKey = game_state['readyKey']
+            self.Players[1].mPauseKey = game_state['pauseKey']
+        elif pNum == 3:
+            self.Players[2].mMoveX = game_state['moveX']
+            self.Players[2].mMoveY = game_state['moveY']
+            self.Players[2].mReadyKey = game_state['readyKey']
+            self.Players[2].mPauseKey = game_state['pauseKey']
+        elif pNum == 4:
+            self.Players[3].mMoveX = game_state['moveX']
+            self.Players[3].mMoveY = game_state['moveY']
+            self.Players[3].mReadyKey = game_state['readyKey']
+            self.Players[3].mPauseKey = game_state['pauseKey']
+        
+    def sendData(self):
+        for p in self.Players:
+            game_state = {
+                'player': p,
+                'Players': self.Players,
+                'lastRound': self.lastRound,
+                'result': self.result,
+                'police': self.police,
+                'ready': self.ready,
+                'alarmedStores': self.alarmedStores,
+                'allAlarms': self.allAlarms,
+                'Stores': self.Stores,
+                'Cars': self.Cars,
+                'scene': self.scene_manager.get_scene()
+            }
 
     ##### Render Game #####
     def render(self):
@@ -539,6 +575,7 @@ class GameHOST:
                     else:
                         c.ready = False
 
+    # temp X & Y are where the player is intending on going, loc x & Y are where the player actually is
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         valid = False
         # exterior boarder
@@ -611,7 +648,7 @@ class GameHOST:
                 if p.controller.controller_type == "keyboard" or p.controller.controller_type == "joystick":
                     #Handles Players
                     if p.status != -1:
-                        if self.scene_manager.current_scene == "game":
+                        if self.scene_manager.current_scene == "mgame":
                             # Update player status if moving
                             
                             if p.controller.get_movement() != (0, 0) and p.status == 1:
@@ -679,7 +716,7 @@ class GameHOST:
             if event.type == pygame.KEYDOWN:
 
                 #### Used for Keyboard Emulation Testing // Player controls pt. 2 ####
-                if self.testing and self.scene_manager.current_scene == "game":
+                if self.testing and self.scene_manager.current_scene == "mgame":
 
                     if not self.police:
                         for p in self.Players:
@@ -748,7 +785,7 @@ class GameHOST:
 
                 if event.key == pygame.K_ESCAPE:
                     if not self.testing:
-                        self.scene_manager.switch_scene("pause")
+                        self.scene_manager.switch_scene("mpause")
 
             ### joystick events ###
             elif event.type == pygame.JOYBUTTONDOWN:
@@ -772,7 +809,7 @@ class GameHOST:
     def CPUDumbManager(self, p, dt):
         if p.controller.controller_type == "None":
             if p.status != -1:
-                if self.scene_manager.current_scene == "game":
+                if self.scene_manager.current_scene == "mgame":
                     # Update player status if moving
                     if p.CPU.moveToLocation == (0,0):
                         p.CPU.moveToLocation = self.CPUSelectLocation(p)
@@ -796,7 +833,7 @@ class GameHOST:
             for c in self.Cars:
                 ##### if at car cash out
                 if c.playerNum == CPU.playerNum:
-                    print(c.position)
+                    #print(c.position)
                     return c.position
 
     # def CPUDecisionProcess(self, CPU, Store):
@@ -1172,7 +1209,7 @@ class GameHOST:
                     self.HighScore = p.score
 
             self.result = "GAME OVER: Player " + str(self.TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
-            self.scene_manager.switch_scene('win')
+            self.scene_manager.switch_scene('mwin')
 
     ### Executres end of round functions ###
     def resetRound(self):
@@ -1191,7 +1228,7 @@ class GameHOST:
         self.CarReset()
         self.resetCPU()
         self.roundSkipped = False
-        self.scene_manager.switch_scene('status')
+        self.scene_manager.switch_scene('mstatus')
         # print("Scene2")
 
     ### Executes game reset funcitons ###   

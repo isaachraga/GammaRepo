@@ -5,7 +5,8 @@ from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 
 class GameStatus:
-    def __init__(self, scene_manager, game):
+    def __init__(self, scene_manager, game, Mult):
+        self.Mult = Mult
         self.scene_manager = scene_manager
         self.game = game
         self.screen = self.scene_manager.screen
@@ -59,7 +60,10 @@ class GameStatus:
                 if event.key == pygame.K_SPACE:
                     self.next_scene()
                 if event.key == pygame.K_ESCAPE:
-                    self.scene_manager.switch_scene('pause')
+                    if self.Mult:
+                        self.scene_manager.switch_scene('mpause')
+                    else:
+                        self.scene_manager.switch_scene('pause')
             
             if event.type == pygame.USEREVENT:
                 #Check if a button was clicked
@@ -71,10 +75,16 @@ class GameStatus:
 
     def next_scene(self):
         if Preferences.MODS_PREFERENCE == "Enabled":
-            self.scene_manager.switch_scene('mods')
+            if self.Mult:
+                self.scene_manager.switch_scene('mmods')
+            else:
+                self.scene_manager.switch_scene('mods')
         else:
             self.game.statusFlag = False
-            self.scene_manager.switch_scene('game')
+            if self.Mult:
+                self.scene_manager.switch_scene('mgame')
+            else:
+                self.scene_manager.switch_scene('game')
 
     def render(self):
         self.screen.fill(Settings.COLOR_BACKGROUND)

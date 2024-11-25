@@ -542,6 +542,7 @@ class Game:
                     else:
                         c.ready = False
 
+    # temp X & Y are where the player is intending on going, loc x & Y are where the player actually is
     def boundaryCollision(self, player, tempX, tempY, locX, locY):
         valid = False
         # exterior boarder

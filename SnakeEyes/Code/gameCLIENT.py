@@ -1,17 +1,24 @@
 import pygame
 import pygame.locals
 import pygame.freetype  # Import the freetype module.
-import random
-import math
 from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
-from SnakeEyes.Code.preferences import Preferences
-from SnakeEyes.Code import modifier
-from SnakeEyes.Code import controller
-from SnakeEyes.Code import player
-from SnakeEyes.Code import car
-from SnakeEyes.Code import store
-from bson.objectid import ObjectId
+
+
+
+'''
+End prev connection
+pass information to next location
+start new connection
+
+
+1. Register Inputs
+2. Send Inputs
+3. Receive Data
+4. Render Frame
+
+scene check, store current scene, if scene not equal, change scene
+'''
 
 
 ### TO DO ###
@@ -23,12 +30,13 @@ class GameCLIENT:
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
-        self.clock = pygame.time.Clock()
+        #self.clock = pygame.time.Clock()
         self.initialization()
 
 
     def initialization(self):
         ### Flags and General Game Vars ###
+        '''
         self.dt = 0
         self.result = "init"
         self.winScore = Preferences.FINISHLINE_SCORE
@@ -49,31 +57,16 @@ class GameCLIENT:
         self.moveSpeed = 300
         self.roundSkipped = False
         self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
-
+        '''
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
         self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
+        '''
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
-
-        self.initializePlayerSprites()
-
-    def getDB(self):
-        games = self.atlas_client.find (collection_name=Settings.COLLECTION_NAME, filter={"_id": ObjectId(self.DBID)})
-        if games:
-            for idx, games in enumerate (games):
-                print(f'{idx+1}\nid: {games["_id"]}\ntitle: {games["Name"]},\nyear: {games["X"]}\nplot: {games["Y"]}\n')
-        else:
-            print("Error")
-
+        '''
         
-
-    def setDB(self):
-        myquery = { "_id": ObjectId(self.DBID)}
-        newvalues = { "$set": { "X": self.p1.position.x, "Y": self.p1.position.y} }
-
-        self.atlas_client.update_one(myquery, newvalues)
 
     ### Character Sprites ###
     # Helper function to cut up sprite sheets
@@ -160,14 +153,19 @@ class GameCLIENT:
 
     ### Initializes the game after updated the preferences ###
     def delayedInit(self):
+        self.scene = 'mgame'
+        self.initializePlayerSprites()
+        '''
         self.winScore = Preferences.FINISHLINE_SCORE
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
         self.CarReset()
+        '''
 
     ### Resets all stores to starting state ###
-    def storeReset(self):
+    #def storeReset(self):
+    '''
         self.store1 = store.Store()
         self.store1.storeNum = 1
         self.store1.position = pygame.Vector2(250, 310)
@@ -192,9 +190,10 @@ class GameCLIENT:
 
         for s in self.Stores:
             s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
-
+'''
     ### Resets all Players to starting state ###
-    def playerReset(self):
+    #def playerReset(self):
+    '''
         self.Players = []
         self.joystick_id = 0
         if Preferences.RED_PLAYER_TYPE == "Player" or Preferences.RED_PLAYER_TYPE == "CPU":
@@ -242,9 +241,10 @@ class GameCLIENT:
             self.Players.append(self.p4)
 
         self.numPlayers = len(self.Players)
-
+'''
     ### Resets all Cars to starting state ###
-    def CarReset(self):
+    #def CarReset(self):
+    '''
         self.Cars = []
 
         if Preferences.RED_PLAYER_TYPE != "None":
@@ -283,15 +283,17 @@ class GameCLIENT:
         for c in self.Cars:
             c.collider = pygame.Rect(c.position.x-20, c.position.y-20, 100,190)
             c.rb = pygame.Rect(c.position.x, c.position.y, 60,150)
-
+'''
     ### Resets all Player Statuses ###
-    def playerStatusReset(self):
+    #def playerStatusReset(self):
+    '''
         for p in self.Players:
             p.status = 0
             p.scoreText = ""
-
+'''
     ### Resets player location to starting point ###
-    def playerLocReset(self):
+    #def playerLocReset(self):
+    '''
         if Preferences.RED_PLAYER_TYPE != "None":
             self.p1.position = pygame.Vector2(140,470)
         if Preferences.BLUE_PLAYER_TYPE != "None":
@@ -300,9 +302,11 @@ class GameCLIENT:
             self.p3.position = pygame.Vector2(750,470)
         if Preferences.GREEN_PLAYER_TYPE != "None":
             self.p4.position = pygame.Vector2(1040,470)
-
+'''
     ### Handles control assignment from game setup ###
-    def controllerAssignment(self, player, controls):
+    #def controllerAssignment(self, player, controls):
+    '''
+        
         if not pygame.joystick.get_init():
             pygame.joystick.init()
 
@@ -361,7 +365,7 @@ class GameCLIENT:
             player.right = player.controller.right
             player.up = player.controller.up
             player.down = player.controller.down
-
+'''
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainGameLoop.mp3")
@@ -373,9 +377,11 @@ class GameCLIENT:
 
     ##### Update Game #####
     def update(self):
-        self.inputManager()
-        self.readyCheck()
-        self.colliderUpdate()
+        self.inputManagerCLIENT()
+        self.sendData()
+        self.loadData()
+        #self.readyCheck()
+        #self.colliderUpdate()
 
     ##### Render Game #####
     def render(self):
@@ -394,6 +400,23 @@ class GameCLIENT:
         if not self.statusFlag: #Prevents rendering the reset stuff when ending round
             pygame.display.flip()
 
+    def loadData(self, game_state):
+        self.player = game_state['player']
+        self.Players = game_state['Players']
+        self.lastRound = game_state['lastRound']
+        self.result = game_state['result']
+        self.police = game_state['police']
+        self.ready = game_state['ready']
+        self.alarmedStores = game_state['alarmedStores']
+        self.allAlarms = game_state['allAlarms']
+        self.Stores = game_state['Stores']
+        self.Cars = game_state['Cars']
+        
+        if game_state['scene'] != self.scene:
+            self.scene_manager.switch_scene(game_state['scene'])
+            
+
+
     def debugStatus(self):
         ##### DEBUG / STATUS INFO #####
         if self.lastRound:
@@ -401,13 +424,8 @@ class GameCLIENT:
 
     ### On screen text for game status information ###
     def gameStatus(self):
-        if self.police:
-            self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to continue...", (255, 255, 255))
-        else:
-            if self.ready:
-                self.GAME_FONT.render_to(self.screen, (350, 400), "Press SPACE to try your luck...", (255, 255, 255))
-            else:
-                self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
+        if not self.police and not self.ready:
+            self.GAME_FONT.render_to(self.screen, (350, 400), "Waiting for Players to Select a Store", (255, 255, 255))
 
         if self.alarmedStores > 0:
             if not self.police:
@@ -513,13 +531,15 @@ class GameCLIENT:
         character_sprites[character]["last_action"] = action
 
     ### Handles all collider checks ###
-    def colliderUpdate(self):
+    #def colliderUpdate(self):
+    '''
         self.storeColliders()
         self.carColliders()
-
+        '''
     ##### STORE COLLIDERS #####
     ### checks for any players colliding with the store col, adds them to the store if they're not in yet
-    def storeColliders(self):
+    #def storeColliders(self):
+    '''
         for s in self.Stores:
             for p in self.Players:
                 if p.status != -1:
@@ -534,10 +554,11 @@ class GameCLIENT:
                             if p in s.players:
                                 s.players.remove(p)
                                 p.status = 0
-    
+    '''
     ##### CAR COLLIDERS #####
     ### check for specified player's colision, sets option for cash out if collision is true
-    def carColliders(self):
+    #def carColliders(self):
+    '''
         for c in self.Cars:
             for p in self.Players:
                 if c.playerNum == p.playerNum:
@@ -546,8 +567,9 @@ class GameCLIENT:
                         c.ready = True
                     else:
                         c.ready = False
-
-    def boundaryCollision(self, player, tempX, tempY, locX, locY):
+        '''
+    #def boundaryCollision(self, player, tempX, tempY, locX, locY):
+    '''
         valid = False
         # exterior boarder
         if(tempX != 0):
@@ -589,10 +611,11 @@ class GameCLIENT:
         player.YCol.center = player.position
 
         return valid
-
+'''
 
     ### checks ready status for all players
-    def readyCheck(self):
+    #def readyCheck(self):
+    '''
         count = 0
         for p in self.Players:
             if p.status == 0:
@@ -602,15 +625,62 @@ class GameCLIENT:
             self.ready = False
         else:
             self.ready = True
+    '''
+    def sendData(self):
+        game_state = {
+                'moveX': self.move_x,
+                'moveY': self.move_y,
+                'readyKey': self.readyKey,
+                'pauseKey': self.pauseKey
+            }
+        return game_state
+
+    
+
+    ### handles all inputs for the client ###
+    def inputManagerCLIENT(self):
+        #dt = self.clock.tick(60) / 1000
+        self.move_x, self.move_y = self.player.controller.get_movement()
+        for event in pygame.event.get():
+
+            ### Handle application exit ###
+            if event.type == pygame.QUIT:
+                self.scene_manager.quit()
+                self.running = False
+                self.c.close()
+                self.scene_manager.quit()
+
+            ### Handle keyboard events ###
+            if event.type == pygame.KEYDOWN:
+                if event.key == self.player.controller.action_buttons.get('ready'):
+                    self.readyKey = True
+                else:
+                    self.readyKey = False
+
+                if event.key == pygame.K_ESCAPE:
+                    self.pauseKey = True
+                else:
+                    self.pauseKey = False
+            elif event.type == pygame.JOYBUTTONDOWN:
+                joystick_id = event.joy
+                button_id = event.button
+
+
+                if self.player.controller.controller_type == 'joystick':
+                    if self.player.controller.joystick.get_instance_id() == joystick_id:
+                        if button_id == self.player.controller.action_buttons.get('ready'):
+                            self.readyKey = True
+                        else:
+                            self.readyKey = False
 
     ##### Game Functions #####
-
-    ### handles all inputs for the game ###
+    '''
     def inputManager(self):
+        
         if self.statusFlag:
             self.resetRound()
 
-        dt = self.clock.tick(60) / 1000
+        
 
         ##### Player Controls #####
 
@@ -627,7 +697,8 @@ class GameCLIENT:
                             #print("Reset")
                                 p.status = 0
 
-                        move_x, move_y = p.controller.get_movement()
+                        #move_x, move_y = p.controller.get_movement()
+     
                         tempX = move_x * self.moveSpeed
                         tempY = move_y * self.moveSpeed
                             
@@ -774,10 +845,12 @@ class GameCLIENT:
                                 # DEBUG STATEMENT
                                 # print("ready pressed...")
                                 self.handle_ready_action(p)
-
+    '''
+        
     ### CPU SECTION ###
     # if cpu has nowhere to go, find somewhere to go
-    def CPUDumbManager(self, p, dt):
+    #def CPUDumbManager(self, p, dt):
+    '''
         if p.controller.controller_type == "None":
             if p.status != -1:
                 if self.scene_manager.current_scene == "game":
@@ -787,9 +860,10 @@ class GameCLIENT:
                     else:
                         self.CPUMoveToLocation(p, dt)
                         #move to location
-
+'''
     ### Figures out which location to go to
-    def CPUSelectLocation(self, CPU):
+    #def CPUSelectLocation(self, CPU):
+    '''
         #selecting store
         if self.CPUDecidePlay(CPU) == True:
             activeStores = []
@@ -806,58 +880,22 @@ class GameCLIENT:
                 if c.playerNum == CPU.playerNum:
                     print(c.position)
                     return c.position
+    '''
+    
 
-    # def CPUDecisionProcess(self, CPU, Store):
-    #     if CPU.self.score < CPU.low_threshold: 
-    #         activeStores = []
-    #         for s in self.Stores:
-    #           if s.staus == 0:
-    #               activeStores.append(s)
-    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
-    #          modPos = pygame.Vector2(position.x+30, position.y)
-    #          return modPos
-    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
-    #         for c in self.Cars:
-    #             if c.playerNum == CPU.playerNum:
-    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
-    #                 return position
-                # test
-
-
-                    position = pygame.Vector2(c.position.x + 30, c.position.y)
-                    #print(c.position)
-                    return position
-    #def CPUDecisionProcess(self, CPU, Store):
-    #     if CPU.self.score < CPU.low_threshold: 
-    #         activeStores = []
-    #         for s in self.Stores:
-    #           if s.staus == 0:
-    #               activeStores.append(s)
-    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
-    #          modPos = pygame.Vector2(position.x+30, position.y)
-    #          return modPos
-    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
-    #         for c in self.Cars:
-    #             if c.playerNum == CPU.playerNum:
-    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
-    #                 return position
-                # test
-
-    #def CPUFindThreshold(self, CPU):
-        #find max player amount
-        #pull their score and mod it for threshold amount
-                
+    
 
     ### Decides whether to play of quit
-    def CPUDecidePlay(self, CPU):
+    #def CPUDecidePlay(self, CPU):
+    '''
         if CPU.CPU.turn < 3:
             return True
         else:
             return False
-    
+    '''
     ### CPU Movement ###
-    def CPUMoveToLocation(self, CPU, dt):
-        
+    #def CPUMoveToLocation(self, CPU, dt):
+    '''
         #cpu counter delays the cpu from moving instantly
         if CPU.CPU.counter < 90 and CPU.status == 0:
             #print("Waiting...")
@@ -928,9 +966,10 @@ class GameCLIENT:
                 if abs(CPU.CPU.moveToLocation.x - CPU.position.x) < 100 and abs(CPU.CPU.moveToLocation.y - CPU.position.y) < 100 and CPU.status == 0:
                     if self.handle_ready_action(CPU):
                         CPU.CPU.counter = 0
-    
+        '''
     ### Handles when player or CPU readies ###
-    def handle_ready_action(self, player):
+    #def handle_ready_action(self, player):
+    '''
         for c in self.Cars:
             ##### if at car cash out
             if c.ready and c.playerNum == player.playerNum:
@@ -947,9 +986,10 @@ class GameCLIENT:
                         if player.status != -1:
                             player.status = 1
                             return True
-
+'''
     ### HANDLES THE DICE ROLL - SHOCKER ###
-    def handle_dice_roll(self):
+    #def handle_dice_roll(self):
+    '''
         # DEBUG STATEMENT
         # Clear store text
         for s in self.Stores:
@@ -1005,11 +1045,12 @@ class GameCLIENT:
         # delays police roll from happening until the first alarmed round has finished
         if self.alarmedStores > 0 and not self.roundSkipped:
             self.roundSkipped = True
-
+        '''
     
     ### Executes the police roll ###
-    def policeRoll(self, store):
+    #def policeRoll(self, store):
         #print("Police Roll")
+    '''
         self.resetTempScores()
         store.scoreText = "POLICE"
         store.scoreTextColor = (255,0,0)
@@ -1028,9 +1069,11 @@ class GameCLIENT:
                     p.streak = 0
         if not self.lastRound:
             self.result = "SNAKE EYES"
+            '''
 
     ### Executes the alarm roll ###
-    def alarmedStoreRoll(self, store):
+    #def alarmedStoreRoll(self, store):
+    '''
         store.scoreText = "ALARMED"
         store.scoreTextColor = (255,0,0)
         self.alarmedStores = self.alarmedStores + 1
@@ -1058,9 +1101,10 @@ class GameCLIENT:
                     
 
         store.players.clear()
-    
+        '''
     ### Executes Roll ###
-    def defaultRoll(self, store):
+    #def defaultRoll(self, store):
+    '''
         self.result = "Roll Default"
         for p in store.players:
             if p.status == 1:
@@ -1083,20 +1127,22 @@ class GameCLIENT:
             if p.controller.controller_type != "keyboard" and p.controller.controller_type != "joystick":
                 p.CPU.turn += 1
                 p.CPU.moveToLocation = (0,0)
-
+        '''
     
 
     ### handles rolls, num 1 is the lowest number, num2 is highest number, risk is the level of risk mod applied, reward is the level of reward mod applied
-    def roll(self, num1, num2, riskMod, rewardMod):
+    #def roll(self, num1, num2, riskMod, rewardMod):
+    '''
         self.roll1 = random.randint(num1, num2-(riskMod-1))
         self.roll2 = random.randint(num1, num2-(riskMod-1))
         if self.roll1 == self.roll2:
             return -1
         else: 
             return int((self.roll1+self.roll2)*self.rewardScale(rewardMod)*2000)
-
+        '''
     ### handles the reward scaling
-    def rewardScale(self, rewardMod):
+    #def rewardScale(self, rewardMod):
+    '''
         match rewardMod:
             case 1:
                 return 0.5
@@ -1108,9 +1154,11 @@ class GameCLIENT:
                 return 3.0
             case 5:
                 return 5.0
+        '''
 
     ### Assigns store stats ###
-    def assignStoreStats(self, store):
+    #def assignStoreStats(self, store):
+    '''
         store.status = 0
 
         store.risk = random.randint(1,5)
@@ -1120,9 +1168,11 @@ class GameCLIENT:
             store.reward = 1
         elif store.reward > 5:
             store.reward = 5
+        '''
 
     ### looks through players to see if the round is over and how to handle it ###
-    def roundCheck(self):
+    #def roundCheck(self):
+    '''
         self.lastRoundCheck()
 
         count = 0
@@ -1144,21 +1194,26 @@ class GameCLIENT:
                 count = 0
                 self.gameOver()
             self.statusFlag = True
+        '''
 
-    def resetTempScores(self):
+    #def resetTempScores(self):
+    '''
         for p in self.Players:
             p.tmpScore = 0
+        '''
 
     ### Resets all of the cpu variables ###
-    def resetCPU(self):
+    #def resetCPU(self):
+    '''
         for p in self.Players:
             if p.controller.controller_type != "keyboard" and p.controller.controller_type != "joystick":
                 p.CPU.turn = 0
                 p.CPU.moveToLocation = (0,0)
                 ###reset threshold
-
+        '''
     ### get's num of active players
-    def lastRoundCheck(self):
+    #def lastRoundCheck(self):
+    '''
         if not self.lastRound:
             for p in self.Players:
                 if p.score >= self.winScore:
@@ -1167,9 +1222,10 @@ class GameCLIENT:
                         self.result = "LAST ROUND"
                     else:
                         self.gameOver()
-
+        '''
     ### Executes the end of game functions ###
-    def gameOver(self):
+    #def gameOver(self):
+    '''
         if not self.gameOverFlag:
             self.gameOverFlag = True
             self.TopPlayer = player.Player()
@@ -1181,9 +1237,10 @@ class GameCLIENT:
 
             self.result = "GAME OVER: Player " + str(self.TopPlayer.playerNum) +" Wins!\nPress Space To Restart"
             self.scene_manager.switch_scene('win')
-
+        '''
     ### Executres end of round functions ###
-    def resetRound(self):
+    #def resetRound(self):
+    '''
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
@@ -1201,9 +1258,11 @@ class GameCLIENT:
         self.roundSkipped = False
         self.scene_manager.switch_scene('status')
         # print("Scene2")
+        '''
 
     ### Executes game reset funcitons ###   
-    def resetGame(self):
+    #def resetGame(self):
+    '''
         self.dt = 0
         self.num1 = 0
         self.num2 = 0
@@ -1220,17 +1279,21 @@ class GameCLIENT:
         self.gameOverFlag = False
         self.statusFlag = True
         self.roundSkipped = False
+        '''
 
-    def getScore(self, playerNum):
+    #def getScore(self, playerNum):
+    '''
             for p in self.Players:
                 if p.playerNum == playerNum:
                     return str(p.score)
+            '''
     
-    def getActivePlayers(self):
+    #def getActivePlayers(self):
+    '''
         count = 0
         for p in self.Players:
             if p.status != -1:
                 count = count +1
         return count
-    
+        '''
     

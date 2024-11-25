@@ -36,10 +36,10 @@ class SceneManager:
         }
         
         self.scenes['setup']  = GameSetup(self,  self.scenes.get('game'))
-        self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
-        self.scenes['mods']   = GameMods(self,   self.scenes.get('game'))
-        self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
-        self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
+        self.scenes['status'] = GameStatus(self, self.scenes.get('game'), False)
+        self.scenes['mods']   = GameMods(self,   self.scenes.get('game'), False)
+        self.scenes['pause']  = Pause(self,      self.scenes.get('game'), False)
+        self.scenes['win']    = GameWin(self,    self.scenes.get('game'), False)
         #Scenes that are "nested" in other scenes. Can be nested repeatedly
         #Have the ability to go back to previous scene with switch_scene('back')
         self.nested_scenes = ['tutorial', 'options', 'scene', 'pause', 'credits']
@@ -61,23 +61,23 @@ class SceneManager:
     def multiplayer_init(self, host):
         if host:
             self.scenes['mgame']  = GameHOST(self)
-            self.scenes['msetup']  = GameSetupSERV(self,  self.scenes.get('mgame'))
+            self.scenes['msetup2']  = GameSetupSERV(self,  self.scenes.get('mgame'))
         else:
             self.scenes['mgame']  = GameCLIENT(self)
-            self.scenes['msetup']  = GameSetupCLIENT(self,  self.scenes.get('mgame'))
+            self.scenes['msetup2']  = GameSetupCLIENT(self,  self.scenes.get('mgame'))
         
-        self.scenes['mstatus'] = GameStatus(self, self.scenes.get('mgame'))
-        self.scenes['mmods']   = GameMods(self,   self.scenes.get('mgame'))
-        self.scenes['mpause']  = Pause(self,      self.scenes.get('mgame'))
-        self.scenes['mwin']    = GameWin(self,    self.scenes.get('mgame'))
+        self.scenes['mstatus'] = GameStatus(self, self.scenes.get('mgame'), True)
+        self.scenes['mmods']   = GameMods(self,   self.scenes.get('mgame'), True)
+        self.scenes['mpause']  = Pause(self,      self.scenes.get('mgame'), True)
+        self.scenes['mwin']    = GameWin(self,    self.scenes.get('mgame'), True)
     
     def multiplayer_destroy(self):
-        self.scenes.remove("mgame")
-        self.scenes.remove("msetup")
-        self.scenes.remove("mstatus")
-        self.scenes.remove("mmods")
-        self.scenes.remove("mpause")
-        self.scenes.remove("mwin")
+        del self.scenes["mgame"]
+        del self.scenes["msetup2"]
+        del self.scenes["mstatus"]
+        del self.scenes["mmods"]
+        del self.scenes["mpause"]
+        del self.scenes["mwin"]
 
 
     ### SCENE MANAGEMENT ###

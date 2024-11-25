@@ -4,16 +4,14 @@ import pygame.freetype
 import pygame_gui
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+import pickle
 
 
 '''
-on selecting multiplayer
-choose join or host
-on join
-    input tcp address and port
-on host
-    setup server
-    start game setup, display
+remove control displays
+
+ERRORS
+
 '''
 
 
@@ -21,6 +19,7 @@ on host
 class GameSetupCLIENT:
     ##### Initial Setup #####
     def __init__(self, scene_manager, game):
+        self.pNum = 2
         self.game = game
         self.scene_manager = scene_manager
         self.screen = self.scene_manager.screen
@@ -29,16 +28,44 @@ class GameSetupCLIENT:
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
 
         self.clock = pygame.time.Clock() #Needed for pygame_gui
+        self.enabled = False
+        
 
         self.makeGUI()
 
     def ClientSetup(self, GC1, GC2):
         print("client")
-        c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        c.connect((GC1+".tcp.ngrok.io",int(GC2)))
+        self.c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print("Trying to connect: "+GC1+".tcp.ngrok.io:"+GC2)
+        self.c.connect((GC1+".tcp.ngrok.io",int(GC2)))
+        print(self.c.recv(1024).decode())
+        self.c.send("Hey Serv".encode())
 
-        print(c.recv(1024).decode())
-        c.send("Hey Serv".encode())
+        self.running = True
+        
+        
+        #self.c.shutdown(socket.SHUT_RDWR)
+        
+        
+        
+
+    def dataImport(self, game_state):
+        self.pNum = game_state['pNum']
+        Preferences.FINISHLINE_SCORE = game_state['FinishlineScore']
+        Preferences.MODS_PREFERENCE = game_state['ModState']
+        Preferences.BLUE_PLAYER_TYPE = game_state['BluePT']
+        Preferences.YELLOW_PLAYER_TYPE = game_state['YellowPT']
+        Preferences.GREEN_PLAYER_TYPE = game_state['GreenPT']
+
+    def enableControls(self):
+        self.enabled = True
+        self.controlSchemeSelect('red', 0)
+        if self.pNum == 2:
+            self.controlSchemeSelect('blue', 2)
+        if self.pNum == 3:
+            self.controlSchemeSelect('yellow', 2)  
+        if self.pNum == 4:
+            self.controlSchemeSelect('green', 2)
 
     def makeGUI(self):
         option_select_width = 38
@@ -93,20 +120,7 @@ class GameSetupCLIENT:
             text=self.player_type_options[self.red_player_index],  # Show current option
             manager=self.ui_manager
         )
-        self.red_player_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((92), (251)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.red_player_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((236), (251)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        
 
         self.red_control_index = self.control_type_options.index(Preferences.RED_CONTROLS)
         self.red_control_label = pygame_gui.elements.UILabel(
@@ -116,20 +130,7 @@ class GameSetupCLIENT:
             text=self.control_type_options[self.red_control_index],  # Show current option
             manager=self.ui_manager
         )
-        self.red_control_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((92), (300)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.red_control_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((236), (300)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        
 
         # Blue Player
         self.blue_panel = pygame_gui.elements.UIPanel(
@@ -159,21 +160,8 @@ class GameSetupCLIENT:
             text=self.player_type_options[self.blue_player_index],  # Show current option
             manager=self.ui_manager
         )
-        self.blue_player_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1012), (251)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.blue_player_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1156), (251)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
 
+        
         self.blue_control_index = self.control_type_options.index(Preferences.BLUE_CONTROLS)
         self.blue_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
@@ -182,20 +170,21 @@ class GameSetupCLIENT:
             text=self.control_type_options[self.blue_control_index],  # Show current option
             manager=self.ui_manager
         )
-        self.blue_control_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1012), (300)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.blue_control_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1156), (300)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        if self.pNum == 2:
+            self.blue_control_left = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((1012), (300)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='<',
+                manager=self.ui_manager
+            )
+            self.blue_control_right = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((1156), (300)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='>',
+                manager=self.ui_manager
+            )
 
         # Yellow Player
         self.yellow_panel = pygame_gui.elements.UIPanel(
@@ -224,20 +213,7 @@ class GameSetupCLIENT:
             text=self.player_type_options[self.yellow_player_index],  # Show current option
             manager=self.ui_manager
         )
-        self.yellow_player_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((92), (611)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.yellow_player_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((236), (611)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        
 
         self.yellow_control_index = self.control_type_options.index(Preferences.YELLOW_CONTROLS)
         self.yellow_control_label = pygame_gui.elements.UILabel(
@@ -247,20 +223,21 @@ class GameSetupCLIENT:
             text=self.control_type_options[self.yellow_control_index],  # Show current option
             manager=self.ui_manager
         )
-        self.yellow_control_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((92), (660)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.yellow_control_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((236), (660)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        if self.pNum == 3:
+            self.yellow_control_left = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((92), (660)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='<',
+                manager=self.ui_manager
+            )
+            self.yellow_control_right = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((236), (660)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='>',
+                manager=self.ui_manager
+            )
 
         # Green Player
         self.green_panel = pygame_gui.elements.UIPanel(
@@ -289,21 +266,8 @@ class GameSetupCLIENT:
             text=self.player_type_options[self.green_player_index],  # Show current option
             manager=self.ui_manager
         )
-        self.green_player_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1012), (611)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.green_player_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1156), (611)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
-
+        
+        
         self.green_control_index = self.control_type_options.index(Preferences.GREEN_CONTROLS)
         self.green_control_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
@@ -312,20 +276,21 @@ class GameSetupCLIENT:
             text=self.control_type_options[self.green_control_index],  # Show current option
             manager=self.ui_manager
         )
-        self.green_control_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1012), (660)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.green_control_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((1156), (660)), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
+        if self.pNum == 4:
+            self.green_control_left = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((1012), (660)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='<',
+                manager=self.ui_manager
+            )
+            self.green_control_right = pygame_gui.elements.UIButton(
+                relative_rect=pygame.Rect(
+                    ((1156), (660)), #Position
+                    (option_select_width, option_select_height)),  #Size
+                text='>',
+                manager=self.ui_manager
+            )
 
         ########################
         ##### GAME OPTIONS #####
@@ -334,7 +299,7 @@ class GameSetupCLIENT:
         game_option_y = 304
         game_option_space = 80
 
-        # Finishline Score Select
+        # Finishline
         self.finish_score_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((584), (game_option_y + (game_option_space*0))), #Position
@@ -342,25 +307,10 @@ class GameSetupCLIENT:
             text="$"+str(f'{Preferences.FINISHLINE_SCORE:,}'),  # Show current option
             manager=self.ui_manager
         )
-        self.finish_score_dec = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((522), (game_option_y + (game_option_space*0))), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.finish_score_inc = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((736), (game_option_y + (game_option_space*0))), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
         
-        # Enable/Disable Mods
-        self.mods_options = ["Disabled", "Enabled"]
-        self.mods_option_index = 1
-
+        
+        # Mods
+        
         self.mods_label = pygame_gui.elements.UILabel(
             relative_rect=pygame.Rect(
                 ((584), (game_option_y + (game_option_space*1))), #Position
@@ -368,33 +318,9 @@ class GameSetupCLIENT:
             text=Preferences.MODS_PREFERENCE,  # Show current option
             manager=self.ui_manager
         )
-        self.mods_left = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((522), (game_option_y + (game_option_space*1))), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='<',
-            manager=self.ui_manager
-        )
-        self.mods_right = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                ((736), (game_option_y + (game_option_space*1))), #Position
-                (option_select_width, option_select_height)),  #Size
-            text='>',
-            manager=self.ui_manager
-        )
-
+        
         # Start Button
-        '''
-        start_button_width = 150
-        start_button_height = 60
-        self.start_button = pygame_gui.elements.UIButton(
-            relative_rect=pygame.Rect(
-                (((Settings.WIDTH / 2) - (start_button_width / 2)), (Settings.HEIGHT - start_button_height)), #Position
-                (start_button_width, start_button_height)), #Size
-            text='START',
-            manager=self.ui_manager
-        )
-        '''
+        
 
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
@@ -403,11 +329,55 @@ class GameSetupCLIENT:
     ##### Run #####
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+        self.clientProcess()
         self.update()
         self.render()
 
+    def clientProcess(self):
+        if self.running:
+            try:
+                #print("Running...")
+                self.c.send(pickle.dumps(self.pNum))
+                game_state = pickle.loads(self.c.recv(1024))
+                '''if len(game_state) == 0:
+                    self.running = False
+                    #self.scene_manager.multiplayer_destroy()
+                    self.scene_manager.switch_scene('menu')
+                    self.c.close()
+                    print("Exiting...")
+                    break'''
+
+                #print("Importing...")
+                self.dataImport(game_state)
+                if not self.enabled:
+                    self.enableControls()
+                #print("Updating...")
+                self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+                #self.update()
+                #print("Rendering...")
+                #self.render()
+            except EOFError:
+                print("End of Connection")
+                self.running = False
+                self.scene_manager.switch_scene('menu')
+                self.c.close()
+                self.scene_manager.multiplayer_destroy()
+                print("EoC Exiting...")
+
+    
+    def clientVars(self):
+        self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
+        self.mods_label.set_text(Preferences.MODS_PREFERENCE)
+
+        self.blue_player_label.set_text(Preferences.BLUE_PLAYER_TYPE)
+        self.yellow_player_label.set_text(Preferences.YELLOW_PLAYER_TYPE)
+        self.green_player_label.set_text(Preferences.GREEN_PLAYER_TYPE)
+
     ##### Update #####
     def update(self):
+        self.clientVars()
+        
+                    
         if pygame.joystick.get_count() != 0:
             self.control_type_options = [
                 "WASD",
@@ -427,6 +397,9 @@ class GameSetupCLIENT:
             ]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.running = False
+                self.c.shutdown(socket.SHUT_WR)
+                self.c.close()
                 self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
@@ -435,137 +408,41 @@ class GameSetupCLIENT:
                     self.scene_manager.switch_scene('scene')
                 # Pause Menu
                 if event.key == pygame.K_ESCAPE:
+                    print("Escape")
                     self.scene_manager.switch_scene("pause")
 
             self.ui_manager.process_events(event) #Update pygame_gui
             if event.type == pygame.USEREVENT:
                 # Check if a button was clicked
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    # Start Button
-                    if event.ui_element == self.start_button:
-                        self.game.initialization()
-                        self.game.delayedInit()
-                        self.scene_manager.switch_scene('game')
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-
-                    # Player Type Select
-                    if event.ui_element == self.red_player_left:
-                        self.playerTypeSelect('red', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.red_player_right:
-                        self.playerTypeSelect('red', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.blue_player_left:
-                        self.playerTypeSelect('blue', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.blue_player_right:
-                        self.playerTypeSelect('blue', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.yellow_player_left:
-                        self.playerTypeSelect('yellow', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.yellow_player_right:
-                        self.playerTypeSelect('yellow', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.green_player_left:
-                        self.playerTypeSelect('green', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.green_player_right:
-                        self.playerTypeSelect('green', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-
+                    
                     # Player Control Select
-                    if event.ui_element == self.red_control_left:
-                        self.controlSchemeSelect('red', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.red_control_right:
-                        self.controlSchemeSelect('red', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.blue_control_left:
-                        self.controlSchemeSelect('blue', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.blue_control_right:
-                        self.controlSchemeSelect('blue', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.yellow_control_left:
-                        self.controlSchemeSelect('yellow', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.yellow_control_right:
-                        self.controlSchemeSelect('yellow', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.green_control_left:
-                        self.controlSchemeSelect('green', -1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.green_control_right:
-                        self.controlSchemeSelect('green', 1)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    if self.pNum == 2:
+                        if event.ui_element == self.blue_control_left:
+                            self.controlSchemeSelect('blue', -1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                        if event.ui_element == self.blue_control_right:
+                            self.controlSchemeSelect('blue', 1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    elif self.pNum == 3:
+                        if event.ui_element == self.yellow_control_left:
+                            self.controlSchemeSelect('yellow', -1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                        if event.ui_element == self.yellow_control_right:
+                            self.controlSchemeSelect('yellow', 1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    elif self.pNum == 4:
+                        if event.ui_element == self.green_control_left:
+                            self.controlSchemeSelect('green', -1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                        if event.ui_element == self.green_control_right:
+                            self.controlSchemeSelect('green', 1)
+                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
                     # Finishline Score
-                    self.score_increments = 50000
-                    if event.ui_element == self.finish_score_dec:
-                        if (Preferences.FINISHLINE_SCORE > self.score_increments):
-                            Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE - self.score_increments
-                            self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
-                            self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-                    if event.ui_element == self.finish_score_inc:
-                        Preferences.FINISHLINE_SCORE = Preferences.FINISHLINE_SCORE + self.score_increments
-                        self.finish_score_label.set_text("$"+str(f'{Preferences.FINISHLINE_SCORE:,}'))
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    
 
-                    #Mods Option Select
-                    if event.ui_element == self.mods_left or event.ui_element == self.mods_right:
-                        if event.ui_element == self.mods_left:
-                            self.mods_option_index -= 1
-                        elif event.ui_element == self.mods_right:
-                            self.mods_option_index += 1
-                        self.mods_option_index %= len(self.mods_options)  #Wrap list
-                        Preferences.MODS_PREFERENCE = self.mods_options[self.mods_option_index]
-                        self.mods_label.set_text(Preferences.MODS_PREFERENCE)
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-
-    # Function to handle changing player type
-    def playerTypeSelect(self, color, direction):
-        players = {
-            "red" : {
-                "index" : "red_player_index",
-                "label" : self.red_player_label,
-                "preference" : "RED_PLAYER_TYPE"
-            },
-            "blue" : {
-                "index" : "blue_player_index",
-                "label" : self.blue_player_label,
-                "preference" : "BLUE_PLAYER_TYPE"
-            },
-            "yellow" : {
-                "index" : "yellow_player_index",
-                "label" : self.yellow_player_label,
-                "preference" : "YELLOW_PLAYER_TYPE"
-            },
-            "green" : {
-                "index" : "green_player_index",
-                "label" : self.green_player_label,
-                "preference" : "GREEN_PLAYER_TYPE"
-            }
-        }
-        options = self.player_type_options
-        index_attr = players[color]["index"]
-        label = players[color]["label"]
-        preference_key = players[color]["preference"]
-        # Update Index
-        index = getattr(self, index_attr)  #Get current index
-        new_index = (index + direction) % len(options)
-        setattr(self, index_attr, new_index)  #Update index
-        # Update Label
-        label.set_text(str(options[new_index]))
-        # Update Preferences
-        setattr(Preferences, preference_key, str(options[new_index]))
-
-        # Disable control scheme if not a player
-        if (options[new_index] != "Player"):
-            self.controlSchemeSelect(color, 0)
-        # Enable control scheme if player
-        else:
-            self.controlSchemeSelect(color, 2)
+    
 
     # Function to handle changing player control scheme
     # Direction: -1: left,   1: right
