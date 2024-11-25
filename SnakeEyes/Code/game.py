@@ -810,7 +810,7 @@ class Game:
     #     if CPU.self.score < CPU.low_threshold: 
     #         activeStores = []
     #         for s in self.Stores:
-    #           if s.staus == 0:
+    #           if s.status == 0:
     #               activeStores.append(s)
     #          position = activeStores[random.randint(0, len(activeStores)-1)].position
     #          modPos = pygame.Vector2(position.x+30, position.y)
