@@ -1100,6 +1100,9 @@ class Game:
         store.scoreTextColor = (0,0,255)
         store.status = -1
         self.police = True
+
+        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/policeSiren.mp3")
+
         for p in self.Players:
             
             if p.status != -1:
