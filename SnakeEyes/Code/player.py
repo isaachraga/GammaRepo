@@ -19,6 +19,7 @@ class Player:
         self.currentMods = {}
         self.streak = 0
         self.scoreText = ""
+        self.playerType = ""
         
 
         ##### STATUS #####

@@ -11,7 +11,7 @@ import pickle
 remove control displays
 
 ERRORS
-
+assign controller type
 '''
 
 
@@ -21,6 +21,7 @@ class GameSetupCLIENT:
     def __init__(self, scene_manager, game):
         self.pNum = 2
         self.game = game
+        self.tempScene = 'msetup2'
         self.scene_manager = scene_manager
         self.screen = self.scene_manager.screen
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json")
@@ -56,6 +57,9 @@ class GameSetupCLIENT:
         Preferences.BLUE_PLAYER_TYPE = game_state['BluePT']
         Preferences.YELLOW_PLAYER_TYPE = game_state['YellowPT']
         Preferences.GREEN_PLAYER_TYPE = game_state['GreenPT']
+        if game_state['Scene'] == 'mgame':
+            print("Scene change")
+            self.tempScene = 'mgame'
 
     def enableControls(self):
         self.enabled = True
@@ -337,16 +341,12 @@ class GameSetupCLIENT:
         if self.running:
             try:
                 #print("Running...")
-                self.c.send(pickle.dumps(self.pNum))
+                game_status = {
+                    'pNum': self.pNum,
+                    'Scene': self.tempScene
+                }
+                self.c.send(pickle.dumps(game_status))
                 game_state = pickle.loads(self.c.recv(1024))
-                '''if len(game_state) == 0:
-                    self.running = False
-                    #self.scene_manager.multiplayer_destroy()
-                    self.scene_manager.switch_scene('menu')
-                    self.c.close()
-                    print("Exiting...")
-                    break'''
-
                 #print("Importing...")
                 self.dataImport(game_state)
                 if not self.enabled:
@@ -357,11 +357,16 @@ class GameSetupCLIENT:
                 #print("Rendering...")
                 #self.render()
             except EOFError:
-                print("End of Connection")
+                print("End of ConnectionClient")
+                print(self.tempScene)
                 self.running = False
-                self.scene_manager.switch_scene('menu')
+                if self.tempScene == 'mgame':
+                    self.scene_manager.switch_scene('mgame')
+                else:
+                    self.scene_manager.switch_scene('menu')
+                    self.scene_manager.multiplayer_destroy()
+
                 self.c.close()
-                self.scene_manager.multiplayer_destroy()
                 print("EoC Exiting...")
 
     

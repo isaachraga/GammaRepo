@@ -3,6 +3,11 @@ import pygame.locals
 import pygame.freetype  # Import the freetype module.
 from collections import namedtuple
 from SnakeEyes.Code.settings import Settings
+from SnakeEyes.Code import player
+from SnakeEyes.Code import car
+from SnakeEyes.Code import store
+import socket
+import pickle
 
 
 
@@ -27,6 +32,9 @@ scene check, store current scene, if scene not equal, change scene
 class GameCLIENT:
     ##### Initial Setup #####
     def __init__(self, scene_manager):
+        self.pNum = 2
+        self.c = ''
+        self.assigned = False
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
@@ -58,6 +66,9 @@ class GameCLIENT:
         self.roundSkipped = False
         self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
         '''
+        self.Cars = []
+        self.Players = []
+        self.player = player.Player()
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
         self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
@@ -155,6 +166,7 @@ class GameCLIENT:
     def delayedInit(self):
         self.scene = 'mgame'
         self.initializePlayerSprites()
+
         '''
         self.winScore = Preferences.FINISHLINE_SCORE
         self.playerReset()
@@ -372,6 +384,8 @@ class GameCLIENT:
 
     ##### Run Game Loop #####
     def run(self):
+        if self.assigned:
+            self.clientProcess()
         self.update() 
         self.render()
 
@@ -382,6 +396,33 @@ class GameCLIENT:
         self.loadData()
         #self.readyCheck()
         #self.colliderUpdate()
+
+    def assignTunnel(self, pNum, c):
+        self.pNum = pNum
+        self.c = c
+
+    def clientProcess(self):
+        if self.running:
+            try:
+                #print("Running...")
+                self.c.send(pickle.dumps(self.pNum))
+                game_state = pickle.loads(self.c.recv(1024))
+                #print("Importing...")
+                self.dataImport(game_state)
+                if not self.enabled:
+                    self.enableControls()
+                #print("Updating...")
+                self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+                #self.update()
+                #print("Rendering...")
+                #self.render()
+            except EOFError:
+                print("End of Connection")
+                self.running = False
+                self.scene_manager.switch_scene('menu')
+                self.c.close()
+                self.scene_manager.multiplayer_destroy()
+                print("EoC Exiting...")
 
     ##### Render Game #####
     def render(self):

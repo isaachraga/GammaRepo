@@ -11,6 +11,10 @@ from SnakeEyes.Code import controller
 from SnakeEyes.Code import player
 from SnakeEyes.Code import car
 from SnakeEyes.Code import store
+import threading
+import sys
+import pickle
+import socket
 
 
 ### TO DO ###
@@ -34,6 +38,8 @@ class GameHOST:
         self.scene_manager = scene_manager
         self.screen = scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
+        self.STORE_INFO_PANEL_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", 18)
+        self.ALERT_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", 30)
         self.clock = pygame.time.Clock()
         self.initialization()
 
@@ -57,13 +63,25 @@ class GameHOST:
         self.alarmedStores = 0
         self.testing = False
 
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+
         self.moveSpeed = 300
         self.roundSkipped = False
-        self.storeCollider = pygame.Rect((140, 0, 990, 260)) 
+        self.storeCollider = pygame.Rect((0, 0, 1280, 260)) 
 
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/Background.png')
         self.badgeSprite = pygame.image.load('SnakeEyes/Assets/Icons/badge.png')
         self.moneySprite = pygame.image.load('SnakeEyes/Assets/Icons/cash.png')
+        self.storeInfoPanel = pygame.image.load('SnakeEyes/Assets/Environment/Background/Store_Info_Panel.png')
+        self.storeSprites = [
+            "SnakeEyes/Assets/Environment/Objects/ABC_Liquor.png",
+            "SnakeEyes/Assets/Environment/Objects/Perris_Jewels.png",
+            "SnakeEyes/Assets/Environment/Objects/RX-Express.png",
+            "SnakeEyes/Assets/Environment/Objects/Slow_Panda.png"
+        ]
         self.playerReset()
         self.playerLocReset()
         self.storeReset()
@@ -163,36 +181,44 @@ class GameHOST:
 
     ### Resets all stores to starting state ###
     def storeReset(self):
+
+        # Pick new store sprites
+        selected_sprites = random.sample(self.storeSprites, 4)
+
         self.store1 = store.Store()
         self.store1.storeNum = 1
         self.store1.position = pygame.Vector2(250, 310)
         self.assignStoreStats(self.store1)
+        self.store1.sprite = pygame.image.load(selected_sprites[0])
 
         self.store2 = store.Store()
         self.store2.storeNum = 2
         self.store2.position = pygame.Vector2(500, 310)
         self.assignStoreStats(self.store2)
+        self.store2.sprite = pygame.image.load(selected_sprites[1])
 
         self.store3 = store.Store()
         self.store3.storeNum = 3
         self.store3.position = pygame.Vector2(750, 310)
         self.assignStoreStats(self.store3)
+        self.store3.sprite = pygame.image.load(selected_sprites[2])
 
         self.store4 = store.Store()
         self.store4.storeNum = 4
         self.store4.position = pygame.Vector2(1000, 310)
         self.assignStoreStats(self.store4)
+        self.store4.sprite = pygame.image.load(selected_sprites[3])
 
         self.Stores = [self.store1,self.store2,self.store3, self.store4]
 
         for s in self.Stores:
-            s.collider = pygame.Rect(s.position.x, s.position.y, 20,20)
+            s.collider = pygame.Rect(s.position.x-33, s.position.y, 100,20)
 
     ### Resets all Players to starting state ###
     def playerReset(self):
         self.Players = []
         self.joystick_id = 0
-        if Preferences.RED_PLAYER_TYPE == "Player" or Preferences.RED_PLAYER_TYPE == "CPU":
+        if Preferences.RED_PLAYER_TYPE == "Player" or Preferences.RED_PLAYER_TYPE == "CPU" or Preferences.RED_PLAYER_TYPE == "Player(Online)":
             self.p1 = player.Player()
             self.p1.playerNum = 1
             self.controllerAssignment(self.p1, Preferences.RED_CONTROLS)
@@ -201,9 +227,11 @@ class GameHOST:
             self.p1.gr = pygame.Vector2(25,60)
             self.p1.yl = pygame.Vector2(25,80)
             self.p1.rd = pygame.Vector2(25,100)
+            self.p1.playerType = Preferences.RED_PLAYER_TYPE
             self.Players.append(self.p1)
+            
 
-        if Preferences.BLUE_PLAYER_TYPE == "Player" or Preferences.BLUE_PLAYER_TYPE == "CPU":
+        if Preferences.BLUE_PLAYER_TYPE == "Player" or Preferences.BLUE_PLAYER_TYPE == "CPU" or Preferences.BLUE_PLAYER_TYPE == "Player(Online)":
             self.p2 = player.Player()
             self.p2.playerNum = 2
             self.controllerAssignment(self.p2, Preferences.BLUE_CONTROLS)
@@ -212,9 +240,10 @@ class GameHOST:
             self.p2.gr = pygame.Vector2(1210,60)
             self.p2.yl = pygame.Vector2(1210,80)
             self.p2.rd = pygame.Vector2(1210,100)
+            self.p2.playerType = Preferences.BLUE_PLAYER_TYPE
             self.Players.append(self.p2)
 
-        if Preferences.YELLOW_PLAYER_TYPE == "Player" or Preferences.YELLOW_PLAYER_TYPE == "CPU":
+        if Preferences.YELLOW_PLAYER_TYPE == "Player" or Preferences.YELLOW_PLAYER_TYPE == "CPU" or Preferences.YELLOW_PLAYER_TYPE == "Player(Online)":
             self.p3 = player.Player()
             self.p3.playerNum = 3
             self.controllerAssignment(self.p3, Preferences.YELLOW_CONTROLS)
@@ -223,9 +252,10 @@ class GameHOST:
             self.p3.gr = pygame.Vector2(25,260)
             self.p3.yl = pygame.Vector2(25,280)
             self.p3.rd = pygame.Vector2(25,300)
+            self.p3.playerType = Preferences.YELLOW_PLAYER_TYPE
             self.Players.append(self.p3)
 
-        if Preferences.GREEN_PLAYER_TYPE == "Player" or Preferences.GREEN_PLAYER_TYPE == "CPU" :
+        if Preferences.GREEN_PLAYER_TYPE == "Player" or Preferences.GREEN_PLAYER_TYPE == "CPU" or Preferences.GREEN_PLAYER_TYPE == "Player(Online)":
             self.p4 = player.Player()
             self.p4.playerNum = 4
             self.controllerAssignment(self.p4, Preferences.GREEN_CONTROLS)
@@ -234,6 +264,7 @@ class GameHOST:
             self.p4.gr = pygame.Vector2(1210,260)
             self.p4.yl = pygame.Vector2(1210,280)
             self.p4.rd = pygame.Vector2(1210,300)
+            self.p4.playerType = Preferences.GREEN_PLAYER_TYPE
             self.Players.append(self.p4)
 
         self.numPlayers = len(self.Players)
@@ -371,6 +402,78 @@ class GameHOST:
         self.inputManager()
         self.readyCheck()
         self.colliderUpdate()
+    
+    def assignTunnel(self, SSH, s, clientNum):
+        print("Blue: "+Preferences.BLUE_PLAYER_TYPE)
+        self.SSH = SSH
+        self.s = s
+        clientNum = clientNum
+        self.running = True
+        threading.Thread(target=self.ServerListen, args=()).start()
+        '''for x in range(clientNum):
+            print("Clients: "+str(len(self.Clients)))
+            threading.Thread(target=self.handle_clientHOST, args=(c,)).start()'''
+        
+    def ServerListen(self):
+        
+
+        while self.running:
+            try:
+                self.s.settimeout(5)
+                self.player = 1
+                self.serverActive = True
+                print("Trying connection...."+str(len(self.Clients)))
+
+                client, addr = self.s.accept()
+                self.Clients.append(client)
+                self.player += 1
+                self.autoPlayer()
+                threading.Thread(target=self.handle_clientHOST, args=(client, addr, self.player)).start()
+            except TimeoutError:
+                print("Connection Timed Out")
+            
+        print("server thread closed")
+        sys.exit()
+
+    def test(self):
+        print("Testing")
+        
+    def handle_clientHOST(self, client):
+        client.send(("Player in game").encode())
+        print(client.recv(1024).decode())
+        while client in self.Clients:
+            #print("running game host")
+            try:
+                receive = pickle.loads(client.recv(1024))
+                #print("Received: "+receive)
+                game_state = {
+                    'pNum': player,
+                    'FinishlineScore': Preferences.FINISHLINE_SCORE,
+                    'ModState': Preferences.MODS_PREFERENCE,
+                    'BluePT': Preferences.BLUE_PLAYER_TYPE,
+                    'YellowPT': Preferences.YELLOW_PLAYER_TYPE,
+                    'GreenPT': Preferences.GREEN_PLAYER_TYPE
+
+                }
+                #print("Sending...")
+                client.send(pickle.dumps(game_state))
+            except EOFError:
+                #print("EoF HOST HC")
+                self.thread = False
+                #client.close()
+                #self.Clients.remove(client)
+            #client.send(pickle.dumps(game_state))
+        #client.close()
+        print("client thread closed HOST HC")
+        sys.exit()
+
+    def closeConnections(self):
+        self.running = False
+        for c in self.Clients:
+            c.shutdown(socket.SHUT_RDWR)
+            c.close()
+            self.Clients.remove(c)
+            print("closed connection HOST")
 
     def getData(self, pNum, game_state):
         if pNum == 2:
@@ -411,6 +514,18 @@ class GameHOST:
         self.screen.fill((255,255,255))
         ### Set Background Image ###
         self.screen.blit(self.loadingScreen, (0,0))
+        
+        ### Render the Stores ###
+        self.screen.blit(self.store1.sprite, (140,50))
+        self.screen.blit(self.store2.sprite, (390,50))
+        self.screen.blit(self.store3.sprite, (640,50))
+        self.screen.blit(self.store4.sprite, (890,50))
+        # Store info Panels
+        self.screen.blit(self.storeInfoPanel, (148,6))
+        self.screen.blit(self.storeInfoPanel, (398,6))
+        self.screen.blit(self.storeInfoPanel, (648,6))
+        self.screen.blit(self.storeInfoPanel, (898,6))
+
 
         ### All game status updates ###
         self.debugStatus()
@@ -449,32 +564,93 @@ class GameHOST:
     ### Information associated with each store ###
     def storeStatus(self):
         for s in self.Stores:
-            self.GAME_FONT.render_to(self.screen, (s.position.x-101, s.position.y-296), s.scoreText, (255,255,255))
-            self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-295), s.scoreText, s.scoreTextColor)
+            # Displays ALARMED and POLICE
+            scoreTextRect = self.ALERT_FONT.get_rect(s.scoreText)
+            scoreTextRect.center = (s.position.x+15, s.position.y-262)
+            self.ALERT_FONT.render_to(self.screen, (scoreTextRect.left-1, scoreTextRect.top-1), s.scoreText, (255,255,255))
+            self.ALERT_FONT.render_to(self.screen, (scoreTextRect.left, scoreTextRect.top), s.scoreText, s.scoreTextColor)
 
             if s.status == -1:
                 s.color = (255,0,0)
             else:
                 
+                iconSize = 30
+                iconOffset = 0
+                
+                # Risk
+                scaledBadgeSprite = pygame.transform.scale(self.badgeSprite, (iconSize, iconSize))
+                center_x, center_y = s.position.x+15, s.position.y-280 
+                total_width = ((iconSize+iconOffset) * (s.risk)) - iconOffset 
+                start_x = center_x - total_width // 2
                 offset = 0
                 for x in range(s.risk):
-                    self.screen.blit(self.badgeSprite, (s.position.x+10+offset, s.position.y-280))
-                    offset = offset+20
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-270), "Risk: ", (255, 255, 255))
+                    self.screen.blit(scaledBadgeSprite, (start_x+offset, center_y-(iconSize//2)))
+                    offset += iconSize+iconOffset
 
+                # Reward
+                scaledMoneySprite = pygame.transform.scale(self.moneySprite, (iconSize, iconSize))
+                center_x, center_y = s.position.x+15, s.position.y-245 
+                total_width = ((iconSize+iconOffset) * (s.reward)) - iconOffset 
+                start_x = center_x - total_width // 2
                 offset = 0
                 for x in range(s.reward):
-                    self.screen.blit(self.moneySprite, (s.position.x+10+offset, s.position.y-250))
-                    offset = offset+20
-                self.GAME_FONT.render_to(self.screen, (s.position.x-100, s.position.y-240), "Reward: ", (255, 255, 255))
+                    self.screen.blit(scaledMoneySprite, (start_x+offset, center_y-(iconSize//2)))
+                    offset += iconSize+iconOffset
                 
-                offset = 0
-                for p in s.players:
-                    if p.status == 1:
-                        s.scoreText = ""
-                        self.GAME_FONT.render_to(self.screen, (s.position.x-101+offset, s.position.y-301), "P"+str(p.playerNum), (255,255,255))
-                        self.GAME_FONT.render_to(self.screen, (s.position.x-100+offset, s.position.y-300), "P"+str(p.playerNum), p.color)
-                        offset = offset + 40
+                # Display players in the store
+                # Lots of math because font size, text, and padding are all adjustable
+                padding = 6
+                back_color = (255, 255, 255)
+                inactive_color = (65, 65, 65)
+                showInactive = False # Enabling this shows all player numbers at all times in the inactive_color
+                # PLAYER 1
+                if hasattr(self, 'p1') and self.p1 in self.Players:
+                    p_text = "P1"
+                    p_text_rect = self.STORE_INFO_PANEL_FONT.get_rect(p_text)
+                    p_text_rect.topleft = (s.position.x-99, s.position.y-300)
+
+                    if self.p1 in s.players and self.p1.status == 1:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top+padding), p_text, self.p1.color)
+                    elif showInactive:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top+padding), p_text, inactive_color)
+                # PLAYER 2
+                if hasattr(self, 'p2') and self.p2 in self.Players:
+                    p_text = "P2"
+                    p_text_rect = self.STORE_INFO_PANEL_FONT.get_rect(p_text)
+                    p_text_rect.topright = (s.position.x+128, s.position.y-300)
+
+                    if self.p2 in s.players and self.p2.status == 1:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top+padding), p_text, self.p2.color)
+                    elif showInactive:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top+padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top+padding), p_text, inactive_color)
+                # PLAYER 3
+                if hasattr(self, 'p3') and self.p3 in self.Players:
+                    p_text = "P3"
+                    p_text_rect = self.STORE_INFO_PANEL_FONT.get_rect(p_text)
+                    p_text_rect.bottomleft = (s.position.x-99, s.position.y-225)
+
+                    if self.p3 in s.players and self.p3.status == 1:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top-padding), p_text, self.p3.color)
+                    elif showInactive:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left+padding, p_text_rect.top-padding), p_text, inactive_color)
+                # PLAYER 4
+                if hasattr(self, 'p4') and self.p4 in self.Players:
+                    p_text = "P4"
+                    p_text_rect = self.STORE_INFO_PANEL_FONT.get_rect(p_text)
+                    p_text_rect.bottomright = (s.position.x+128, s.position.y-225)
+
+                    if self.p4 in s.players and self.p4.status == 1:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top-padding), p_text, self.p4.color)
+                    elif showInactive:
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding-1, p_text_rect.top-padding-1), p_text, back_color)
+                        self.STORE_INFO_PANEL_FONT.render_to(self.screen, (p_text_rect.left-padding, p_text_rect.top-padding), p_text, inactive_color)
 
     ### Information associated with each player ###
     def playerStatus(self):
@@ -700,7 +876,7 @@ class GameHOST:
                             p.position.x += tempX * dt
                             p.position.y += tempY * dt
                             p.collider.center = p.position
-                else:
+                elif not p.playerType == "Player(Online)":
                     #print("CPU")
                     #handles CPU
                     self.CPUDumbManager(p, dt)
@@ -709,6 +885,7 @@ class GameHOST:
 
             ### Handle application exit ###
             if event.type == pygame.QUIT:
+                self.closeConnections()
                 self.scene_manager.quit()
                 self.running = False
 

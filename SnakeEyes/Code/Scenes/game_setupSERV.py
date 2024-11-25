@@ -12,6 +12,10 @@ import pickle
 
 '''
 take away control to change player type if already occupied
+
+ERROR
+need to transition server funtions to game
+connection needs to be verrified
 '''
 
 
@@ -26,9 +30,9 @@ class GameSetupSERV:
     ##### Initial Setup #####
     def __init__(self, scene_manager, game):
         self.running = True
+        self.tempScene = 'msetup'
         self.GC1 = '0'
         self.GC2 = '0'
-        self.thread = True
         self.Clients = []
         self.counter = 0
         self.serverActive = False
@@ -49,33 +53,54 @@ class GameSetupSERV:
         while client in self.Clients:
             try:
                 receive = pickle.loads(client.recv(1024))
+                #print(receive['Scene'])
+                if receive['Scene'] == 'mgame':
+                    self.Clients.remove(client)
+                    print("client thread closed BREAK")
+                    client.shutdown(socket.SHUT_RDWR)
+                    client.close()
+                    sys.exit()
+                    break
                 #print("Received: "+receive)
+                self.assignData(receive)
                 game_state = {
                     'pNum': player,
                     'FinishlineScore': Preferences.FINISHLINE_SCORE,
                     'ModState': Preferences.MODS_PREFERENCE,
                     'BluePT': Preferences.BLUE_PLAYER_TYPE,
                     'YellowPT': Preferences.YELLOW_PLAYER_TYPE,
-                    'GreenPT': Preferences.GREEN_PLAYER_TYPE
+                    'GreenPT': Preferences.GREEN_PLAYER_TYPE,
+                    'Scene': self.tempScene
 
                 }
                 #print("Sending...")
                 client.send(pickle.dumps(game_state))
             except EOFError:
                 print("End of Connection")
-                self.thread = False
+                thread = False
                 client.close()
                 self.Clients.remove(client)
             #client.send(pickle.dumps(game_state))
         #client.close()
+        print("client thread closed SERV")
         sys.exit()
     
+    def switchScene(self):
+        while len(self.Clients) != 0:
+            cl = False
+
+    
     def ServerSetup(self):
-        
         threading.Thread(target=self.ServerListen, args=()).start()
             
-        
-    
+    def closeConnections(self):
+        self.running = False
+        for c in self.Clients:
+            c.shutdown(socket.SHUT_RDWR)
+            c.close()
+            self.Clients.remove(c)
+            print("closed connection")
+
     def ServerListen(self): 
         print("Server Starting...")
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -84,14 +109,14 @@ class GameSetupSERV:
         self.s.listen(2)  
 
         print("Server started. Waiting for connections...")
-        ssh_tunnel = ngrok.connect("8000", "tcp")
+        self.ssh_tunnel = ngrok.connect("8000", "tcp")
         #ssh_tunnel = ngrok.connect("8000")
         
-        print(f"Ingress established at: {ssh_tunnel}")
-        mod = str(ssh_tunnel)[:40]
-        self.GC1 = str(ssh_tunnel)[20]
+        print(f"Ingress established at: {self.ssh_tunnel}")
+        mod = str(self.ssh_tunnel)[:40]
+        self.GC1 = str(self.ssh_tunnel)[20]
         self.GC2 = str(mod[len(mod)-5:])
-        print(str(ssh_tunnel)[20]+" - "+mod[len(mod)-5:])
+        print(str(self.ssh_tunnel)[20]+" - "+mod[len(mod)-5:])
         while self.running:
             try:
                 self.s.settimeout(5)
@@ -102,26 +127,25 @@ class GameSetupSERV:
                 client, addr = self.s.accept()
                 self.Clients.append(client)
                 self.player += 1
-                self.autoPlayer()
                 threading.Thread(target=self.handle_client, args=(client, addr, self.player)).start()
             except TimeoutError:
                 print("Connection Timed Out")
             
-
-        self.s.close()
+        print("server thread closed")
         sys.exit()
             
             
     
-    def autoPlayer(self):
-        if self.player == 2:
-            Preferences.BLUE_PLAYER_TYPE = 'Player'
-            self.blue_player_label.set_text(Preferences.BLUE_PLAYER_TYPE)  
-        if self.player == 3:
-            Preferences.YELLOW_PLAYER_TYPE = 'Player'  
+    def assignData(self, receive):
+        if receive['pNum'] == 2:
+            Preferences.BLUE_PLAYER_TYPE = 'Player(Online)'
+            self.blue_player_label.set_text(Preferences.BLUE_PLAYER_TYPE)
+
+        if receive['pNum'] == 3:
+            Preferences.YELLOW_PLAYER_TYPE = 'Player(Online)'  
             self.yellow_player_label.set_text(Preferences.YELLOW_PLAYER_TYPE)    
-        if self.player == 4:
-            Preferences.RED_PLAYER_TYPE = 'Player'
+        if receive['pNum'] == 4:
+            Preferences.RED_PLAYER_TYPE = 'Player(Online)'
             self.green_player_label.set_text(Preferences.GREEN_PLAYER_TYPE)   
         
     def makeGUI(self):
@@ -512,11 +536,7 @@ class GameSetupSERV:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-                for c in self.Clients:
-                    c.shutdown(socket.SHUT_RDWR)
-                    c.close()
-                    self.Clients.remove(c)
-                    print("closed client")
+                self.closeConnections()
                 self.scene_manager.quit()
 
             if event.type == pygame.KEYDOWN:
@@ -534,9 +554,18 @@ class GameSetupSERV:
                     # Start Button
                     if event.ui_element == self.start_button:
                         self.game.initialization()
+                        #sendClients = self.Clients.copy()
+                        #self.Clients.clear()
+                        self.game.assignTunnel(self.ssh_tunnel, self.s, len(self.Clients))
                         self.game.delayedInit()
+                        #send request to client to switch scene
+                        #when confirmation is received, then switch
+                        self.tempScene = 'mgame'
+                        self.switchScene()
                         self.scene_manager.switch_scene('mgame')
+                        self.running = False
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+
 
                     # Player Type Select
                     if event.ui_element == self.red_player_left:
