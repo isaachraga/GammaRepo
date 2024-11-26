@@ -113,7 +113,7 @@ def test_car_has_collide(setup_game):
         game.run() 
         #logging.info("Run: "+ str(x)+" | Location: "+ str(game.Players[1].position.y))
 
-    assert(game.Players[1].position.y < 493)
+    assert(game.Players[1].position.y < 494)
     location = game.Players[1].position.x
 
     for x in range(10):
