@@ -12,5 +12,6 @@ class Store:
         #risk/reward are scales that go from 1-5 that modify roll information
         self.risk = 0
         self.reward = 0
-        self.collider = pygame.Rect(self.position.x, self.position.y, 20,20)
+        self.collider = pygame.Rect(self.position.x, self.position.y, 0, 0) # Changed in StoreReset()
         self.players = []
+        self.sprite = ""

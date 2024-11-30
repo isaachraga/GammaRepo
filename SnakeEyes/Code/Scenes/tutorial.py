@@ -11,7 +11,21 @@ class Tutorial:
 
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json") #pygame_gui manager
         self.clock = pygame.time.Clock() #Needed for pygame_gui
+        self.jeff= pygame.image.load('SnakeEyes/Assets/Characters/Profile/jeff teach.png')
+        self.tutorial_images = [
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 1.png"),  # Replace with your image paths
+            pygame.image.load("SnakeEyes/Assets/Icons/cash.png"),
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 3.png"),
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 4.png"),
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 5.png"),
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 6.png"),
+            pygame.image.load("SnakeEyes/Assets/Tutorial/tutorial 7.png")
+        ]
 
+        self.tutorial_images = [
+            pygame.transform.scale(image, (Settings.WIDTH/2, Settings.HEIGHT/2))
+            for image in self.tutorial_images
+        ]
         self.make_GUI()
         self.hide_GUI()
         self.default_text.show()
@@ -74,7 +88,7 @@ class Tutorial:
         textbox_height = 200
         self.default_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/2 - textbox_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (textbox_width, textbox_height)), #Size
             html_text = 
             'You and up to 4 players are placed in various shopping malls '
@@ -84,7 +98,7 @@ class Tutorial:
             manager=self.ui_manager
         )
 
-        control_scheme_width = 1000
+        control_scheme_width = 700
         control_scheme_height = 580
         self.control_schemes = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
@@ -127,7 +141,7 @@ class Tutorial:
         goal_text_height = 200
         self.goal_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - goal_text_width/2), (Settings.HEIGHT/2 - goal_text_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (goal_text_width, goal_text_height)), #Size
             html_text = 
             "The player who passes the goal amount of money the furthest "
@@ -141,7 +155,7 @@ class Tutorial:
         gameplay_text_height = 200
         self.gameplay_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - gameplay_text_width/2), (Settings.HEIGHT/2 - gameplay_text_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (gameplay_text_width, gameplay_text_height)), #Size
             html_text = 
             "All players will start in a mall and walk around to find "
@@ -157,7 +171,7 @@ class Tutorial:
         money_text_height = 200
         self.money_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - money_text_width/2), (Settings.HEIGHT/2 - money_text_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (money_text_width, money_text_height)), #Size
             html_text = 
             "If you won money, you now have that amount as cash-on-hand "
@@ -170,7 +184,7 @@ class Tutorial:
         alarm_text_height = 200
         self.alarm_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - alarm_text_width/2), (Settings.HEIGHT/2 - alarm_text_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (alarm_text_width, alarm_text_height)), #Size
             html_text = 
             "If an alarm is set off at your store, you lose your "
@@ -184,7 +198,7 @@ class Tutorial:
         police_text_height = 200
         self.police_text = pygame_gui.elements.UITextBox(
             relative_rect=pygame.Rect(
-                ((Settings.WIDTH/2 - police_text_width/2), (Settings.HEIGHT/2 - police_text_height/2)), #Position
+                ((Settings.WIDTH/2 - textbox_width/2), (Settings.HEIGHT/5 - textbox_height/5)), #Position
                 (police_text_width, police_text_height)), #Size
             html_text = 
             "If the police show up, everyone who is still at the mall "
@@ -271,6 +285,13 @@ class Tutorial:
         tutorial_header = self.HEADER_FONT.get_rect("TUTORIAL")
         tutorial_header.center = ((Settings.WIDTH / 2), (Settings.HEADER_FONT_SIZE/2) + 10)
         self.HEADER_FONT.render_to(self.screen, tutorial_header, "TUTORIAL", Settings.COLOR_TEXT)
+
+        self.screen.blit(self.jeff, (-50,250))
+        
+        current_image = self.tutorial_images[self.page_index]
+        image_rect = current_image.get_rect(center=(Settings.WIDTH/2 , Settings.HEIGHT /1.5))
+        self.screen.blit(current_image, image_rect)
+
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)

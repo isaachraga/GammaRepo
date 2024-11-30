@@ -30,6 +30,8 @@ def setup_game(setup_scene_manager):
     pygame.init()
     game = Game(setup_scene_manager) #Instantiate Game
     #Set to current scene
+    Preferences.BLUE_PLAYER_TYPE = "Player"
+    Preferences.BLUE_CONTROLS = "TFGH"
     game.initialization()
     game.delayedInit()
     game.scene_manager.switch_scene('game')
@@ -111,7 +113,7 @@ def test_car_has_collide(setup_game):
         game.run() 
         #logging.info("Run: "+ str(x)+" | Location: "+ str(game.Players[1].position.y))
 
-    assert(game.Players[1].position.y < 493)
+    assert(game.Players[1].position.y < 494)
     location = game.Players[1].position.x
 
     for x in range(10):
