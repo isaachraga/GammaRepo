@@ -833,6 +833,16 @@ class Game:
 #                    position = pygame.Vector2(c.position.x +30, c.position.y)
 #                    return position
 
+    def CPUHighThreshold(self):
+        highestScore = max(p.score for p in self.Players)
+        for p in self.Players:
+            p.score += highestScore
+
+    def CPULowThreshold(self):
+        lowestScore = min(p.score for p in self.Players)
+        for p in self.Players:
+            p.score -= lowestScore
+            
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
             return True
