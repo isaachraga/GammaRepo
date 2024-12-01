@@ -17,8 +17,8 @@ class Credits:
         self.David= pygame.image.load('SnakeEyes/Assets/Team/David.png')
         self.Cam= pygame.image.load('SnakeEyes/Assets/Team/Cameron.png')
         self.Nick= pygame.image.load('SnakeEyes/Assets/Team/Nick.png')
-        self.Ricky= pygame.image.load('SnakeEyes/Assets/Team/ricky.png')
-        self.nolan= pygame.image.load('SnakeEyes/Assets/Team/nolan.png')
+        self.Ricky= pygame.image.load('SnakeEyes/Assets/Team/Ricky.png')
+        self.nolan= pygame.image.load('SnakeEyes/Assets/Team/Nolan.png')
         self.clock = pygame.time.Clock() #Needed for pygame_gui
         self.button_width = 150
         self.button_height = 60
