@@ -908,13 +908,11 @@ class Game:
 #    def CPUDecideAction(self, CPU):
 #        if self.CPUDecidePlay(CPU):
 #            return self.CPUSelectLocation(CPU)
-#        elif CPU.score >= CPU.high_threshold:
+#        elif CPU.score >= self.CPUHighThreshold:
 #            return self.CPUMoveToLocation(CPU)
 #        else:
 #            return self.CPUSelectLocation(CPU)
     
-
-
     def CPUDecisionProcess(self):
         for p in self.Players:
             if p.score < self.CPULowThreshold(): 
@@ -925,6 +923,15 @@ class Game:
                     position = activeStores[random.randint(0, len(activeStores)-1)].position
                     modPos = pygame.Vector2(position.x+30, position.y)
                     return modPos
+
+    # def CPUDecisionToPlay(self):
+    #     if CPU.CPU.turn < 1:
+    #         return True
+    #     else:
+    #         if self.alarmedStores > 1
+    #             set location to car
+    #         else:
+    #             set location to another random store
             
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 3:
