@@ -9,9 +9,11 @@ from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 import pickle
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 #hide
-NGROK_TOKEN = os.environ['NGROK_TOKEN']
+NGROK_TOKEN = os.getenv("NGROK_TOKEN")
 
 '''
 take away control to change player type if already occupied

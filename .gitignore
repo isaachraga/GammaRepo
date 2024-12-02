@@ -8,4 +8,5 @@
 /SnakeEyes/Code/__pycache__/*.pyc
 /SnakeEyes/Code/Scenes/__pycache__/*.pyc
 *.pyc
+*.env
 
