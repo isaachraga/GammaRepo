@@ -1,5 +1,6 @@
 name: Sticky Fingers Tests
-
+env:
+    NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
 on:
     pull_request:
       branches:
