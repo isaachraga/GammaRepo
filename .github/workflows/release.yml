@@ -1,5 +1,6 @@
 name: Package and Release Sticky Fingers
-
+env:
+    NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
 on:
   push:
     branches:
