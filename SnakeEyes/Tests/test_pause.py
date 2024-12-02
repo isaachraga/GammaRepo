@@ -31,7 +31,7 @@ def setup_game(setup_scene_manager):
 @pytest.fixture 
 def setup_pause_menu(setup_scene_manager, setup_game):
     pygame.init()
-    pause_menu = Pause(setup_scene_manager, setup_game) #Instantiate Pause Menu
+    pause_menu = Pause(setup_scene_manager, setup_game, False) #Instantiate Pause Menu
     pause_menu.scene_manager.switch_scene('pause') #Set to current scene
     pause_menu.screen = pygame.display.set_mode((Settings.WIDTH, Settings.HEIGHT))
     return pause_menu
