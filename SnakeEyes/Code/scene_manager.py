@@ -82,6 +82,21 @@ class SceneManager:
         
     
     def multiplayer_destroy(self):
+        Preferences.FINISHLINE_SCORE = 1000000
+        Preferences.MODS_PREFERENCE = "Enabled"
+
+        #Player types: Player, CPU, or None
+        Preferences.RED_PLAYER_TYPE = "Player"
+        Preferences.BLUE_PLAYER_TYPE = "CPU"
+        Preferences.YELLOW_PLAYER_TYPE = "None"
+        Preferences.GREEN_PLAYER_TYPE = "None"
+
+        #Player control schemes
+        Preferences.RED_CONTROLS = "WASD"
+        Preferences.BLUE_CONTROLS = "None"
+        Preferences.YELLOW_CONTROLS = "None"
+        Preferences.GREEN_CONTROLS = "None"
+
         del self.scenes["mgame"]
         del self.scenes["msetup2"]
         del self.scenes["mstatus"]

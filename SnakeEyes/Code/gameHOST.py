@@ -489,7 +489,7 @@ class GameHOST:
             try:
                 receive = pickle.loads(client.recv(1024))
                 self.getData(pNum, receive)
-                if receive['Scene'] == 'mstatus':
+                if receive['Scene'] == 'mstatus' or receive['Scene'] == 'mwin':
                     self.Clients.remove(client)
                     print("Client post len = "+str(len(self.Clients)))
                     print("HOST client thread closed BREAK")
@@ -1531,10 +1531,12 @@ class GameHOST:
             cl = False
 
     def winSwitch(self):
+        self.scene_manager.scenes['mwin'].assignTunnel(self.SSH, self.s, len(self.Clients))
         self.tempScene = 'mwin'
         self.switchScene()
         self.running = False
         self.tempScene = 'mgame'
+        print("win registered!!!!")
         self.scene_manager.switch_scene('mwin')
 
     def statusSwitch(self):

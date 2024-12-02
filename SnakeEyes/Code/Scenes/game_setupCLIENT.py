@@ -44,7 +44,7 @@ class GameSetupCLIENT:
         print("Trying to connect: "+GC1+".tcp.ngrok.io:"+GC2)
         self.c.connect((GC1+".tcp.ngrok.io",int(GC2)))
         print(self.c.recv(1024).decode())
-        self.c.send("Hey Serv".encode())
+        self.c.send("Hey Serv from SETUP".encode())
 
         self.running = True
         

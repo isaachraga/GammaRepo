@@ -32,6 +32,7 @@ class GameModsSERV:
     '''
     def assignTunnel(self, SSH, s, clientNum):
         #print("Blue: "+Preferences.BLUE_PLAYER_TYPE)
+        self.resetConnections()
         self.SSH = SSH
         self.s = s
         clientNum = clientNum
@@ -40,12 +41,12 @@ class GameModsSERV:
 
     def ServerListen(self):
         while self.running:
-            #print("Game serv thread")
+            #print("SERV STATUS thread")
             try:
                 self.s.settimeout(5)
                 self.player = 1
                 self.serverActive = True
-                print("SERV MODS Trying connection...."+str(len(self.Clients)))
+                print("SERV MOD Trying connection...."+str(len(self.Clients)))
 
                 client, addr = self.s.accept()
                 self.Clients.append(client)
@@ -53,33 +54,29 @@ class GameModsSERV:
                 #self.autoPlayer()
                 threading.Thread(target=self.handle_clientHOST, args=(client,self.player)).start()
             except TimeoutError:
-                print("SERV MODS Connection Timed Out")
+                print("SERV MOD Connection Timed Out")
             
-        print("SERV MODS server thread closed")
+        print("SERV MOD server thread closed")
         sys.exit()
 
     def handle_clientHOST(self, client, pNum):
-        client.send(("GameConnected").encode())
+        client.send(("ModsConnected").encode())
         print(client.recv(1024).decode())
         while client in self.Clients:
             #print("running game host")
             try:
                 receive = pickle.loads(client.recv(1024))
-                self.getData(pNum, receive)
+                if receive['Scene'] == 'mgame':
+                    self.Clients.remove(client)
+                    print("SERV MOD client thread closed BREAK")
+                    client.shutdown(socket.SHUT_RDWR)
+                    client.close()
+                    sys.exit()
+                    break
                 #print("Received: "+receive['msg'])
                 game_state = {
-                    'player': self.Players[pNum-1],
-                    'Players': self.Players,
-                    'lastRound': self.lastRound,
-                    'statusFlag': self.statusFlag,
-                    'result': self.result,
-                    'police': self.police,
-                    'ready':self.ready,
-                    'alarmedStores': self.alarmedStores,
-                    'allAlarms': self.allAlarms,
-                    'Stores': self.Stores,
-                    'Cars': self.Cars,
-                    'scene': self.tempScene
+                    'pNum': pNum,
+                    'Scene': self.tempScene
                 }
                 #print("Sending...")
                 client.send(pickle.dumps(game_state))
@@ -90,7 +87,7 @@ class GameModsSERV:
                 #self.Clients.remove(client)
             #client.send(pickle.dumps(game_state))
         #client.close()
-        print("client thread closed HOST HC")
+        print("SERV MOD client thread closed HOST HC")
         sys.exit()
 
     def closeConnections(self):
@@ -100,18 +97,37 @@ class GameModsSERV:
             c.close()
             self.Clients.remove(c)
             print("closed connection")
-            
+
     def switchScene(self):
         while len(self.Clients) != 0:
             cl = False
 
     def handleSwitchScene(self):
-        
-        self.scene_manager.scenes['mgame'].assignTunnel(self.SSH, self.s, len(self.Clients))
+        self.game.delayedInit()
+        self.game.assignTunnel(self.SSH, self.s, len(self.Clients))
         self.tempScene = 'mgame'
+        #print("^^^BLUE^^^")
+
         self.switchScene()
         self.running = False
-        self.scene_manager.switch_scene('mgame')
+        self.next_scene()
+
+    def resetConnections(self):
+        self.closeConnections()
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+        self.tempScene = 'mmods'
+
+    def next_scene(self):
+        self.resetConnections()
+        
+        self.game.statusFlag = False
+        if self.Mult:
+            self.scene_manager.switch_scene('mgame')
+        else:
+            self.scene_manager.switch_scene('game')
     '''
     END OF SERVER FUNCTIONS
     '''
@@ -174,38 +190,39 @@ class GameModsSERV:
 
             if event.type == pygame.KEYDOWN:
                 for p in self.game.Players:
-                    if p.controller.controller_type == "keyboard" or p.controller.controller_type == "joystick":
-                        if event.key == p.controller.left:
-                                #print(str(len(self.available_mods)))
-                                if(p.modSelection - 1 < 0):
-                                    p.modSelection = len(self.available_mods) -1 
+                    if p.controller:
+                        if p.controller.controller_type == "keyboard" or p.controller.controller_type == "joystick":
+                            if event.key == p.controller.left:
+                                    #print(str(len(self.available_mods)))
+                                    if(p.modSelection - 1 < 0):
+                                        p.modSelection = len(self.available_mods) -1 
+                                    else:
+                                        p.modSelection = p.modSelection -1
+                            if event.key == p.controller.right:
+                                if(p.modSelection == len(self.available_mods) - 1):
+                                    p.modSelection = 0
                                 else:
-                                    p.modSelection = p.modSelection -1
-                        if event.key == p.controller.right:
-                            if(p.modSelection == len(self.available_mods) - 1):
-                                p.modSelection = 0
-                            else:
-                                p.modSelection = p.modSelection + 1
+                                    p.modSelection = p.modSelection + 1
 
-                        if p.controller.controller_type == 'keyboard':
-                            # Scene Selection
-                            if event.key == pygame.K_ESCAPE:
-                                if self.Mult:
-                                    self.scene_manager.switch_scene('mpause')
-                                else:
-                                    self.scene_manager.switch_scene('pause')
-                            
-                            if event.key == p.controller.action_buttons.get('space'):
-                                self.game.statusFlag = False
-                                if self.Mult:
-                                    self.handleSwitchScene()
-                                else:
-                                    self.scene_manager.switch_scene('game')
+                            if p.controller.controller_type == 'keyboard':
+                                # Scene Selection
+                                if event.key == pygame.K_ESCAPE:
+                                    if self.Mult:
+                                        self.scene_manager.switch_scene('mpause')
+                                    else:
+                                        self.scene_manager.switch_scene('pause')
+                                
+                                if event.key == p.controller.action_buttons.get('space'):
+                                    self.game.statusFlag = False
+                                    if self.Mult:
+                                        self.handleSwitchScene()
+                                    else:
+                                        self.scene_manager.switch_scene('game')
 
-                            if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
-                                p.score = round(p.score - self.available_mods[p.modSelection].cost)
-                                p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
-            
+                                if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
+                                    p.score = round(p.score - self.available_mods[p.modSelection].cost)
+                                    p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
+                
             elif event.type == pygame.JOYBUTTONDOWN:
                 joystick_id = event.joy
                 button_id = event.button

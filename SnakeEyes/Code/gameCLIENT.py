@@ -242,7 +242,7 @@ class GameCLIENT:
             check = self.c.recv(1024).decode()
             if check == "GameConnected":
                 print(check)
-                self.c.send("Hey Serv".encode())
+                self.c.send("Hey Serv from GAME".encode())
 
                 self.connected = True
                 self.running = True
@@ -364,6 +364,10 @@ class GameCLIENT:
                     self.scene_manager.scenes['mstatus'].clientInit(self.pNum, self.GC1, self.GC2)
                     self.closeConnection()
                     self.scene_manager.switch_scene('mstatus')
+                elif  self.tempScene == 'mwin':
+                    self.scene_manager.scenes['mwin'].clientInit(self.pNum, self.GC1, self.GC2)
+                    self.closeConnection()
+                    self.scene_manager.switch_scene('mwin')
                 else:
                     self.scene_manager.switch_scene('menu')
                     self.scene_manager.multiplayer_destroy()

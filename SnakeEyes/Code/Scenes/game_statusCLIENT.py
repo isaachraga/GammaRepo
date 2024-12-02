@@ -4,9 +4,7 @@ import pygame.freetype
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 import socket
-import threading
 import pickle
-import sys
 
 class GameStatusCLIENT:
     def __init__(self, scene_manager, game, Mult):
@@ -73,7 +71,7 @@ class GameStatusCLIENT:
             check = self.c.recv(1024).decode()
             if check == "StatusConnected":
                 print(check)
-                self.c.send("Hey Serv".encode())
+                self.c.send("Hey Serv from STATUS".encode())
 
                 self.connected = True
                 self.running = True
@@ -117,7 +115,7 @@ class GameStatusCLIENT:
                     self.scene_manager.scenes['mmods'].clientInit(self.pNum, self.GC1, self.GC2)
                     self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
                     self.closeConnection()
-                    self.scene_manager.switch_scene('m,ods')
+                    self.scene_manager.switch_scene('mmods')
                 else:
                     self.scene_manager.switch_scene('menu')
                     self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
