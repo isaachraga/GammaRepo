@@ -109,7 +109,8 @@ class GameSetupSERV:
         self.s.listen(2)  
 
         print("Server started. Waiting for connections...")
-        self.ssh_tunnel = ngrok.connect("8000", "tcp", authtoken = "cr_2pBEMXhdvZ6s0tLpM6NNWv4wjxg")
+        ngrok.set_auth_token("2pBEMXhdvZ6s0tLpM6NNWv4wjxg_fqFGZqtmTXNMRKM1QnPc") 
+        self.ssh_tunnel = ngrok.connect("8000", "tcp")
         #ssh_tunnel = ngrok.connect("8000")
         
         print(f"Ingress established at: {self.ssh_tunnel}")
