@@ -6,4 +6,3 @@ class CPU:
         self.turn = 0
         self.previousScore = 0
         self.counter = 0
-        
