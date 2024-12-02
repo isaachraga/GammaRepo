@@ -3,8 +3,10 @@ import pygame_gui
 import pygame.freetype
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+import socket
+import pickle
 
-class GameStatus:
+class GameStatusCLIENT:
     def __init__(self, scene_manager, game, Mult):
         self.Mult = Mult
         self.scene_manager = scene_manager
@@ -12,6 +14,14 @@ class GameStatus:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.HEADER_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.HEADER_FONT_SIZE)
+
+        self.pNum = 2
+        self.connected = False
+        self.running = False
+        self.assigned = False
+        self.GC1 = ''
+        self.GC2 = ''
+        self.tempScene = 'mstatus'
 
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json") #pygame_gui manager
         self.clock = pygame.time.Clock() #Needed for pygame_gui
@@ -22,13 +32,13 @@ class GameStatus:
         self.button_width = 500
         self.button_height = 70
 
-        self.continue_button = pygame_gui.elements.UIButton(
+        '''self.continue_button = pygame_gui.elements.UIButton(
             relative_rect=pygame.Rect(
                 ((Settings.WIDTH/2)-self.button_width/2, (Settings.HEIGHT)-self.button_height), #Position
                 (self.button_width, self.button_height)), #Size
             text='CONTINUE',
             manager=self.ui_manager
-        )
+        )'''
 
         sidePadding = 25
         verticalPadding = 80
@@ -43,48 +53,109 @@ class GameStatus:
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
-    
+    '''
+    START OF CLIENT FUNCTIONS
+    '''
+
+    def clientInit(self, pNum, GC1, GC2):
+        self.GC1 = GC1
+        self.GC2 = GC2
+        self.pNum = pNum
+        #self.controllerHandling()
+        
+        while self.connected == False:
+            #print("client")
+            self.c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            print("Trying to connect: "+GC1+".tcp.ngrok.io:"+GC2)
+            self.c.connect((GC1+".tcp.ngrok.io",int(GC2)))
+            check = self.c.recv(1024).decode()
+            if check == "StatusConnected":
+                print(check)
+                self.c.send("Hey Serv from STATUS".encode())
+
+                self.connected = True
+                self.running = True
+                self.assigned = True
+    '''
+    def controllerHandling(self):
+        if self.pNum == 2:
+            self.controllerAssignment(self.player, Preferences.BLUE_CONTROLS)
+
+        if self.pNum == 3:
+            self.controllerAssignment(self.player, Preferences.YELLOW_CONTROLS)
+
+        if self.pNum == 4:
+            self.controllerAssignment(self.player, Preferences.RED_CONTROLS)
+    '''
+    def clientProcess(self):
+        if self.running:
+            try:
+                #print("Running...")
+                game_status = {
+                    'pNum': self.pNum,
+                    'Scene': self.tempScene
+                }
+                self.c.send(pickle.dumps(game_status))
+                game_state = pickle.loads(self.c.recv(1024))
+                self.dataImport(game_state)
+                self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+
+            except EOFError:
+                print("STATUS End of Connection Client")
+                print(self.tempScene)
+                self.running = False
+                if self.tempScene == 'mgame':
+                    #print("Controlls: "+Preferences.BLUE_CONTROLS)
+                    self.game.clientInit(self.pNum, self.GC1, self.GC2)
+                    self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    self.closeConnection()
+                    self.scene_manager.switch_scene('mgame')
+                elif self.tempScene == 'mmods':
+                    #print("Controlls: "+Preferences.BLUE_CONTROLS)
+                    self.scene_manager.scenes['mmods'].clientInit(self.pNum, self.GC1, self.GC2)
+                    self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    self.closeConnection()
+                    self.scene_manager.switch_scene('mmods')
+                else:
+                    self.scene_manager.switch_scene('menu')
+                    self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    self.scene_manager.multiplayer_destroy()
+
+                self.c.close()
+                print("STATUS EoC Exiting...")
+
+    def closeConnection(self):
+        self.connected = False
+        self.running = False
+        self.assigned = False
+        self.GC1 = ''
+        self.GC2 = ''
+        self.tempScene = 'mstatus'
+
+    def dataImport(self, game_state):
+        self.pNum = game_state['pNum']
+        self.tempScene = game_state['Scene']
+    '''
+    END OF CLIENT FUNCTIONS
+    '''
     def run(self):
-        self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+        #self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
+        
         self.update()
+        if self.assigned:
+            self.clientProcess()
         self.render()
 
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.running = False
+                self.c.shutdown(socket.SHUT_RDWR)
+                self.c.close()
+                self.scene_manager.quit()
 
-            self.ui_manager.process_events(event) #Update pygame_gui
-
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    self.next_scene()
-                if event.key == pygame.K_ESCAPE:
-                    if self.Mult:
-                        self.scene_manager.switch_scene('mpause')
-                    else:
-                        self.scene_manager.switch_scene('pause')
-            
-            if event.type == pygame.USEREVENT:
-                #Check if a button was clicked
-                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    #Continue Button
-                    if event.ui_element == self.continue_button:
-                        self.next_scene()
-                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
-
-    def next_scene(self):
-        if Preferences.MODS_PREFERENCE == "Enabled":
-            if self.Mult:
-                self.scene_manager.switch_scene('mmods')
-            else:
-                self.scene_manager.switch_scene('mods')
-        else:
-            self.game.statusFlag = False
-            if self.Mult:
-                self.scene_manager.switch_scene('mgame')
-            else:
-                self.scene_manager.switch_scene('game')
+                #play on scene transition
+                #self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
         self.screen.fill(Settings.COLOR_BACKGROUND)

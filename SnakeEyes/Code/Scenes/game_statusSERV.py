@@ -3,8 +3,12 @@ import pygame_gui
 import pygame.freetype
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
+import threading
+import socket
+import sys
+import pickle
 
-class GameStatus:
+class GameStatusSERV:
     def __init__(self, scene_manager, game, Mult):
         self.Mult = Mult
         self.scene_manager = scene_manager
@@ -12,6 +16,12 @@ class GameStatus:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.HEADER_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.HEADER_FONT_SIZE)
+
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+        self.tempScene = 'mstatus'
 
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json") #pygame_gui manager
         self.clock = pygame.time.Clock() #Needed for pygame_gui
@@ -39,7 +49,108 @@ class GameStatus:
             object_id='#back_panel',
             manager=self.ui_manager
         )
-    
+
+    '''
+    START OF SERVER FUNCTIONS
+    '''
+    def assignTunnel(self, SSH, s, clientNum):
+        #print("Blue: "+Preferences.BLUE_PLAYER_TYPE)
+        self.resetConnections()
+        self.SSH = SSH
+        self.s = s
+        clientNum = clientNum
+        self.running = True
+        threading.Thread(target=self.ServerListen, args=()).start()
+
+    def ServerListen(self):
+        while self.running:
+            #print("SERV STATUS thread")
+            try:
+                self.s.settimeout(5)
+                self.player = 1
+                self.serverActive = True
+                print("SERV STATUS Trying connection...."+str(len(self.Clients)))
+
+                client, addr = self.s.accept()
+                self.Clients.append(client)
+                self.player += 1
+                #self.autoPlayer()
+                threading.Thread(target=self.handle_clientHOST, args=(client,self.player)).start()
+            except TimeoutError:
+                print("SERV STATUS Connection Timed Out")
+            
+        print("SERV STATUS server thread closed")
+        sys.exit()
+
+    def handle_clientHOST(self, client, pNum):
+        client.send(("StatusConnected").encode())
+        print(client.recv(1024).decode())
+        while client in self.Clients:
+            #print("running game host")
+            try:
+                receive = pickle.loads(client.recv(1024))
+                if receive['Scene'] == 'mmods' or receive['Scene'] == 'mgame':
+                    self.Clients.remove(client)
+                    print("SERV STATUS client thread closed BREAK")
+                    client.shutdown(socket.SHUT_RDWR)
+                    client.close()
+                    sys.exit()
+                    break
+                #print("Received: "+receive['msg'])
+                game_state = {
+                    'pNum': pNum,
+                    'Scene': self.tempScene
+                }
+                #print("Sending...")
+                client.send(pickle.dumps(game_state))
+            except EOFError:
+                #print("EoF HOST HC")
+                self.thread = False
+                #client.close()
+                #self.Clients.remove(client)
+            #client.send(pickle.dumps(game_state))
+        #client.close()
+        print("client thread closed HOST HC")
+        sys.exit()
+
+    def closeConnections(self):
+        self.running = False
+        for c in self.Clients:
+            c.shutdown(socket.SHUT_RDWR)
+            c.close()
+            self.Clients.remove(c)
+            print("closed connection")
+
+    def switchScene(self):
+        while len(self.Clients) != 0:
+            cl = False
+
+    def handleSwitchScene(self):
+        if Preferences.MODS_PREFERENCE == "Enabled":
+            self.scene_manager.scenes['mmods'].assignTunnel(self.SSH, self.s, len(self.Clients))
+            self.tempScene = 'mmods'
+        else:
+            print("Number of Clients"+str(len(self.Clients)))
+            self.game.delayedInit()
+            self.game.assignTunnel(self.SSH, self.s, len(self.Clients))
+            self.tempScene = 'mgame'
+            #print("^^^BLUE^^^")
+
+        self.switchScene()
+        self.running = False
+        self.next_scene()
+
+    def resetConnections(self):
+        self.closeConnections()
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+        self.tempScene = 'mstatus'
+    '''
+    END OF SERVER FUNCTIONS
+    '''
+
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
@@ -52,13 +163,15 @@ class GameStatus:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.running = False
+                self.closeConnections()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event) #Update pygame_gui
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.next_scene()
+                    self.handleSwitchScene()
                 if event.key == pygame.K_ESCAPE:
                     if self.Mult:
                         self.scene_manager.switch_scene('mpause')
@@ -70,10 +183,11 @@ class GameStatus:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Continue Button
                     if event.ui_element == self.continue_button:
-                        self.next_scene()
+                        self.handleSwitchScene()
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def next_scene(self):
+        self.resetConnections()
         if Preferences.MODS_PREFERENCE == "Enabled":
             if self.Mult:
                 self.scene_manager.switch_scene('mmods')

@@ -2,8 +2,12 @@ import pygame
 import pygame_gui
 import pygame.freetype
 from SnakeEyes.Code.settings import Settings
+import threading
+import pickle
+import socket
+import sys
 
-class GameWin:
+class GameWinSERV:
     def __init__(self, scene_manager, game, Mult):
         self.Mult = Mult
         self.scene_manager = scene_manager
@@ -11,6 +15,13 @@ class GameWin:
         self.screen = self.scene_manager.screen
         self.GAME_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.FONT_SIZE)
         self.HEADER_FONT = pygame.freetype.Font("Fonts/HighlandGothicFLF-Bold.ttf", Settings.HEADER_FONT_SIZE)
+
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+        self.tempScene = 'mwin'
+
 
         self.ui_manager = pygame_gui.UIManager((Settings.WIDTH, Settings.HEIGHT), "SnakeEyes/Assets/theme.json") #pygame_gui manager
         self.clock = pygame.time.Clock() #Needed for pygame_gui
@@ -34,17 +45,122 @@ class GameWin:
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
 
         self.sorted_players = sorted(self.game.Players, key=lambda Player: Player.score, reverse=True)
-
+    
     
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
         self.update()
         self.render()
 
+    '''
+    START OF SERVER FUNCTIONS
+    '''
+    def assignTunnel(self, SSH, s, clientNum):
+        #print("Blue: "+Preferences.BLUE_PLAYER_TYPE)
+        self.resetConnections()
+        self.SSH = SSH
+        self.s = s
+        clientNum = clientNum
+        self.running = True
+        threading.Thread(target=self.ServerListen, args=()).start()
+
+    def ServerListen(self):
+        while self.running:
+            #print("SERV STATUS thread")
+            try:
+                self.s.settimeout(5)
+                self.player = 1
+                self.serverActive = True
+                print("SERV WIN Trying connection...."+str(len(self.Clients)))
+
+                client, addr = self.s.accept()
+                self.Clients.append(client)
+                self.player += 1
+                #self.autoPlayer()
+                threading.Thread(target=self.handle_clientHOST, args=(client,self.player)).start()
+            except TimeoutError:
+                print("SERV WIN Connection Timed Out")
+            
+        print("SERV WIN server thread closed")
+        sys.exit()
+
+    def handle_clientHOST(self, client, pNum):
+        client.send(("WinConnected").encode())
+        print(client.recv(1024).decode())
+        while client in self.Clients:
+            #print("running game host")
+            try:
+                receive = pickle.loads(client.recv(1024))
+                if receive['Scene'] == 'menu':
+                    self.Clients.remove(client)
+                    print("SERV WIN client thread closed BREAK")
+                    client.shutdown(socket.SHUT_RDWR)
+                    client.close()
+                    sys.exit()
+                    break
+                #print("Received: "+receive['msg'])
+                game_state = {
+                    'pNum': pNum,
+                    'Scene': self.tempScene
+                }
+                #print("Sending...")
+                client.send(pickle.dumps(game_state))
+            except EOFError:
+                #print("EoF HOST HC")
+                self.thread = False
+                #client.close()
+                #self.Clients.remove(client)
+            #client.send(pickle.dumps(game_state))
+        #client.close()
+        print("SERV WIN client thread closed HOST HC")
+        sys.exit()
+
+    def closeConnections(self):
+        self.running = False
+        for c in self.Clients:
+            c.shutdown(socket.SHUT_RDWR)
+            c.close()
+            self.Clients.remove(c)
+            print("closed connection")
+
+    def switchScene(self):
+        while len(self.Clients) != 0:
+            cl = False
+
+    def handleSwitchScene(self):
+        self.game.delayedInit()
+        self.game.assignTunnel(self.SSH, self.s, len(self.Clients))
+        self.tempScene = 'menu'
+        #print("^^^BLUE^^^")
+
+        self.switchScene()
+        self.running = False
+        self.next_scene()
+
+    def resetConnections(self):
+        self.closeConnections()
+        self.SSH = '' #tunnel connection
+        self.s = '' #socket connection
+        self.running = False
+        self.Clients = []
+        self.tempScene = 'mwin'
+
+    def next_scene(self):
+        self.resetConnections()
+        
+        self.game.statusFlag = False
+        self.scene_manager.switch_scene('menu')
+        self.scene_manager.multiplayer_destroy()
+    '''
+    END OF SERVER FUNCTIONS
+    '''
+
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.running = False
+                self.closeConnections()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event) #Update pygame_gui
 
@@ -61,7 +177,7 @@ class GameWin:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
                     #Continue Button
                     if event.ui_element == self.continue_button:
-                        self.scene_manager.switch_scene('menu')
+                        self.next_scene()
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):

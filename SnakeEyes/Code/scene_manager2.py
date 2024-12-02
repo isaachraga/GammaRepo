@@ -1,21 +1,11 @@
 import pygame
 from SnakeEyes.Code.game import Game
 from SnakeEyes.Code.gameHOST import GameHOST
-from SnakeEyes.Code.gameCLIENT import GameCLIENT
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
-from SnakeEyes.Code.Scenes.multiplayer_setup import MultiplayerSetup
-from SnakeEyes.Code.Scenes.game_setupSERV import GameSetupSERV
-from SnakeEyes.Code.Scenes.game_setupCLIENT import GameSetupCLIENT
 from SnakeEyes.Code.Scenes.game_status import GameStatus
-from SnakeEyes.Code.Scenes.game_statusSERV import GameStatusSERV
-from SnakeEyes.Code.Scenes.game_statusCLIENT import GameStatusCLIENT
 from SnakeEyes.Code.Scenes.game_mods import GameMods
-from SnakeEyes.Code.Scenes.game_modsSERV import GameModsSERV
-from SnakeEyes.Code.Scenes.game_modsCLIENT import GameModsCLIENT
 from SnakeEyes.Code.Scenes.game_win import GameWin
-from SnakeEyes.Code.Scenes.game_winSERV import GameWinSERV
-from SnakeEyes.Code.Scenes.game_winCLIENT import GameWinCLIENT
 from SnakeEyes.Code.Scenes.pause import Pause
 from SnakeEyes.Code.Scenes.scene_selection import SceneSelection
 from SnakeEyes.Code.Scenes.options import OptionsMenu
@@ -23,6 +13,7 @@ from SnakeEyes.Code.Scenes.main_menu import MainMenu
 from SnakeEyes.Code.Scenes.tutorial import Tutorial
 from SnakeEyes.Code.Scenes.credits import Credits
 from SnakeEyes.Code.Scenes.game_setup import GameSetup
+from SnakeEyes.Code.Scenes.game_setupMULT import GameSetupMULT
 
 
 
@@ -36,16 +27,23 @@ class SceneManager:
             'options':  OptionsMenu(self),
             'menu':     MainMenu(self),
             'game':     Game(self),
+            'gameMULT': GameHOST(self, "673ead30233d5bf52342fe5b"),
             'credits':  Credits(self),
             'scene':    SceneSelection(self),
-            'mSetup': MultiplayerSetup(self),
         }
-        
+        '''
         self.scenes['setup']  = GameSetup(self,  self.scenes.get('game'))
-        self.scenes['status'] = GameStatus(self, self.scenes.get('game'), False)
-        self.scenes['mods']   = GameMods(self,   self.scenes.get('game'), False)
-        self.scenes['pause']  = Pause(self,      self.scenes.get('game'), False)
-        self.scenes['win']    = GameWin(self,    self.scenes.get('game'), False)
+        self.scenes['status'] = GameStatus(self, self.scenes.get('game'))
+        self.scenes['mods']   = GameMods(self,   self.scenes.get('game'))
+        self.scenes['pause']  = Pause(self,      self.scenes.get('game'))
+        self.scenes['win']    = GameWin(self,    self.scenes.get('game'))
+        '''
+        self.scenes['setup']  = GameSetupMULT(self,  self.scenes.get('gameMULT'))
+        self.scenes['status'] = GameStatus(self, self.scenes.get('gameMULT'))
+        self.scenes['mods']   = GameMods(self,   self.scenes.get('gameMULT'))
+        self.scenes['pause']  = Pause(self,      self.scenes.get('gameMULT'))
+        self.scenes['win']    = GameWin(self,    self.scenes.get('gameMULT'))
+
         #Scenes that are "nested" in other scenes. Can be nested repeatedly
         #Have the ability to go back to previous scene with switch_scene('back')
         self.nested_scenes = ['tutorial', 'options', 'scene', 'pause', 'credits']
@@ -63,46 +61,6 @@ class SceneManager:
 
     def quit(self):
         self.running = False
-    
-    def multiplayer_init(self, host):
-        if host:
-            self.scenes['mgame']  = GameHOST(self)
-            self.scenes['msetup2']  = GameSetupSERV(self,  self.scenes.get('mgame'))
-            self.scenes['mstatus'] = GameStatusSERV(self, self.scenes.get('mgame'), True)
-            self.scenes['mmods']   = GameModsSERV(self,   self.scenes.get('mgame'), True)
-            self.scenes['mwin']    = GameWinSERV(self,    self.scenes.get('mgame'), True)
-        else:
-            self.scenes['mgame']  = GameCLIENT(self)
-            self.scenes['msetup2']  = GameSetupCLIENT(self,  self.scenes.get('mgame'))
-            self.scenes['mstatus'] = GameStatusCLIENT(self, self.scenes.get('mgame'), True)
-            self.scenes['mmods']   = GameModsCLIENT(self,   self.scenes.get('mgame'), True)
-            self.scenes['mwin']    = GameWinCLIENT(self,    self.scenes.get('mgame'), True)
-        
-        self.scenes['mpause']  = Pause(self,      self.scenes.get('mgame'), True)
-        
-    
-    def multiplayer_destroy(self):
-        Preferences.FINISHLINE_SCORE = 1000000
-        Preferences.MODS_PREFERENCE = "Enabled"
-
-        #Player types: Player, CPU, or None
-        Preferences.RED_PLAYER_TYPE = "Player"
-        Preferences.BLUE_PLAYER_TYPE = "CPU"
-        Preferences.YELLOW_PLAYER_TYPE = "None"
-        Preferences.GREEN_PLAYER_TYPE = "None"
-
-        #Player control schemes
-        Preferences.RED_CONTROLS = "WASD"
-        Preferences.BLUE_CONTROLS = "None"
-        Preferences.YELLOW_CONTROLS = "None"
-        Preferences.GREEN_CONTROLS = "None"
-
-        del self.scenes["mgame"]
-        del self.scenes["msetup2"]
-        del self.scenes["mstatus"]
-        del self.scenes["mmods"]
-        del self.scenes["mpause"]
-        del self.scenes["mwin"]
 
 
     ### SCENE MANAGEMENT ###

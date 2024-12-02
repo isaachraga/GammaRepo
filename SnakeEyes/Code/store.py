@@ -14,4 +14,5 @@ class Store:
         self.reward = 0
         self.collider = pygame.Rect(self.position.x, self.position.y, 0, 0) # Changed in StoreReset()
         self.players = []
-        self.sprite = ""
+        self.sprite = ''
+        self.spriteNum = 0

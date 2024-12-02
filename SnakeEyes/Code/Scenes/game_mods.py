@@ -4,7 +4,8 @@ from SnakeEyes.Code import modifier
 #import textwrap
 
 class GameMods:
-    def __init__(self, scene_manager, game):
+    def __init__(self, scene_manager, game, Mult):
+        self.Mult = Mult
         self.scene_manager = scene_manager
         self.game = game
         self.screen = self.scene_manager.screen
@@ -88,11 +89,17 @@ class GameMods:
                         if p.controller.controller_type == 'keyboard':
                             # Scene Selection
                             if event.key == pygame.K_ESCAPE:
-                                self.scene_manager.switch_scene('pause')
+                                if self.Mult:
+                                    self.scene_manager.switch_scene('mpause')
+                                else:
+                                    self.scene_manager.switch_scene('pause')
                             
                             if event.key == p.controller.action_buttons.get('space'):
                                 self.game.statusFlag = False
-                                self.scene_manager.switch_scene('game')
+                                if self.Mult:
+                                    self.scene_manager.switch_scene('mgame')
+                                else:
+                                    self.scene_manager.switch_scene('game')
 
                             if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
                                 p.score = round(p.score - self.available_mods[p.modSelection].cost)
@@ -107,7 +114,10 @@ class GameMods:
                         if p.controller.joystick.get_instance_id() == joystick_id:
                             if button_id == p.controller.action_buttons.get('space'):
                                 self.game.statusFlag = False
-                                self.scene_manager.switch_scene('game')
+                                if self.Mult:
+                                    self.scene_manager.switch_scene('mgame')
+                                else:
+                                    self.scene_manager.switch_scene('game')
                             elif button_id == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
                                 p.score = round(p.score - self.available_mods[p.modSelection].cost)
                                 p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
