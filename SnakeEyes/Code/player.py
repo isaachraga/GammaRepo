@@ -38,7 +38,10 @@ class Player:
 
         self.mMoveX = 0
         self.mMoveY = 0
+        self.left = False
+        self.right = False
         self.mReadyKey = False
         self.mPauseKey = False
+        self.press = False
 
         self.CPU = CPU.CPU()

@@ -66,6 +66,7 @@ class GameModsSERV:
             #print("running game host")
             try:
                 receive = pickle.loads(client.recv(1024))
+                self.getData(receive['pNum'], receive)
                 if receive['Scene'] == 'mgame':
                     self.Clients.remove(client)
                     print("SERV MOD client thread closed BREAK")
@@ -76,6 +77,7 @@ class GameModsSERV:
                 #print("Received: "+receive['msg'])
                 game_state = {
                     'pNum': pNum,
+                    'Players': self.game.Players,
                     'Scene': self.tempScene
                 }
                 #print("Sending...")
@@ -89,6 +91,20 @@ class GameModsSERV:
         #client.close()
         print("SERV MOD client thread closed HOST HC")
         sys.exit()
+
+    def getData(self, pNum, game_state):
+        if pNum == 2:
+            self.game.Players[1].right = game_state['right']
+            self.game.Players[1].left = game_state['left']
+            self.game.Players[1].mReadyKey = game_state['select']
+        elif pNum == 3:
+            self.game.Players[2].right = game_state['right']
+            self.game.Players[2].left = game_state['left']
+            self.game.Players[2].mReadyKey = game_state['select']
+        elif pNum == 4:
+            self.game.Players[3].right = game_state['right']
+            self.game.Players[3].left = game_state['left']
+            self.game.Players[3].mReadyKey = game_state['select']
 
     def closeConnections(self):
         self.running = False
@@ -138,6 +154,7 @@ class GameModsSERV:
 
     def update(self):
         self.input_manager()
+        self.input_manager_online()
         
 
     def render(self):
@@ -222,7 +239,7 @@ class GameModsSERV:
                                 if event.key == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
                                     p.score = round(p.score - self.available_mods[p.modSelection].cost)
                                     p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
-                
+                    
             elif event.type == pygame.JOYBUTTONDOWN:
                 joystick_id = event.joy
                 button_id = event.button
@@ -239,3 +256,35 @@ class GameModsSERV:
                             elif button_id == p.controller.action_buttons.get('ready') and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
                                 p.score = round(p.score - self.available_mods[p.modSelection].cost)
                                 p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
+    
+    def input_manager_online(self):
+        for p in self.game.Players:
+            if not p.controller:
+                #print ("Pressed: "+str(p.press))
+                if p.left:
+                    if not p.press:
+                        p.press = True
+                        if(p.modSelection - 1 < 0):
+                                p.modSelection = len(self.available_mods) -1 
+                        else:
+                            p.modSelection = p.modSelection -1
+                    
+
+                if p.right:
+                    if not p.press:
+                        p.press = True
+                        if(p.modSelection == len(self.available_mods) - 1):
+                                p.modSelection = 0
+                        else:
+                            p.modSelection = p.modSelection + 1
+                    
+
+                if p.mReadyKey and p.score >= self.available_mods[p.modSelection].cost and self.available_mods[p.modSelection] not in p.currentMods:
+                    if not p.press:
+                        p.press = True
+                        p.score = round(p.score - self.available_mods[p.modSelection].cost)
+                        p.currentMods[self.available_mods[p.modSelection]] = self.available_mods[p.modSelection]
+                    
+
+                if not p.left and not p.right and not p.mReadyKey: 
+                        p.press = False

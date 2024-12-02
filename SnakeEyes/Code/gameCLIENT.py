@@ -6,8 +6,6 @@ from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 from SnakeEyes.Code import controller
 from SnakeEyes.Code import player
-from SnakeEyes.Code import car
-from SnakeEyes.Code import store
 import socket
 import pickle
 

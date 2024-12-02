@@ -1008,9 +1008,9 @@ class GameHOST:
 
             ### Handle application exit ###
             if event.type == pygame.QUIT:
+                self.running = False
                 self.closeConnections()
                 self.scene_manager.quit()
-                self.running = False
 
             ### Handle keyboard events ###
             if event.type == pygame.KEYDOWN:

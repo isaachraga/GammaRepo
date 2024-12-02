@@ -158,7 +158,9 @@ class GameWinSERV:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.running = False
+                self.closeConnections()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event) #Update pygame_gui
 
