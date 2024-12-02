@@ -20,6 +20,8 @@ class GameSetupCLIENT:
     ##### Initial Setup #####
     def __init__(self, scene_manager, game):
         self.pNum = 2
+        self.GC1 = ''
+        self.GC2 = ''
         self.game = game
         self.tempScene = 'msetup2'
         self.scene_manager = scene_manager
@@ -35,6 +37,8 @@ class GameSetupCLIENT:
         self.makeGUI()
 
     def ClientSetup(self, GC1, GC2):
+        self.GC1 = GC1
+        self.GC2 = GC2
         print("client")
         self.c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print("Trying to connect: "+GC1+".tcp.ngrok.io:"+GC2)
@@ -361,13 +365,15 @@ class GameSetupCLIENT:
                 print(self.tempScene)
                 self.running = False
                 if self.tempScene == 'mgame':
+                    #print("Controlls: "+Preferences.BLUE_CONTROLS)
+                    self.game.clientInit(self.pNum, self.GC1, self.GC2)
                     self.scene_manager.switch_scene('mgame')
                 else:
                     self.scene_manager.switch_scene('menu')
                     self.scene_manager.multiplayer_destroy()
 
                 self.c.close()
-                print("EoC Exiting...")
+                print("Setup EoC Exiting...")
 
     
     def clientVars(self):
@@ -413,7 +419,7 @@ class GameSetupCLIENT:
                     self.scene_manager.switch_scene('scene')
                 # Pause Menu
                 if event.key == pygame.K_ESCAPE:
-                    print("Escape")
+                    #print("Escape")
                     self.scene_manager.switch_scene("pause")
 
             self.ui_manager.process_events(event) #Update pygame_gui

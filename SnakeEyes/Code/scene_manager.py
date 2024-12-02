@@ -8,8 +8,14 @@ from SnakeEyes.Code.Scenes.multiplayer_setup import MultiplayerSetup
 from SnakeEyes.Code.Scenes.game_setupSERV import GameSetupSERV
 from SnakeEyes.Code.Scenes.game_setupCLIENT import GameSetupCLIENT
 from SnakeEyes.Code.Scenes.game_status import GameStatus
+from SnakeEyes.Code.Scenes.game_statusSERV import GameStatusSERV
+from SnakeEyes.Code.Scenes.game_statusCLIENT import GameStatusCLIENT
 from SnakeEyes.Code.Scenes.game_mods import GameMods
+from SnakeEyes.Code.Scenes.game_modsSERV import GameModsSERV
+from SnakeEyes.Code.Scenes.game_modsCLIENT import GameModsCLIENT
 from SnakeEyes.Code.Scenes.game_win import GameWin
+from SnakeEyes.Code.Scenes.game_winSERV import GameWinSERV
+from SnakeEyes.Code.Scenes.game_winCLIENT import GameWinCLIENT
 from SnakeEyes.Code.Scenes.pause import Pause
 from SnakeEyes.Code.Scenes.scene_selection import SceneSelection
 from SnakeEyes.Code.Scenes.options import OptionsMenu
@@ -62,14 +68,18 @@ class SceneManager:
         if host:
             self.scenes['mgame']  = GameHOST(self)
             self.scenes['msetup2']  = GameSetupSERV(self,  self.scenes.get('mgame'))
+            self.scenes['mstatus'] = GameStatusSERV(self, self.scenes.get('mgame'), True)
+            self.scenes['mmods']   = GameModsSERV(self,   self.scenes.get('mgame'), True)
+            self.scenes['mwin']    = GameWinSERV(self,    self.scenes.get('mgame'), True)
         else:
             self.scenes['mgame']  = GameCLIENT(self)
             self.scenes['msetup2']  = GameSetupCLIENT(self,  self.scenes.get('mgame'))
+            self.scenes['mstatus'] = GameStatusCLIENT(self, self.scenes.get('mgame'), True)
+            self.scenes['mmods']   = GameModsCLIENT(self,   self.scenes.get('mgame'), True)
+            self.scenes['mwin']    = GameWinCLIENT(self,    self.scenes.get('mgame'), True)
         
-        self.scenes['mstatus'] = GameStatus(self, self.scenes.get('mgame'), True)
-        self.scenes['mmods']   = GameMods(self,   self.scenes.get('mgame'), True)
         self.scenes['mpause']  = Pause(self,      self.scenes.get('mgame'), True)
-        self.scenes['mwin']    = GameWin(self,    self.scenes.get('mgame'), True)
+        
     
     def multiplayer_destroy(self):
         del self.scenes["mgame"]

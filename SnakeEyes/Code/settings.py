@@ -4,7 +4,8 @@ class Settings:
     FONT_SIZE = 16
     HEADER_FONT_SIZE = 30
     SFX_VOLUME = 0.25
-    BGM_VOLUME = 0.25
+    #BGM_VOLUME = 0.25
+    BGM_VOLUME = 0
 
     CONTROLLER_DEADZONE = 0.3
 

@@ -48,7 +48,7 @@ class GameSetupSERV:
         self.makeGUI()
 
     def handle_client(self, client, addr, player):
-        client.send(("Hello  Player "+str(player)).encode())
+        client.send(("SetupConnected").encode())
         print(client.recv(1024).decode())
         while client in self.Clients:
             try:
@@ -76,13 +76,13 @@ class GameSetupSERV:
                 #print("Sending...")
                 client.send(pickle.dumps(game_state))
             except EOFError:
-                print("End of Connection")
+                print("SERV SETUP End of Connection")
                 thread = False
                 client.close()
                 self.Clients.remove(client)
             #client.send(pickle.dumps(game_state))
         #client.close()
-        print("client thread closed SERV")
+        print("SERV SETUP client thread closed")
         sys.exit()
     
     def switchScene(self):
@@ -99,7 +99,7 @@ class GameSetupSERV:
             c.shutdown(socket.SHUT_RDWR)
             c.close()
             self.Clients.remove(c)
-            print("closed connection")
+            print("SERV SETUP closed connection")
 
     def ServerListen(self): 
         print("Server Starting...")
@@ -118,20 +118,21 @@ class GameSetupSERV:
         self.GC2 = str(mod[len(mod)-5:])
         print(str(self.ssh_tunnel)[20]+" - "+mod[len(mod)-5:])
         while self.running:
+            print("Setup serv thread")
             try:
                 self.s.settimeout(5)
                 self.player = 1
                 self.serverActive = True
-                print("Trying connection...."+str(len(self.Clients)))
+                print("SERV SETUP Trying connection...."+str(len(self.Clients)))
 
                 client, addr = self.s.accept()
                 self.Clients.append(client)
                 self.player += 1
                 threading.Thread(target=self.handle_client, args=(client, addr, self.player)).start()
             except TimeoutError:
-                print("Connection Timed Out")
+                print("SERV SETUP Connection Timed Out")
             
-        print("server thread closed")
+        print("SERV SETUP server thread closed")
         sys.exit()
             
             
@@ -562,8 +563,9 @@ class GameSetupSERV:
                         #when confirmation is received, then switch
                         self.tempScene = 'mgame'
                         self.switchScene()
-                        self.scene_manager.switch_scene('mgame')
                         self.running = False
+                        self.scene_manager.switch_scene('mgame')
+
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
 
