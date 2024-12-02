@@ -78,7 +78,7 @@ def test_icon_assets():
     assert os.path.exists("SnakeEyes/Assets/Icons/shield modifier.png")
     assert os.path.exists("SnakeEyes/Assets/Icons/boost modifier.png")
 
-def test_icon_assets():
+def test_tutorial_assets():
     logging.info("Testing Tutorial Assets")
     assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 1.png")
     assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 3.png")
@@ -86,6 +86,21 @@ def test_icon_assets():
     assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 5.png")
     assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 6.png")
     assert os.path.exists("SnakeEyes/Assets/Tutorial/tutorial 7.png")
+
+def test_credits_assets():
+    logging.info("Testing Credits Assets")
+    assert os.path.exists("SnakeEyes/Assets/Team/Amari.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Brandon.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Cameron.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Dakota.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/David.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Isaac.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Nick.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Nolan.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Pierce.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Ricky.png")
+    assert os.path.exists("SnakeEyes/Assets/Team/Zach.png")
+    
 
     
 def test_GUI_theme():

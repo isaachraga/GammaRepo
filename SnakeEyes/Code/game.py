@@ -892,54 +892,38 @@ class Game:
                 if c.playerNum == CPU.playerNum:
                     #print(c.position)
                     return c.position
+                    # position = pygame.Vector2(c.position.x + 30, c.position.y)
+                    # print(c.position)
+                    # return position
 
-    # def CPUDecisionProcess(self, CPU, Store):
-    #     if CPU.self.score < CPU.low_threshold: 
-    #         activeStores = []
-    #         for s in self.Stores:
-    #           if s.staus == 0:
-    #               activeStores.append(s)
-    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
-    #          modPos = pygame.Vector2(position.x+30, position.y)
-    #          return modPos
-    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
-    #         for c in self.Cars:
-    #             if c.playerNum == CPU.playerNum:
-    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
-    #                 return position
-                # test
+    def CPUHighThreshold(self):
+        highestScore = max(p.score for p in self.Players)
+        for p in self.Players:
+            return highestScore(p)
 
-
-                    position = pygame.Vector2(c.position.x + 30, c.position.y)
-                    #print(c.position)
-                    return position
-    #def CPUDecisionProcess(self, CPU, Store):
-    #     if CPU.self.score < CPU.low_threshold: 
-    #         activeStores = []
-    #         for s in self.Stores:
-    #           if s.staus == 0:
-    #               activeStores.append(s)
-    #          position = activeStores[random.randint(0, len(activeStores)-1)].position
-    #          modPos = pygame.Vector2(position.x+30, position.y)
-    #          return modPos
-    #     elif CPU.self.score >= CPU.high_threshold or Store.self.status == -1:
-    #         for c in self.Cars:
-    #             if c.playerNum == CPU.playerNum:
-    #                 position = pygame.Vector2(c.position.x +30, c.position.y)
-    #                 return position
-                # test
-
-    #def CPUFindThreshold(self, CPU):
-        #find max player amount
-        #pull their score and mod it for threshold amount
-                
-
-    ### Decides whether to play of quit
+    def CPULowThreshold(self):
+        lowestScore = min(p.score for p in self.Players)
+        for p in self.Players:
+            return lowestScore(p)     
+    
+    def CPUDecisionProcess(self):
+        for p in self.Players:
+            if p.score < self.CPULowThreshold(): 
+                activeStores = []
+                for s in self.Stores:
+                    if s.status == 0:
+                        activeStores.append(s)
+                    position = activeStores[random.randint(0, len(activeStores)-1)].position
+                    modPos = pygame.Vector2(position.x+30, position.y)
+                    return modPos
+            
     def CPUDecidePlay(self, CPU):
-        if CPU.CPU.turn < 3:
+        if CPU.CPU.turn < 5:
+            for store in self.Stores:
+                if store.status == -1:
+                    return False
             return True
-        else:
-            return False
+        return False
     
     ### CPU Movement ###
     def CPUMoveToLocation(self, CPU, dt):
