@@ -8,7 +8,10 @@ import pygame_gui
 from SnakeEyes.Code.settings import Settings
 from SnakeEyes.Code.preferences import Preferences
 import pickle
+import os
 
+#hide
+NGROK_TOKEN = os.environ['NGROK_TOKEN']
 
 '''
 take away control to change player type if already occupied
@@ -109,7 +112,7 @@ class GameSetupSERV:
         self.s.listen(2)  
 
         print("Server started. Waiting for connections...")
-        ngrok.set_auth_token("2pBEMXhdvZ6s0tLpM6NNWv4wjxg_fqFGZqtmTXNMRKM1QnPc") 
+        ngrok.set_auth_token(NGROK_TOKEN) 
         self.ssh_tunnel = ngrok.connect("8000", "tcp")
         #ssh_tunnel = ngrok.connect("8000")
         
