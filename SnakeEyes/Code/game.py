@@ -897,24 +897,11 @@ class Game:
 
     def CPUHighThreshold(self):
         highestScore = max(p.score for p in self.Players)
-        for p in self.Players:
-            return highestScore(p)
+        return highestScore
 
     def CPULowThreshold(self):
         lowestScore = min(p.score for p in self.Players)
-        for p in self.Players:
-            return lowestScore(p)     
-    
-    def CPUDecisionProcess(self):
-        for p in self.Players:
-            if p.score < self.CPULowThreshold(): 
-                activeStores = []
-                for s in self.Stores:
-                    if s.status == 0:
-                        activeStores.append(s)
-                    position = activeStores[random.randint(0, len(activeStores)-1)].position
-                    modPos = pygame.Vector2(position.x+30, position.y)
-                    return modPos
+        return lowestScore   
             
     def CPUDecidePlay(self, CPU):
         if CPU.CPU.turn < 5:
