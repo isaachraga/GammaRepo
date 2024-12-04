@@ -59,6 +59,19 @@ class MultiplayerSetup:
             manager=self.ui_manager
         )
 
+
+        #Back
+        self.back_width = 100
+        self.back_height = 75
+        self.back_button = pygame_gui.elements.UIButton(
+            relative_rect=pygame.Rect(
+                ((0), (Settings.HEIGHT - self.back_height)), #Position
+                (self.back_width, self.back_height)), #Size
+            text='BACK',
+            manager=self.ui_manager
+            
+        )
+
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/mainMenuLoop.wav")
@@ -131,6 +144,10 @@ class MultiplayerSetup:
                     #Quit Button
                     if event.ui_element == self.quit_button:
                         self.scene_manager.quit()
+                        self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+                    #Back Button
+                    if event.ui_element == self.back_button:
+                        self.scene_manager.switch_scene('menu')
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
     def render(self):
