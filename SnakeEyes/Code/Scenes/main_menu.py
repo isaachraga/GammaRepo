@@ -171,7 +171,7 @@ class MainMenu:
         self.update_title_animation()  # Update the animated sprite
         self.draw_title_animation()    # Draw the animated sprit
         
-        self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", Settings.COLOR_TEXT)
+        # self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", Settings.COLOR_TEXT)
 
         #Render pygame_gui
         self.ui_manager.update(self.time_delta)

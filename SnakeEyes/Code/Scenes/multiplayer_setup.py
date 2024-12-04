@@ -138,7 +138,7 @@ class MultiplayerSetup:
         self.loadingScreen = pygame.image.load('SnakeEyes/Assets/Environment/Background/MainMenuBackground.png')
         self.screen.blit(self.loadingScreen, (-20,45))
         
-        self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", Settings.COLOR_TEXT)
+        # self.GAME_FONT.render_to(self.screen, (0, 0), "Press S for scene selection (Debug)", Settings.COLOR_TEXT)
 
         if len(self.GC1) != 1 or len(self.GC2) != 5:
             self.GAME_FONT.render_to(self.screen, (((Settings.WIDTH / 2) - (self.button_width / 2))+50, 485), "Enter Game Code to Join Game", (255,255,255))
