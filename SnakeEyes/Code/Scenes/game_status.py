@@ -17,6 +17,7 @@ class GameStatus:
         self.clock = pygame.time.Clock() #Needed for pygame_gui
 
         self.make_GUI()
+        self.joystick = pygame.joystick.Joystick(0)
 
     def make_GUI(self):
         self.button_width = 500
@@ -39,11 +40,11 @@ class GameStatus:
             object_id='#back_panel',
             manager=self.ui_manager
         )
-    
+
     ### Runs once when this scene is switched to ###
     def on_scene_enter(self):
         self.scene_manager.play_music("SnakeEyes/Assets/Audio/Music/shopLoop.wav")
-    
+
     def run(self):
         self.time_delta = self.clock.tick(60) / 1000.0 #Needed for pygame_gui
         self.update()
@@ -52,7 +53,7 @@ class GameStatus:
     def update(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                    self.scene_manager.quit()
+                self.scene_manager.quit()
 
             self.ui_manager.process_events(event) #Update pygame_gui
 
@@ -64,14 +65,18 @@ class GameStatus:
                         self.scene_manager.switch_scene('mpause')
                     else:
                         self.scene_manager.switch_scene('pause')
-            
+
             if event.type == pygame.USEREVENT:
-                #Check if a button was clicked
+                # Check if a button was clicked
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    #Continue Button
+                    # Continue Button
                     if event.ui_element == self.continue_button:
                         self.next_scene()
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
+
+            if event.type == pygame.JOYBUTTONDOWN:
+                if self.joystick.get_button(1):
+                    self.next_scene()
 
     def next_scene(self):
         if Preferences.MODS_PREFERENCE == "Enabled":
@@ -93,11 +98,11 @@ class GameStatus:
         status_text_rect.center = ((Settings.WIDTH / 2), Settings.HEADER_FONT_SIZE)
         self.HEADER_FONT.render_to(self.screen, status_text_rect, "GAME STATUS", Settings.COLOR_TEXT)
 
-        #Render pygame_gui
+        # Render pygame_gui
         self.ui_manager.update(self.time_delta)
         self.ui_manager.draw_ui(self.screen)    
 
-        #Score
+        # Score
         pCount = len(self.game.Players)
 
         VerticalPadding = 100
@@ -110,12 +115,12 @@ class GameStatus:
         spaceForBars = totalHeight - (bufferBetween * (pCount - 1))
         barHeight = spaceForBars / pCount
         goalBarWidth = 3
-        
-        #Goal Bar
+
+        # Goal Bar
         goal_rect = pygame.Rect(barRight, VerticalPadding, goalBarWidth, totalHeight) #x, y, width, height
         pygame.draw.rect(self.screen, Settings.COLOR_TEXT, goal_rect)
 
-        #Intermediate bars
+        # Intermediate bars
         intermediate_rect = pygame.Rect(barRight - ((barGoalWidth/4)*1), VerticalPadding, goalBarWidth, totalHeight) #x, y, width, height
         pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, intermediate_rect)
         intermediate_rect = pygame.Rect(barRight - ((barGoalWidth/4)*2), VerticalPadding, goalBarWidth, totalHeight) #x, y, width, height
@@ -123,28 +128,28 @@ class GameStatus:
         intermediate_rect = pygame.Rect(barRight - ((barGoalWidth/4)*3), VerticalPadding, goalBarWidth, totalHeight) #x, y, width, height
         pygame.draw.rect(self.screen, Settings.COLOR_ACCENT, intermediate_rect)
 
-        #Player Bars
+        # Player Bars
         pCurIndex = 1
         for p in self.game.Players:
-            #Handle decimals
+            # Handle decimals
             pScore = float(self.game.getScore(p.playerNum))
             if (Settings.ROUNDING_PRECISION != 0):
                 pScore = round(pScore, Settings.ROUNDING_PRECISION)
             else:
                 pScore = int(pScore)
 
-            #Score Bar
+            # Score Bar
             curBarWidth = minBarWidth + (barGoalWidth * (pScore / Preferences.FINISHLINE_SCORE))
             # curBarWidth = minBarWidth + barGoalWidth #DEBUG
             rect = pygame.Rect( barLeft, VerticalPadding+((pCurIndex-1)*(barHeight + bufferBetween)), curBarWidth, barHeight) #x, y, width, height
             pygame.draw.rect(self.screen, p.color, rect)
-            
-            #Text
+
+            # Text
             player_num_text = "P"+str(p.playerNum)
             player_num_rect = self.GAME_FONT.get_rect(player_num_text)
             player_num_rect.midright = (rect.left - 5, rect.centery - Settings.FONT_SIZE/2)
             self.GAME_FONT.render_to(self.screen, player_num_rect, player_num_text, Settings.COLOR_TEXT)
-            
+
             player_score_text = "$"+str(f'{pScore:,.{Settings.ROUNDING_PRECISION}f}')
             player_score_rect = self.GAME_FONT.get_rect(player_score_text)
             player_score_rect.midright = (rect.left - 5, rect.centery + Settings.FONT_SIZE/2)
@@ -152,7 +157,7 @@ class GameStatus:
 
             pCurIndex += 1
 
-        #Goal Text
+        # Goal Text
         goal_text = "Goal"
         goal_text_rect = self.GAME_FONT.get_rect(goal_text)
         goal_text_rect.midleft = (goal_rect.right + 5, goal_rect.centery - Settings.FONT_SIZE/2)
@@ -162,6 +167,5 @@ class GameStatus:
         goal_score_rect = self.GAME_FONT.get_rect(goal_score_text)
         goal_score_rect.midleft = (goal_rect.right + 5, goal_rect.centery + Settings.FONT_SIZE/2)
         self.GAME_FONT.render_to(self.screen, goal_score_rect, goal_score_text, Settings.COLOR_TEXT)
-
 
         pygame.display.flip()
