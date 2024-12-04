@@ -98,7 +98,7 @@ class Credits:
         self.GAME_FONT.render_to(self.screen, (1100, 600), "Ricky A.", Settings.COLOR_TEXT)
         self.screen.blit(self.Ricky, (1070,445))
 
-        self.GAME_FONT.render_to(self.screen, (10, 700), "Press S for scene selection", Settings.COLOR_TEXT)
+        # self.GAME_FONT.render_to(self.screen, (10, 700), "Press S for scene selection", Settings.COLOR_TEXT)
 
         self.ui_manager.draw_ui(self.screen)
         pygame.display.flip()
