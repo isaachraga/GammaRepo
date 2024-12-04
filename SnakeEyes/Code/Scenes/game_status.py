@@ -17,7 +17,6 @@ class GameStatus:
         self.clock = pygame.time.Clock() #Needed for pygame_gui
 
         self.make_GUI()
-        self.joystick = pygame.joystick.Joystick(0)
 
     def make_GUI(self):
         self.button_width = 500
@@ -75,8 +74,11 @@ class GameStatus:
                         self.scene_manager.play_sound("SnakeEyes/Assets/Audio/SFX/blipSelect.wav")
 
             if event.type == pygame.JOYBUTTONDOWN:
-                if self.joystick.get_button(1):
-                    self.next_scene()
+                button_id = event.button
+                for p in self.game.Players:
+                    if p.controller.controller_type == 'joystick':
+                        if button_id == p.controller.action_buttons.get("space"):
+                            self.next_scene()
 
     def next_scene(self):
         if Preferences.MODS_PREFERENCE == "Enabled":
