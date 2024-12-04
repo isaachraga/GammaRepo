@@ -24,7 +24,7 @@ class Controller:
         if self.controller_type == "joystick":
             self.axis_horizontal = 0
             self.axis_vertical = 1
-            self.action_buttons = {"ready": 0, "space": 1}
+            self.action_buttons = {"ready": 0, "space": 1, "BRight": 10, "BLeft": 9}
         elif self.controller_type == "keyboard":
             self.map_keyboard_controls()
 
